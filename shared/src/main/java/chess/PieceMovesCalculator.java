@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.Objects;
 
 public interface PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
@@ -35,7 +36,6 @@ If there is an enemy piece at the end of the diagonal,
 the bishop may move to that position and capture the enemy piece.
  */
 class BishopMovesCalculator implements PieceMovesCalculator {
-    private ChessPiece.PieceType bishop = ChessPiece.PieceType.BISHOP;
     private ChessPiece piece;
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
 
@@ -47,10 +47,17 @@ class BishopMovesCalculator implements PieceMovesCalculator {
         ChessMove newMove;
         // Right Top Edge
         while (true) {
+            if (myPosition.getRow() == 8) {
+                break;
+            }
             newPosition = new ChessPosition(row+next, col+next);
-            newMove = new ChessMove(myPosition, newPosition, bishop);
+            newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
                 break;
             }
             next = next + 1;
@@ -62,10 +69,17 @@ class BishopMovesCalculator implements PieceMovesCalculator {
         // Right Bottom Edge
         next = 1;
         while (true) {
+            if (myPosition.getRow() == 1) {
+                break;
+            }
             newPosition = new ChessPosition(row-next, col+next);
-            newMove = new ChessMove(myPosition, newPosition, bishop);
+            newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
                 break;
             }
             next = next + 1;
@@ -77,10 +91,17 @@ class BishopMovesCalculator implements PieceMovesCalculator {
         // Left Bottom Edge
         next = 1;
         while (true) {
+            if (myPosition.getRow() == 1) {
+                break;
+            }
             newPosition = new ChessPosition(row-next, col-next);
-            newMove = new ChessMove(myPosition, newPosition, bishop);
+            newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
                 break;
             }
             next = next + 1;
@@ -92,10 +113,17 @@ class BishopMovesCalculator implements PieceMovesCalculator {
         // Left Top Edge
         next = 1;
         while (true) {
+            if (myPosition.getRow() == 8) {
+                break;
+            }
             newPosition = new ChessPosition(row+next, col-next);
-            newMove = new ChessMove(myPosition, newPosition, bishop);
+            newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
                 break;
             }
             next = next + 1;
@@ -104,9 +132,7 @@ class BishopMovesCalculator implements PieceMovesCalculator {
                 break;
             }
         }
-
         return moves;
-
     }
 }
 

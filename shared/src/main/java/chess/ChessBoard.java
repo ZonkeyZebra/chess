@@ -23,7 +23,7 @@ public class ChessBoard {
     private ChessPiece thePiece = new ChessPiece(white, rook);
 
     public ChessBoard() {
-        resetBoard();
+
     }
 
     /**
@@ -172,5 +172,22 @@ public class ChessBoard {
     public int hashCode() {
         //return Objects.hash(Arrays.deepHashCode(board), black, white, rook, knight, pawn, queen, king, bishop, thePosition, thePiece);
         return Objects.hash(thePosition);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "board=" + Arrays.toString(board) +
+                ", black=" + black +
+                ", white=" + white +
+                ", rook=" + rook +
+                ", knight=" + knight +
+                ", pawn=" + pawn +
+                ", queen=" + queen +
+                ", king=" + king +
+                ", bishop=" + bishop +
+                ", thePosition=" + thePosition +
+                ", thePiece=" + thePiece +
+                '}';
     }
 }
