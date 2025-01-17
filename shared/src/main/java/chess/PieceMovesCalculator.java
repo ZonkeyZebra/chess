@@ -15,6 +15,8 @@ that would allow the opponent to capture their King. If your King is in danger o
 you must make a move that removes your King from immediate danger.
  */
 class KingMovesCalculator implements PieceMovesCalculator {
+    private ChessPiece piece;
+    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
     }
@@ -26,6 +28,8 @@ If there is an enemy piece at the end of the line, they may move to that positio
 (In simpler terms, Queens can take all moves a Rook or Bishop could take from the Queen's position).
  */
 class QueenMovesCalculator implements PieceMovesCalculator {
+    private ChessPiece piece;
+    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
     }
@@ -142,6 +146,8 @@ Knights are the only piece that can ignore pieces in the in-between squares (the
 They can move to squares occupied by an enemy piece and capture the enemy piece, or to unoccupied squares.
  */
 class KnightMovesCalculator implements PieceMovesCalculator {
+    private ChessPiece piece;
+    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
     }
@@ -152,8 +158,93 @@ Rooks may move in straight lines as far as there is open space.
 If there is an enemy piece at the end of the line, rooks may move to that position and capture the enemy piece.
  */
 class RookMovesCalculator implements PieceMovesCalculator {
+    private ChessPiece piece;
+    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        int next = 1;
+        ChessPosition newPosition = myPosition;
+        ChessMove newMove;
+        // right
+        while (true) {
+            if (newPosition.getColumn() == 8 || newPosition.getColumn() == 1) {
+                break;
+            }
+            newPosition = new ChessPosition(row, col+next);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+        }
+        next = 1;
+        newPosition = myPosition;
+        // left
+        while (true) {
+            if (newPosition.getColumn() == 8 || newPosition.getColumn() == 1) {
+                break;
+            }
+            newPosition = new ChessPosition(row, col-next);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+        }
+        next = 1;
+        newPosition = myPosition;
+        // back
+        while (true) {
+            if (newPosition.getRow() == 8 || newPosition.getRow() == 1) {
+                break;
+            }
+            newPosition = new ChessPosition(row-next, col);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+        }
+        next = 1;
+        newPosition = myPosition;
+        // front
+        while (true) {
+            if (newPosition.getRow() == 8 || newPosition.getRow() == 1) {
+                break;
+            }
+            newPosition = new ChessPosition(row+next, col);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                if (next == 1) {
+                    break;
+                }
+                moves.add(newMove);
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+        }
+        return moves;
     }
 }
 
@@ -168,6 +259,8 @@ they get promoted and are replaced with the player's choice of Rook, Knight, Bis
 (they cannot stay a Pawn or become King).
  */
 class PawnMovesCalculator implements PieceMovesCalculator {
+    private ChessPiece piece;
+    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
     }
