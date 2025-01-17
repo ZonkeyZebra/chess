@@ -8,9 +8,19 @@ package chess;
  */
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
+    private ChessPosition thePosition;
+    private ChessPiece thePiece;
+    private ChessGame.TeamColor black = ChessGame.TeamColor.BLACK;
+    private ChessGame.TeamColor white = ChessGame.TeamColor.WHITE;
+    private ChessPiece.PieceType rook = ChessPiece.PieceType.ROOK;
+    private ChessPiece.PieceType knight = ChessPiece.PieceType.KNIGHT;
+    private ChessPiece.PieceType pawn = ChessPiece.PieceType.PAWN;
+    private ChessPiece.PieceType queen = ChessPiece.PieceType.QUEEN;
+    private ChessPiece.PieceType king = ChessPiece.PieceType.KING;
+    private ChessPiece.PieceType bishop = ChessPiece.PieceType.BISHOP;
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -39,6 +49,8 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        thePosition = new ChessPosition(1,1);
+        thePiece = new ChessPiece(white, rook);
+        addPiece(thePosition, thePiece);
     }
 }
