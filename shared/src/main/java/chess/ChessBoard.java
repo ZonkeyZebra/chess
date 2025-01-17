@@ -11,8 +11,6 @@ import java.util.Objects;
  */
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
-    private ChessPosition thePosition;
-    private ChessPiece thePiece;
     private ChessGame.TeamColor black = ChessGame.TeamColor.BLACK;
     private ChessGame.TeamColor white = ChessGame.TeamColor.WHITE;
     private ChessPiece.PieceType rook = ChessPiece.PieceType.ROOK;
@@ -21,9 +19,11 @@ public class ChessBoard {
     private ChessPiece.PieceType queen = ChessPiece.PieceType.QUEEN;
     private ChessPiece.PieceType king = ChessPiece.PieceType.KING;
     private ChessPiece.PieceType bishop = ChessPiece.PieceType.BISHOP;
+    private ChessPosition thePosition = new ChessPosition(0,0);
+    private ChessPiece thePiece = new ChessPiece(white, rook);
 
     public ChessBoard() {
-
+        resetBoard();
     }
 
     /**
@@ -52,8 +52,109 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        thePosition = new ChessPosition(1,1);
-        thePiece = new ChessPiece(white, rook);
+        // WHITE
+        thePosition.setRow(1);
+        thePosition.setCol(1);
+        thePiece.setPieceColor(white);
+        thePiece.setType(rook);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(2);
+        thePiece.setType(knight);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(3);
+        thePiece.setType(bishop);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(4);
+        thePiece.setType(queen);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(5);
+        thePiece.setType(king);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(6);
+        thePiece.setType(bishop);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(7);
+        thePiece.setType(knight);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(8);
+        thePiece.setType(rook);
+        addPiece(thePosition, thePiece);
+        thePosition.setRow(2);
+        thePosition.setCol(1);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(2);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(3);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(4);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(5);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(6);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(7);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(8);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        // BLACK
+        thePosition.setRow(8);
+        thePosition.setCol(1);
+        thePiece.setPieceColor(black);
+        thePiece.setType(rook);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(2);
+        thePiece.setType(knight);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(3);
+        thePiece.setType(bishop);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(4);
+        thePiece.setType(queen);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(5);
+        thePiece.setType(king);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(6);
+        thePiece.setType(bishop);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(7);
+        thePiece.setType(knight);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(8);
+        thePiece.setType(rook);
+        addPiece(thePosition, thePiece);
+        thePosition.setRow(7);
+        thePosition.setCol(1);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(2);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(3);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(4);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(5);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(6);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(7);
+        thePiece.setType(pawn);
+        addPiece(thePosition, thePiece);
+        thePosition.setCol(8);
+        thePiece.setType(pawn);
         addPiece(thePosition, thePiece);
     }
 
@@ -63,11 +164,13 @@ public class ChessBoard {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
-        return Objects.deepEquals(board, that.board) && Objects.equals(thePosition, that.thePosition) && Objects.equals(thePiece, that.thePiece) && black == that.black && white == that.white && rook == that.rook && knight == that.knight && pawn == that.pawn && queen == that.queen && king == that.king && bishop == that.bishop;
+        //return Objects.deepEquals(board, that.board) && black == that.black && white == that.white && rook == that.rook && knight == that.knight && pawn == that.pawn && queen == that.queen && king == that.king && bishop == that.bishop && Objects.equals(thePosition, that.thePosition) && Objects.equals(thePiece, that.thePiece);
+        return Objects.equals(thePosition, that.thePosition);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.deepHashCode(board), thePosition, thePiece, black, white, rook, knight, pawn, queen, king, bishop);
+        //return Objects.hash(Arrays.deepHashCode(board), black, white, rook, knight, pawn, queen, king, bishop, thePosition, thePiece);
+        return Objects.hash(thePosition);
     }
 }
