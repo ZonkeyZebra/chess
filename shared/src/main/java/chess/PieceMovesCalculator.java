@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.LinkedList;
 
 public interface PieceMovesCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition);
@@ -13,7 +14,6 @@ that would allow the opponent to capture their King. If your King is in danger o
 you must make a move that removes your King from immediate danger.
  */
 class KingMovesCalculator implements PieceMovesCalculator {
-    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         throw new RuntimeException("Not implemented");
     }
@@ -35,8 +35,78 @@ If there is an enemy piece at the end of the diagonal,
 the bishop may move to that position and capture the enemy piece.
  */
 class BishopMovesCalculator implements PieceMovesCalculator {
+    private ChessPiece.PieceType bishop = ChessPiece.PieceType.BISHOP;
+    private ChessPiece piece;
+    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
+
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        int next = 1;
+        ChessPosition newPosition = myPosition;
+        ChessMove newMove;
+        // Right Top Edge
+        while (true) {
+            newPosition = new ChessPosition(row+next, col+next);
+            newMove = new ChessMove(myPosition, newPosition, bishop);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+            if (newPosition.getRow() == 8 || newPosition.getColumn() == 8) {
+                break;
+            }
+        }
+        // Right Bottom Edge
+        next = 1;
+        while (true) {
+            newPosition = new ChessPosition(row-next, col+next);
+            newMove = new ChessMove(myPosition, newPosition, bishop);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+            if (newPosition.getRow() == 1 || newPosition.getColumn() == 8) {
+                break;
+            }
+        }
+        // Left Bottom Edge
+        next = 1;
+        while (true) {
+            newPosition = new ChessPosition(row-next, col-next);
+            newMove = new ChessMove(myPosition, newPosition, bishop);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+            if (newPosition.getRow() == 1 || newPosition.getColumn() == 1) {
+                break;
+            }
+        }
+        // Left Top Edge
+        next = 1;
+        while (true) {
+            newPosition = new ChessPosition(row+next, col-next);
+            newMove = new ChessMove(myPosition, newPosition, bishop);
+            piece = board.getPiece(newPosition);
+            if (piece != null) {
+                break;
+            }
+            next = next + 1;
+            moves.add(newMove);
+            if (newPosition.getRow() == 8 || newPosition.getColumn() == 1) {
+                break;
+            }
+        }
+
+        return moves;
+
     }
 }
 
@@ -76,3 +146,4 @@ class PawnMovesCalculator implements PieceMovesCalculator {
         throw new RuntimeException("Not implemented");
     }
 }
+
