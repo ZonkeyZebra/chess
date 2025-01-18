@@ -44,6 +44,7 @@ class BishopMovesCalculator implements PieceMovesCalculator {
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
 
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int next = 1;
@@ -58,7 +59,7 @@ class BishopMovesCalculator implements PieceMovesCalculator {
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
@@ -80,7 +81,7 @@ class BishopMovesCalculator implements PieceMovesCalculator {
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
@@ -102,7 +103,7 @@ class BishopMovesCalculator implements PieceMovesCalculator {
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
@@ -124,7 +125,7 @@ class BishopMovesCalculator implements PieceMovesCalculator {
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
@@ -161,6 +162,7 @@ class RookMovesCalculator implements PieceMovesCalculator {
     private ChessPiece piece;
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
         int next = 1;
@@ -168,14 +170,14 @@ class RookMovesCalculator implements PieceMovesCalculator {
         ChessMove newMove;
         // right
         while (true) {
-            if (newPosition.getColumn() == 8 || newPosition.getColumn() == 1) {
+            if (newPosition.getColumn() == 8) {
                 break;
             }
             newPosition = new ChessPosition(row, col+next);
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
@@ -188,14 +190,14 @@ class RookMovesCalculator implements PieceMovesCalculator {
         newPosition = myPosition;
         // left
         while (true) {
-            if (newPosition.getColumn() == 8 || newPosition.getColumn() == 1) {
+            if (newPosition.getColumn() == 1) {
                 break;
             }
             newPosition = new ChessPosition(row, col-next);
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
@@ -206,16 +208,16 @@ class RookMovesCalculator implements PieceMovesCalculator {
         }
         next = 1;
         newPosition = myPosition;
-        // back
+        // down
         while (true) {
-            if (newPosition.getRow() == 8 || newPosition.getRow() == 1) {
+            if (newPosition.getRow() == 1) {
                 break;
             }
             newPosition = new ChessPosition(row-next, col);
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
@@ -226,16 +228,16 @@ class RookMovesCalculator implements PieceMovesCalculator {
         }
         next = 1;
         newPosition = myPosition;
-        // front
+        // up
         while (true) {
-            if (newPosition.getRow() == 8 || newPosition.getRow() == 1) {
+            if (newPosition.getRow() == 8) {
                 break;
             }
             newPosition = new ChessPosition(row+next, col);
             newMove = new ChessMove(myPosition, newPosition, null);
             piece = board.getPiece(newPosition);
             if (piece != null) {
-                if (next == 1) {
+                if (piece.getTeamColor() == pieceColor) {
                     break;
                 }
                 moves.add(newMove);
