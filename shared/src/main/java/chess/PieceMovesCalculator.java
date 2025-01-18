@@ -10,15 +10,116 @@ public interface PieceMovesCalculator {
 
 /**
 Kings may move 1 square in any direction (including diagonal) to either a position occupied by an enemy
-piece (capturing the enemy piece), or to an unoccupied position. A player is not allowed to make any move
+piece (capturing the enemy piece), or to an unoccupied position. TODO: A player is not allowed to make any move
 that would allow the opponent to capture their King. If your King is in danger of being captured on your turn,
 you must make a move that removes your King from immediate danger.
  */
 class KingMovesCalculator implements PieceMovesCalculator {
-    private ChessPiece piece;
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        ChessPosition newPosition = myPosition;
+        ChessMove newMove;
+        ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
+        // up
+        if (myPosition.getRow() != 8) {
+            newPosition = new ChessPosition(row+1, col);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+        // diagonal right up
+        if (myPosition.getRow() != 8 || myPosition.getColumn() != 8) {
+            newPosition = new ChessPosition(row+1, col+1);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+        // right
+        if (myPosition.getColumn() != 8) {
+            newPosition = new ChessPosition(row, col+1);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+        // diagonal right down
+        if (myPosition.getRow() != 1 && myPosition.getColumn() != 8) {
+            newPosition = new ChessPosition(row-1, col+1);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+        // down
+        if (myPosition.getRow() != 1) {
+            newPosition = new ChessPosition(row-1, col);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+        // diagonal left down
+        if (myPosition.getRow() != 1 || myPosition.getColumn() != 1) {
+            newPosition = new ChessPosition(row-1, col-1);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+        // left
+        if (myPosition.getColumn() != 1) {
+            newPosition = new ChessPosition(row, col-1);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+        // diagonal left up
+        if (myPosition.getRow() != 8 && myPosition.getColumn() != 1) {
+            newPosition = new ChessPosition(row+1, col-1);
+            newMove = new ChessMove(myPosition, newPosition, null);
+            if (board.getPiece(newPosition) == null) {
+                moves.add(newMove);
+            } else{
+                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                    moves.add(newMove);
+                }
+            }
+        }
+
+        return moves;
     }
 }
 
