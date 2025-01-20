@@ -450,8 +450,161 @@ They can move to squares occupied by an enemy piece and capture the enemy piece,
 class KnightMovesCalculator implements PieceMovesCalculator {
     private ChessPiece piece;
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
+    private ChessPosition newPosition;
+    private ChessMove newMove;
+
+    void addMove(ChessPosition myPosition, ChessPosition newPosition) {
+        newMove = new ChessMove(myPosition, newPosition, null);
+        moves.add(newMove);
+    }
+    void moveForwardRight(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor) {
+        newPosition = new ChessPosition(row+2, col+1);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
+    void moveForwardLeft(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor) {
+        newPosition = new ChessPosition(row+2, col-1);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
+    void moveBackRight(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor){
+        newPosition = new ChessPosition(row-2, col+1);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
+    void moveBackLeft(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor){
+        newPosition = new ChessPosition(row-2, col-1);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
+    void moveLeftDown(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor){
+        newPosition = new ChessPosition(row-1, col-2);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
+    void moveLeftUp(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor){
+        newPosition = new ChessPosition(row+1, col-2);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
+    void moveRightDown(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor){
+        newPosition = new ChessPosition(row-1, col+2);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
+    void moveRightUp(int row, int col, ChessPosition myPosition, ChessBoard board, ChessGame.TeamColor pieceColor){
+        newPosition = new ChessPosition(row+1, col+2);
+        if (board.getPiece(newPosition) != null) {
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                addMove(myPosition, newPosition);
+            }
+        } else {
+            addMove(myPosition, newPosition);
+        }
+    }
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
+        // edge: bottom/top
+        if (myPosition.getRow() == 1) {
+            if (myPosition.getColumn() == 1) { // corner
+                moveForwardRight(row, col, myPosition, board, pieceColor);
+                moveRightUp(row, col, myPosition, board, pieceColor);
+            } else if (myPosition.getColumn() == 8) { // other corner
+                moveForwardLeft(row, col, myPosition, board, pieceColor);
+                moveLeftUp(row, col, myPosition, board, pieceColor);
+            } else {
+                moveForwardRight(row, col, myPosition, board, pieceColor);
+                moveForwardLeft(row, col, myPosition, board, pieceColor);
+                moveLeftUp(row, col, myPosition, board, pieceColor);
+                moveRightUp(row, col, myPosition, board, pieceColor);
+            }
+        }
+        // edge: top/bottom
+        if (myPosition.getRow() == 8) {
+            if (myPosition.getColumn() == 1) { // corner
+                moveBackRight(row, col, myPosition, board, pieceColor);
+                moveRightDown(row, col, myPosition, board, pieceColor);
+            } else if (myPosition.getColumn() == 8) { // other corner
+                moveBackLeft(row, col, myPosition, board, pieceColor);
+                moveLeftDown(row, col, myPosition, board, pieceColor);
+            } else {
+                moveBackRight(row, col, myPosition, board, pieceColor);
+                moveBackLeft(row, col, myPosition, board, pieceColor);
+                moveLeftDown(row, col, myPosition, board, pieceColor);
+                moveRightDown(row, col, myPosition, board, pieceColor);
+            }
+        }
+        // edge: left/right
+        if (myPosition.getColumn() == 1) {
+            if (myPosition.getRow() == 1 || myPosition.getRow() == 8) {
+                ///  Do nothing, was covered earlier in top and bottom
+            } else {
+                moveForwardRight(row, col, myPosition, board, pieceColor);
+                moveBackRight(row, col, myPosition, board, pieceColor);
+                moveRightDown(row, col, myPosition, board, pieceColor);
+                moveRightUp(row, col, myPosition, board, pieceColor);
+            }
+        }
+        // edge: right/left
+        if (myPosition.getColumn() == 8) {
+            if (myPosition.getRow() == 1 || myPosition.getRow() == 8) {
+                ///  Do nothing, was covered earlier in top and bottom
+            } else {
+                moveForwardLeft(row, col, myPosition, board, pieceColor);
+                moveBackLeft(row, col, myPosition, board, pieceColor);
+                moveLeftDown(row, col, myPosition, board, pieceColor);
+                moveLeftUp(row, col, myPosition, board, pieceColor);
+            }
+        }
+        // basic
+        if (myPosition.getRow() != 1 && myPosition.getRow() != 8 && myPosition.getColumn() != 1 && myPosition.getColumn() != 8) {
+            moveForwardRight(row, col, myPosition, board, pieceColor);
+            moveForwardLeft(row, col, myPosition, board, pieceColor);
+            moveBackRight(row, col, myPosition, board, pieceColor);
+            moveBackLeft(row, col, myPosition, board, pieceColor);
+            moveLeftDown(row, col, myPosition, board, pieceColor);
+            moveLeftUp(row, col, myPosition, board, pieceColor);
+            moveRightDown(row, col, myPosition, board, pieceColor);
+            moveRightUp(row, col, myPosition, board, pieceColor);
+        }
+        return moves;
     }
 }
 
