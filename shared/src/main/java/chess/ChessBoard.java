@@ -19,7 +19,7 @@ public class ChessBoard {
     private ChessPiece.PieceType queen = ChessPiece.PieceType.QUEEN;
     private ChessPiece.PieceType king = ChessPiece.PieceType.KING;
     private ChessPiece.PieceType bishop = ChessPiece.PieceType.BISHOP;
-    private ChessPosition thePosition = new ChessPosition(0,0);
+    private ChessPosition thePosition = new ChessPosition(0, 0);
     private ChessPiece thePiece = new ChessPiece(white, rook);
 
     public ChessBoard() {
@@ -33,7 +33,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -44,7 +44,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()-1][position.getColumn()-1];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -52,110 +52,38 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        // WHITE
-        thePosition.setRow(1);
-        thePosition.setCol(1);
-        thePiece.setPieceColor(white);
-        thePiece.setType(rook);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(2);
-        thePiece.setType(knight);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(3);
-        thePiece.setType(bishop);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(4);
-        thePiece.setType(queen);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(5);
-        thePiece.setType(king);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(6);
-        thePiece.setType(bishop);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(7);
-        thePiece.setType(knight);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(8);
-        thePiece.setType(rook);
-        addPiece(thePosition, thePiece);
-        thePosition.setRow(2);
-        thePosition.setCol(1);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(2);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(3);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(4);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(5);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(6);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(7);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(8);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        // BLACK
-        thePosition.setRow(8);
-        thePosition.setCol(1);
-        thePiece.setPieceColor(black);
-        thePiece.setType(rook);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(2);
-        thePiece.setType(knight);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(3);
-        thePiece.setType(bishop);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(4);
-        thePiece.setType(queen);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(5);
-        thePiece.setType(king);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(6);
-        thePiece.setType(bishop);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(7);
-        thePiece.setType(knight);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(8);
-        thePiece.setType(rook);
-        addPiece(thePosition, thePiece);
-        thePosition.setRow(7);
-        thePosition.setCol(1);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(2);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(3);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(4);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(5);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(6);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(7);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
-        thePosition.setCol(8);
-        thePiece.setType(pawn);
-        addPiece(thePosition, thePiece);
+        addPiece(new ChessPosition(1, 1), new ChessPiece(white, rook));
+        addPiece(new ChessPosition(1, 2), new ChessPiece(white, knight));
+        addPiece(new ChessPosition(1, 3), new ChessPiece(white, bishop));
+        addPiece(new ChessPosition(1, 4), new ChessPiece(white, queen));
+        addPiece(new ChessPosition(1, 5), new ChessPiece(white, king));
+        addPiece(new ChessPosition(1, 6), new ChessPiece(white, bishop));
+        addPiece(new ChessPosition(1, 7), new ChessPiece(white, knight));
+        addPiece(new ChessPosition(1, 8), new ChessPiece(white, rook));
+        addPiece(new ChessPosition(2, 1), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(2, 2), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(2, 3), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(2, 4), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(2, 5), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(2, 6), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(2, 7), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(2, 8), new ChessPiece(white, pawn));
+        addPiece(new ChessPosition(7, 1), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(7, 2), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(7, 3), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(7, 4), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(7, 5), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(7, 6), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(7, 7), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(7, 8), new ChessPiece(black, pawn));
+        addPiece(new ChessPosition(8, 1), new ChessPiece(black, rook));
+        addPiece(new ChessPosition(8, 2), new ChessPiece(black, knight));
+        addPiece(new ChessPosition(8, 3), new ChessPiece(black, bishop));
+        addPiece(new ChessPosition(8, 4), new ChessPiece(black, queen));
+        addPiece(new ChessPosition(8, 5), new ChessPiece(black, king));
+        addPiece(new ChessPosition(8, 6), new ChessPiece(black, bishop));
+        addPiece(new ChessPosition(8, 7), new ChessPiece(black, knight));
+        addPiece(new ChessPosition(8, 8), new ChessPiece(black, rook));
     }
 
     @Override
