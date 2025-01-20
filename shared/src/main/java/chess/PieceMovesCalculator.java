@@ -562,10 +562,166 @@ they get promoted and are replaced with the player's choice of Rook, Knight, Bis
 (they cannot stay a Pawn or become King).
  */
 class PawnMovesCalculator implements PieceMovesCalculator {
-    private ChessPiece piece;
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        ChessPosition newPosition = myPosition;
+        ChessMove newMove;
+        ChessPosition diagPosition1 = new ChessPosition(row+1, col+1);
+        ChessPosition diagPosition2 = new ChessPosition(row+1, col-1);
+        ChessPosition diagPosition3 = new ChessPosition(row-1, col+1);
+        ChessPosition diagPosition4 = new ChessPosition(row-1, col-1);
+        ChessPosition tempPosition;
+        if (pieceColor == ChessGame.TeamColor.WHITE) {
+            // first move
+            if (myPosition.getRow() == 2) {
+                tempPosition = new ChessPosition(row+1, col);
+                newPosition = new ChessPosition(row+2, col);
+                newMove = new ChessMove(myPosition, newPosition,null);
+                if (board.getPiece(newPosition) == null && board.getPiece(tempPosition) == null) {
+                    moves.add(newMove);
+                }
+            }
+            // basic move forward
+            if (myPosition.getRow() != 8) {
+                newPosition = new ChessPosition(row + 1, col);
+                newMove = new ChessMove(myPosition, newPosition, null);
+                if (newPosition.getRow() != 8) { ///  if 8 then it should be promotion
+                    if (board.getPiece(newPosition) == null) {
+                        moves.add(newMove);
+                    }
+                }
+                // capture
+                if (myPosition.getColumn() != 8) {
+                    if (board.getPiece(diagPosition1) != null) {
+                        newPosition = diagPosition1;
+                        newMove = new ChessMove(myPosition, newPosition, null);
+                        if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                            if (newPosition.getRow() == 8) {
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN);
+                                moves.add(newMove);
+                            } else {
+                                moves.add(newMove);
+                            }
+                        }
+                    }
+                }
+                if (myPosition.getColumn() != 1) {
+                    if (board.getPiece(diagPosition2) != null) {
+                        newPosition = diagPosition2;
+                        newMove = new ChessMove(myPosition, newPosition, null);
+                        if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                            if (newPosition.getRow() == 8) {
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN);
+                                moves.add(newMove);
+                            } else {
+                                moves.add(newMove);
+                            }
+                        }
+                    }
+                }
+                newPosition = new ChessPosition(row + 1, col); /// resets in case of capture
+            }
+            // promotion
+            if (myPosition.getRow() == 8 || newPosition.getRow() == 8) {
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT);
+                moves.add(newMove);
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK);
+                moves.add(newMove);
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP);
+                moves.add(newMove);
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN);
+                moves.add(newMove);
+            }
+        } else {
+            // first move
+            if (myPosition.getRow() == 7) {
+                tempPosition = new ChessPosition(row-1, col);
+                newPosition = new ChessPosition(row-2, col);
+                newMove = new ChessMove(myPosition, newPosition, null);
+                if (board.getPiece(newPosition) == null && board.getPiece(tempPosition) == null) {
+                    moves.add(newMove);
+                }
+            }
+            // basic move forward
+            if (myPosition.getRow() != 1) {
+                newPosition = new ChessPosition(row-1, col);
+                newMove = new ChessMove(myPosition, newPosition, null);
+                if (newPosition.getRow() != 1) {
+                    if (board.getPiece(newPosition) == null) {
+                        moves.add(newMove);
+                    }
+                }
+                // capture
+                if (myPosition.getColumn() != 8) {
+                    if (board.getPiece(diagPosition3) != null) {
+                        newPosition = diagPosition3;
+                        newMove = new ChessMove(myPosition, newPosition, null);
+                        if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                            if (newPosition.getRow() == 1) {
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN);
+                                moves.add(newMove);
+                            } else {
+                                moves.add(newMove);
+                            }
+                        }
+                    }
+                }
+                if (myPosition.getColumn() != 1) {
+                    if (board.getPiece(diagPosition4) != null) {
+                        newPosition = diagPosition4;
+                        newMove = new ChessMove(myPosition, newPosition, null);
+                        if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                            if (newPosition.getRow() == 1) {
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP);
+                                moves.add(newMove);
+                                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN);
+                                moves.add(newMove);
+                            } else {
+                                moves.add(newMove);
+                            }
+                        }
+                    }
+                }
+                newPosition = new ChessPosition(row-1, col); /// resets in case of capture
+            }
+            // promotion
+            if (myPosition.getRow() == 1 || newPosition.getRow() == 1) {
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.KNIGHT);
+                moves.add(newMove);
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.ROOK);
+                moves.add(newMove);
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.BISHOP);
+                moves.add(newMove);
+                newMove = new ChessMove(myPosition, newPosition, ChessPiece.PieceType.QUEEN);
+                moves.add(newMove);
+            }
+        }
+        return moves;
     }
 }
 
