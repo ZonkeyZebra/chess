@@ -82,7 +82,7 @@ public class ChessPiece {
             PieceMovesCalculator movePieces = new PawnMovesCalculator();
             return movePieces.pieceMoves(board, myPosition);
         } else {
-            throw new RuntimeException("Not implemented");
+            throw new RuntimeException("Not valid piece type");
         }
     }
 

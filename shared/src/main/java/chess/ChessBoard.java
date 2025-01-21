@@ -10,17 +10,17 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private ChessPiece[][] board = new ChessPiece[8][8];
-    private ChessGame.TeamColor black = ChessGame.TeamColor.BLACK;
-    private ChessGame.TeamColor white = ChessGame.TeamColor.WHITE;
-    private ChessPiece.PieceType rook = ChessPiece.PieceType.ROOK;
-    private ChessPiece.PieceType knight = ChessPiece.PieceType.KNIGHT;
-    private ChessPiece.PieceType pawn = ChessPiece.PieceType.PAWN;
-    private ChessPiece.PieceType queen = ChessPiece.PieceType.QUEEN;
-    private ChessPiece.PieceType king = ChessPiece.PieceType.KING;
-    private ChessPiece.PieceType bishop = ChessPiece.PieceType.BISHOP;
-    private ChessPosition thePosition = new ChessPosition(0, 0);
-    private ChessPiece thePiece = new ChessPiece(white, rook);
+    private final ChessPiece[][] board = new ChessPiece[8][8];
+    private final ChessGame.TeamColor black = ChessGame.TeamColor.BLACK;
+    private final ChessGame.TeamColor white = ChessGame.TeamColor.WHITE;
+    private final ChessPiece.PieceType rook = ChessPiece.PieceType.ROOK;
+    private final ChessPiece.PieceType knight = ChessPiece.PieceType.KNIGHT;
+    private final ChessPiece.PieceType pawn = ChessPiece.PieceType.PAWN;
+    private final ChessPiece.PieceType queen = ChessPiece.PieceType.QUEEN;
+    private final ChessPiece.PieceType king = ChessPiece.PieceType.KING;
+    private final ChessPiece.PieceType bishop = ChessPiece.PieceType.BISHOP;
+    private final ChessPosition thePosition = new ChessPosition(0, 0);
+    private final ChessPiece thePiece = new ChessPiece(white, rook);
 
     public ChessBoard() {
 
@@ -44,6 +44,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+        /// makes sure it doesn't access out of bounds
         if (position.getRow() - 1 < 0 || position.getColumn() - 1 < 0 || position.getRow() - 1 > 7 || position.getColumn() - 1 > 7) {
             return null;
         }
@@ -95,13 +96,11 @@ public class ChessBoard {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
-        //return Objects.deepEquals(board, that.board) && black == that.black && white == that.white && rook == that.rook && knight == that.knight && pawn == that.pawn && queen == that.queen && king == that.king && bishop == that.bishop && Objects.equals(thePosition, that.thePosition) && Objects.equals(thePiece, that.thePiece);
         return Objects.equals(thePosition, that.thePosition);
     }
 
     @Override
     public int hashCode() {
-        //return Objects.hash(Arrays.deepHashCode(board), black, white, rook, knight, pawn, queen, king, bishop, thePosition, thePiece);
         return Objects.hash(thePosition);
     }
 
