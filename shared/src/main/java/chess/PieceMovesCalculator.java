@@ -1,5 +1,6 @@
 package chess;
 
+import javax.swing.text.Position;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -15,108 +16,56 @@ that would allow the opponent to capture their King. If your King is in danger o
 you must make a move that removes your King from immediate danger.
  */
 class KingMovesCalculator implements PieceMovesCalculator {
-    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
+    private final Collection<ChessMove> moves = new LinkedList<ChessMove>();
+    private ChessPosition newPosition;
+    private ChessMove newMove;
+
+    void addMove(int row, int addRow, int col, int addCol, ChessBoard board, ChessGame.TeamColor pieceColor, ChessPosition myPosition) {
+        newPosition = new ChessPosition(row+addRow, col+addCol);
+        newMove = new ChessMove(myPosition, newPosition, null);
+        if (board.getPiece(newPosition) == null) {
+            moves.add(newMove);
+        } else{
+            if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
+                moves.add(newMove);
+            }
+        }
+    }
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
-        ChessPosition newPosition = myPosition;
-        ChessMove newMove;
         ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
         // up
         if (myPosition.getRow() != 8) {
-            newPosition = new ChessPosition(row+1, col);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, 1, col, 0, board, pieceColor, myPosition);
         }
         // diagonal right up
         if (myPosition.getRow() != 8 || myPosition.getColumn() != 8) {
-            newPosition = new ChessPosition(row+1, col+1);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, 1, col, 1, board, pieceColor, myPosition);
         }
         // right
         if (myPosition.getColumn() != 8) {
-            newPosition = new ChessPosition(row, col+1);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, 0, col, 1, board, pieceColor, myPosition);
         }
         // diagonal right down
         if (myPosition.getRow() != 1 && myPosition.getColumn() != 8) {
-            newPosition = new ChessPosition(row-1, col+1);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, -1, col, 1, board, pieceColor, myPosition);
         }
         // down
         if (myPosition.getRow() != 1) {
-            newPosition = new ChessPosition(row-1, col);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, -1, col, 0, board, pieceColor, myPosition);
         }
         // diagonal left down
         if (myPosition.getRow() != 1 || myPosition.getColumn() != 1) {
-            newPosition = new ChessPosition(row-1, col-1);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, -1, col, -1, board, pieceColor, myPosition);
         }
         // left
         if (myPosition.getColumn() != 1) {
-            newPosition = new ChessPosition(row, col-1);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, 0, col, -1, board, pieceColor, myPosition);
         }
         // diagonal left up
         if (myPosition.getRow() != 8 && myPosition.getColumn() != 1) {
-            newPosition = new ChessPosition(row+1, col-1);
-            newMove = new ChessMove(myPosition, newPosition, null);
-            if (board.getPiece(newPosition) == null) {
-                moves.add(newMove);
-            } else{
-                if (board.getPiece(newPosition).getTeamColor() != pieceColor) {
-                    moves.add(newMove);
-                }
-            }
+            addMove(row, 1, col, -1, board, pieceColor, myPosition);
         }
 
         return moves;
@@ -448,7 +397,6 @@ Knights are the only piece that can ignore pieces in the in-between squares (the
 They can move to squares occupied by an enemy piece and capture the enemy piece, or to unoccupied squares.
  */
 class KnightMovesCalculator implements PieceMovesCalculator {
-    private ChessPiece piece;
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     private ChessPosition newPosition;
     private ChessMove newMove;
