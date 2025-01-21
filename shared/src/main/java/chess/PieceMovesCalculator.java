@@ -80,14 +80,10 @@ If there is an enemy piece at the end of the line, they may move to that positio
 class QueenMovesCalculator implements PieceMovesCalculator {
     private ChessPiece piece;
     private Collection<ChessMove> moves = new LinkedList<ChessMove>();
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
-        int row = myPosition.getRow();
-        int col = myPosition.getColumn();
-        int next = 1;
-        ChessPosition newPosition = myPosition;
-        ChessMove newMove;
-        // Right Top Edge
+    ChessPosition newPosition;
+    ChessMove newMove;
+
+    void RightTopEdge(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         while (true) {
             if (myPosition.getRow() == 8) {
                 break;
@@ -105,14 +101,15 @@ class QueenMovesCalculator implements PieceMovesCalculator {
                 moves.add(newMove);
                 break;
             }
-            next = next + 1;
             moves.add(newMove);
+            next = next + 1;
             if (newPosition.getRow() == 8 || newPosition.getColumn() == 8) {
                 break;
             }
         }
-        // Right Bottom Edge
-        next = 1;
+    }
+
+    void RightBottomEdge(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         newPosition = myPosition;
         while (true) {
             if (myPosition.getRow() == 1) {
@@ -137,8 +134,9 @@ class QueenMovesCalculator implements PieceMovesCalculator {
                 break;
             }
         }
-        // Left Bottom Edge
-        next = 1;
+    }
+
+    void LeftBottomEdge(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         newPosition = myPosition;
         while (true) {
             if (myPosition.getRow() == 1) {
@@ -163,8 +161,9 @@ class QueenMovesCalculator implements PieceMovesCalculator {
                 break;
             }
         }
-        // Left Top Edge
-        next = 1;
+    }
+
+    void LeftTopEdge(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         newPosition = myPosition;
         while (true) {
             if (myPosition.getRow() == 8) {
@@ -189,8 +188,9 @@ class QueenMovesCalculator implements PieceMovesCalculator {
                 break;
             }
         }
-        // right
-        next = 1;
+    }
+
+    void Right(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         newPosition = myPosition;
         while (true) {
             if (newPosition.getColumn() == 8) {
@@ -212,9 +212,10 @@ class QueenMovesCalculator implements PieceMovesCalculator {
             next = next + 1;
             moves.add(newMove);
         }
-        next = 1;
+    }
+
+    void Left(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         newPosition = myPosition;
-        // left
         while (true) {
             if (newPosition.getColumn() == 1) {
                 break;
@@ -235,9 +236,10 @@ class QueenMovesCalculator implements PieceMovesCalculator {
             next = next + 1;
             moves.add(newMove);
         }
-        next = 1;
+    }
+
+    void Down(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         newPosition = myPosition;
-        // down
         while (true) {
             if (newPosition.getRow() == 1) {
                 break;
@@ -258,7 +260,9 @@ class QueenMovesCalculator implements PieceMovesCalculator {
             next = next + 1;
             moves.add(newMove);
         }
-        next = 1;
+    }
+
+    void Up(int row, int col, int next, ChessGame.TeamColor pieceColor, ChessPosition myPosition, ChessBoard board) {
         newPosition = myPosition;
         // up
         while (true) {
@@ -281,6 +285,23 @@ class QueenMovesCalculator implements PieceMovesCalculator {
             next = next + 1;
             moves.add(newMove);
         }
+    }
+
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ChessGame.TeamColor pieceColor = board.getPiece(myPosition).getTeamColor();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
+        int next = 1;
+
+        RightTopEdge(row, col, next, pieceColor, myPosition, board);
+        RightBottomEdge(row, col, 1, pieceColor, myPosition, board);
+        LeftBottomEdge(row, col, 1, pieceColor, myPosition, board);
+        LeftTopEdge(row, col, 1, pieceColor, myPosition, board);
+        Right(row, col, 1, pieceColor, myPosition, board);
+        Left(row, col, 1, pieceColor, myPosition, board);
+        Down(row, col, 1, pieceColor, myPosition, board);
+        Up(row, col, 1, pieceColor, myPosition, board);
+
         return moves;
     }
 }
