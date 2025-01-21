@@ -16,7 +16,7 @@ that would allow the opponent to capture their King. If your King is in danger o
 you must make a move that removes your King from immediate danger.
  */
 class KingMovesCalculator implements PieceMovesCalculator {
-    private final Collection<ChessMove> moves = new LinkedList<ChessMove>();
+    private Collection<ChessMove> moves = new LinkedList<ChessMove>();
     private ChessPosition newPosition;
     private ChessMove newMove;
 
