@@ -14,8 +14,8 @@ public class ChessPiece {
     private PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        setPieceColor(pieceColor);
-        setType(type);
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -28,14 +28,6 @@ public class ChessPiece {
         KNIGHT,
         ROOK,
         PAWN
-    }
-
-    public void setPieceColor(ChessGame.TeamColor pieceColor) {
-        this.pieceColor = pieceColor;
-    }
-
-    public void setType(PieceType type) {
-        this.type = type;
     }
 
     /**
@@ -60,30 +52,21 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessPiece thePiece = board.getPiece(myPosition);
-        PieceType type = thePiece.getPieceType();
-
-        if (type == PieceType.KING) {
-            PieceMovesCalculator movePieces = new KingMovesCalculator();
-            return movePieces.pieceMoves(board, myPosition);
-        } else if (type == PieceType.QUEEN) {
-            PieceMovesCalculator movePieces = new QueenMovesCalculator();
-            return movePieces.pieceMoves(board, myPosition);
-        } else if (type == PieceType.BISHOP) {
-            PieceMovesCalculator movePieces = new BishopMovesCalculator();
-            return movePieces.pieceMoves(board, myPosition);
-        } else if (type == PieceType.KNIGHT) {
-            PieceMovesCalculator movePieces = new KnightMovesCalculator();
-            return movePieces.pieceMoves(board, myPosition);
-        } else if (type == PieceType.ROOK) {
-            PieceMovesCalculator movePieces = new RookMovesCalculator();
-            return movePieces.pieceMoves(board, myPosition);
-        } else if (type == PieceType.PAWN) {
-            PieceMovesCalculator movePieces = new PawnMovesCalculator();
-            return movePieces.pieceMoves(board, myPosition);
-        } else {
-            throw new RuntimeException("Not valid piece type");
+        PieceMovesCalculator movePieces = null;
+        if (type == ChessPiece.PieceType.KING) {
+            movePieces = new KingMoveCalculator();
+        } else if (type == ChessPiece.PieceType.QUEEN) {
+            movePieces = new QueenMoveCalculator();
+        } else if (type == ChessPiece.PieceType.BISHOP) {
+            movePieces = new BishopMoveCalculator();
+        } else if (type == ChessPiece.PieceType.ROOK) {
+            movePieces = new RookMoveCalculator();
+        } else if (type == ChessPiece.PieceType.PAWN) {
+            movePieces = new PawnMoveCalculator();
+        } else if (type == ChessPiece.PieceType.KNIGHT) {
+            movePieces = new KnightMoveCalculator();
         }
+        return movePieces.pieceMoves(board, myPosition);
     }
 
     @Override

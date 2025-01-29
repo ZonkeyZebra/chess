@@ -13,15 +13,7 @@ public class ChessPosition {
     private int col;
 
     public ChessPosition(int row, int col) {
-        setRow(row);
-        setCol(col);
-    }
-
-    public void setRow(int row) {
         this.row = row;
-    }
-
-    public void setCol(int col) {
         this.col = col;
     }
 

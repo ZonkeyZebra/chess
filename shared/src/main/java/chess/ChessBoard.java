@@ -44,11 +44,13 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        /// makes sure it doesn't access out of bounds
-        if (position.getRow() - 1 < 0 || position.getColumn() - 1 < 0 || position.getRow() - 1 > 7 || position.getColumn() - 1 > 7) {
+        int row = position.getRow() - 1;
+        int col = position.getColumn() - 1;
+        /// check bounds
+        if (row > 7 || row < 0 || col > 7 || col < 0) {
             return null;
         }
-        return board[position.getRow() - 1][position.getColumn() - 1];
+        return board[row][col];
     }
 
     /**

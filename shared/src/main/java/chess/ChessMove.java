@@ -14,20 +14,8 @@ public class ChessMove {
     private ChessPiece.PieceType promotionPiece;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition, ChessPiece.PieceType promotionPiece) {
-        setStartPosition(startPosition);
-        setEndPosition(endPosition);
-        setPromotionPiece(promotionPiece);
-    }
-
-    public void setStartPosition(ChessPosition startPosition) {
         this.startPosition = startPosition;
-    }
-
-    public void setEndPosition(ChessPosition endPosition) {
         this.endPosition = endPosition;
-    }
-
-    public void setPromotionPiece(ChessPiece.PieceType promotionPiece) {
         this.promotionPiece = promotionPiece;
     }
 
