@@ -23,7 +23,7 @@ public class ChessBoard {
     private final ChessPiece thePiece = new ChessPiece(white, rook);
 
     public ChessBoard() {
-
+        resetBoard();
     }
 
     /**
