@@ -49,6 +49,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        board = getBoard();
         piece = board.getPiece(startPosition);
         /// If there is no piece at that location, this method returns null
         if (piece == null) {
@@ -77,8 +78,11 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
         /// Receives a given move and executes it, provided it is a legal move.
+        // Which piece do I associate with
+        // Use set board to make move
         throw new RuntimeException("Not implemented");
     }
+
 
     /**
      * Determines if the given team is in check
@@ -87,6 +91,9 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         /// Returns true if the specified team’s King could be captured by an opposing piece.
+        ChessPiece.PieceType king = ChessPiece.PieceType.KING;
+        board = getBoard();
+        // helper function that looks at all valid moves and see if King can be taken?
         throw new RuntimeException("Not implemented");
     }
 
