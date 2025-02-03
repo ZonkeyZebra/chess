@@ -13,6 +13,7 @@ public class ChessGame {
     private ChessBoard board;
     private Collection<ChessMove> validMoves;
     private ChessPiece piece;
+    private final ChessPiece.PieceType king = ChessPiece.PieceType.KING;
 
     public ChessGame() {
         setBoard(new ChessBoard());
@@ -45,8 +46,7 @@ public class ChessGame {
     /**
      * Gets a valid moves for a piece at the given location
      * @param startPosition the piece to get valid moves for
-     * @return Set of valid moves for requested piece, or null if no piece at
-     * startPosition
+     * @return Set of valid moves for requested piece, or null if no piece at startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         board = getBoard();
@@ -67,6 +67,7 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         boolean isValid = false;
+        TeamColor currentTeamTurn = getTeamTurn();
         for (ChessMove validMove : validMoves) {
             if (validMove == move) {
                 isValid = true;
@@ -91,10 +92,26 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         /// Returns true if the specified team’s King could be captured by an opposing piece.
-        ChessPiece.PieceType king = ChessPiece.PieceType.KING;
+        ChessPiece isPiece;
+        ChessPiece landingPiece;
         board = getBoard();
-        // helper function that looks at all valid moves and see if King can be taken?
-        throw new RuntimeException("Not implemented");
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                isPiece = board.getPiece(new ChessPosition(i,j));
+                if (isPiece != null) {
+                    validMoves = isPiece.pieceMoves(board, new ChessPosition(i,j));
+                    for (ChessMove validMove : validMoves) {
+                        landingPiece = board.getPiece(validMove.getEndPosition());
+                        if (landingPiece != null) {
+                            if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() == teamColor) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -135,4 +152,30 @@ public class ChessGame {
     public ChessBoard getBoard() {
         return board;
     }
+
+    private void getChessPieceValidMoves() {
+        ChessPiece isPiece;
+        board = getBoard();
+        for (int i = 0; i < 7; i++) {
+            for (int j = 0; j < 7; j++) {
+                isPiece = board.getPiece(new ChessPosition(i,j));
+                if (isPiece != null) {
+                    validMoves = validMoves(new ChessPosition(i,j));
+                }
+            }
+        }
+    }
+
+    private boolean oldisInCheck(TeamColor teamColor) {
+        /// Returns true if the specified team’s King could be captured by an opposing piece.
+        ChessPiece landingPiece;
+        for (ChessMove validMove : validMoves) {
+            landingPiece = board.getPiece(validMove.getEndPosition());
+            if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() != teamColor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
