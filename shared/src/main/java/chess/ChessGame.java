@@ -69,21 +69,20 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         boolean isValid = false;
-        TeamColor currentTeamTurn = getTeamTurn();
-        for (ChessMove validMove : validMoves) {
-            if (validMove == move) {
-                isValid = true;
-                break;
-            }
+        board = getBoard();
+        piece = board.getPiece(move.getStartPosition());
+        validMoves = piece.pieceMoves(board, move.getStartPosition());
+        if (validMoves.contains(move)) {
+            isValid = true;
         }
         /// If the move is illegal (not valid or corresponding team color), it throws an InvalidMoveException.
         if (!isValid) {
             throw new InvalidMoveException();
         }
         /// Receives a given move and executes it, provided it is a legal move.
-        // Which piece do I associate with
-        // Use set board to make move
-        throw new RuntimeException("Not implemented");
+        board.addPiece(move.getEndPosition(), piece);
+        board.removePiece(move.getStartPosition());
+
     }
 
 
