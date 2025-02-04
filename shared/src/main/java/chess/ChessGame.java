@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -95,8 +97,8 @@ public class ChessGame {
         ChessPiece isPiece;
         ChessPiece landingPiece;
         board = getBoard();
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
                 isPiece = board.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
                     validMoves = isPiece.pieceMoves(board, new ChessPosition(i,j));
@@ -121,7 +123,17 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         /// Returns true if the given team has no way to protect their king from being captured.
-        throw new RuntimeException("Not implemented");
+        Collection<ChessPiece> thisTeam;
+        thisTeam = getTeamPieces(teamColor, "thisTeam");
+        if (thisTeam.size() == 1) {
+            for (ChessPiece piece : thisTeam) {
+                if (piece.getPieceType() == king) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -153,29 +165,26 @@ public class ChessGame {
         return board;
     }
 
-    private void getChessPieceValidMoves() {
-        ChessPiece isPiece;
+    private Collection<ChessPiece> getTeamPieces(TeamColor teamColor, String returnTeam) {
         board = getBoard();
-        for (int i = 0; i < 7; i++) {
-            for (int j = 0; j < 7; j++) {
+        ChessPiece isPiece;
+        Collection<ChessPiece> thisTeam = new ArrayList<>();
+        Collection<ChessPiece> otherTeam = new ArrayList<>();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
                 isPiece = board.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
-                    validMoves = validMoves(new ChessPosition(i,j));
+                    if (isPiece.getTeamColor() == teamColor) {
+                        thisTeam.add(isPiece);
+                    } else {
+                        otherTeam.add(isPiece);
+                    }
                 }
             }
         }
-    }
-
-    private boolean oldisInCheck(TeamColor teamColor) {
-        /// Returns true if the specified team’s King could be captured by an opposing piece.
-        ChessPiece landingPiece;
-        for (ChessMove validMove : validMoves) {
-            landingPiece = board.getPiece(validMove.getEndPosition());
-            if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() != teamColor) {
-                return true;
-            }
+        if (returnTeam == "otherTeam") {
+            return otherTeam;
         }
-        return false;
+        return thisTeam;
     }
-
 }
