@@ -124,10 +124,19 @@ public class ChessGame {
         /// Returns true if the given team has no way to protect their king from being captured.
         Collection<ChessPiece> thisTeam;
         thisTeam = getTeamPieces(teamColor, "thisTeam");
+        ChessPosition theKingPosition = new ChessPosition(getKingRow(teamColor), getKingCol(teamColor));
+        Collection<ChessMove> kingMoves;
         if (thisTeam.size() == 1) {
             for (ChessPiece piece : thisTeam) {
                 if (piece.getPieceType() == king) {
                     return true;
+                }
+            }
+        }
+        if (isInCheck(teamColor)) {
+            for (ChessPiece piece : thisTeam) {
+                if (piece.getPieceType() == king) {
+                    kingMoves = piece.pieceMoves(board, theKingPosition);
                 }
             }
         }
@@ -142,8 +151,18 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         /// Returns true if the given team has no legal moves but their king is not in immediate danger.
-        if (validMoves == null && !isInCheck(teamColor) && !isInCheckmate(teamColor)) {
-            return true;
+        ChessPiece isPiece;
+        board = getBoard();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                isPiece = board.getPiece(new ChessPosition(i,j));
+                if (isPiece != null) {
+                    validMoves = isPiece.pieceMoves(board, new ChessPosition(i,j));
+                    if (validMoves.isEmpty() && !isInCheck(teamColor) && !isInCheckmate(teamColor)) {
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }
@@ -185,5 +204,37 @@ public class ChessGame {
             return otherTeam;
         }
         return thisTeam;
+    }
+
+    private int getKingRow(TeamColor teamColor) {
+        board = getBoard();
+        ChessPiece isPiece;
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                isPiece = board.getPiece(new ChessPosition(i,j));
+                if (isPiece != null) {
+                    if (isPiece.getPieceType() == king && isPiece.getTeamColor() == teamColor) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    private int getKingCol(TeamColor teamColor) {
+        board = getBoard();
+        ChessPiece isPiece;
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                isPiece = board.getPiece(new ChessPosition(i,j));
+                if (isPiece != null) {
+                    if (isPiece.getPieceType() == king && isPiece.getTeamColor() == teamColor) {
+                        return j;
+                    }
+                }
+            }
+        }
+        return 0;
     }
 }
