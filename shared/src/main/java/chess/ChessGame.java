@@ -234,7 +234,7 @@ public class ChessGame {
     }
 
     private boolean checkFutureKingMovesWillCheck(ChessMove move, TeamColor teamColor) {
-        ChessBoard fakeBoard = board;
+        ChessBoard fakeBoard = getBoard();
         ChessPiece king = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         fakeBoard.addPiece(move.getEndPosition(), king);
         fakeBoard.removePiece(move.getStartPosition());
@@ -244,18 +244,17 @@ public class ChessGame {
         return false;
     }
 
-    public boolean isInCheckFuture(ChessBoard board, TeamColor teamColor) {
+    public boolean isInCheckFuture(ChessBoard fakeBoard, TeamColor teamColor) {
         /// Returns true if the specified team’s King could be captured by an opposing piece.
         ChessPiece isPiece;
         ChessPiece landingPiece;
-        board = getBoard();
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                isPiece = board.getPiece(new ChessPosition(i,j));
+                isPiece = fakeBoard.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
-                    validMoves = isPiece.pieceMoves(board, new ChessPosition(i,j));
+                    validMoves = isPiece.pieceMoves(fakeBoard, new ChessPosition(i,j));
                     for (ChessMove validMove : validMoves) {
-                        landingPiece = board.getPiece(validMove.getEndPosition());
+                        landingPiece = fakeBoard.getPiece(validMove.getEndPosition());
                         if (landingPiece != null) {
                             if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() == teamColor) {
                                 return true;
