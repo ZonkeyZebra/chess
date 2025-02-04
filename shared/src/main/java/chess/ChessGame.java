@@ -124,7 +124,7 @@ public class ChessGame {
         /// Returns true if the given team has no way to protect their king from being captured.
         Collection<ChessPiece> thisTeam;
         thisTeam = getTeamPieces(teamColor, "thisTeam");
-        ChessPosition theKingPosition = new ChessPosition(getKingRow(teamColor), getKingCol(teamColor));
+        ChessPosition theKingPosition = getKingPosition(teamColor);
         Collection<ChessMove> kingMoves;
         if (thisTeam.size() == 1) {
             for (ChessPiece piece : thisTeam) {
@@ -206,35 +206,20 @@ public class ChessGame {
         return thisTeam;
     }
 
-    private int getKingRow(TeamColor teamColor) {
+    private ChessPosition getKingPosition(TeamColor teamColor) {
         board = getBoard();
         ChessPiece isPiece;
+        ChessPosition kingPosition;
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 isPiece = board.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
                     if (isPiece.getPieceType() == king && isPiece.getTeamColor() == teamColor) {
-                        return i;
+                        return kingPosition = new ChessPosition(i,j);
                     }
                 }
             }
         }
-        return 0;
-    }
-
-    private int getKingCol(TeamColor teamColor) {
-        board = getBoard();
-        ChessPiece isPiece;
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                isPiece = board.getPiece(new ChessPosition(i,j));
-                if (isPiece != null) {
-                    if (isPiece.getPieceType() == king && isPiece.getTeamColor() == teamColor) {
-                        return j;
-                    }
-                }
-            }
-        }
-        return 0;
+        return null;
     }
 }
