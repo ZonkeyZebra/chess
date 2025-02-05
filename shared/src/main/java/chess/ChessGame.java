@@ -69,10 +69,14 @@ public class ChessGame {
         validMoves = piece.pieceMoves(board, startPosition);
         for (ChessMove move : validMoves) {
             fakeBoard = new ChessBoard(board);
-            fakeBoard.addPiece(move.getEndPosition(), piece);
-            fakeBoard.removePiece(move.getStartPosition());
-            moveWillCheck = isInCheckFuture(fakeBoard, teamColor);
-            if (moveWillCheck) {
+            if (move.getEndPosition().getColumn() >= 1 && move.getEndPosition().getRow() >= 1 && move.getEndPosition().getRow() <= 8 && move.getEndPosition().getColumn() <= 8) {
+                fakeBoard.addPiece(move.getEndPosition(), piece);
+                fakeBoard.removePiece(move.getStartPosition());
+                moveWillCheck = isInCheckFuture(fakeBoard, teamColor);
+                if (moveWillCheck) {
+                    removeMoves.add(move);
+                }
+            } else {
                 removeMoves.add(move);
             }
         }
@@ -100,6 +104,9 @@ public class ChessGame {
         /// Receives a given move and executes it, provided it is a legal move.
         board.addPiece(move.getEndPosition(), piece);
         board.removePiece(move.getStartPosition());
+        TeamColor currentTeam = getTeamTurn();
+        TeamColor nextTeam = getOppositeTeamColor(currentTeam);
+        setTeamTurn(nextTeam);
 
     }
 
@@ -251,5 +258,12 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+    private TeamColor getOppositeTeamColor(TeamColor currentTeam) {
+        if (currentTeam == TeamColor.BLACK) {
+            return TeamColor.WHITE;
+        }
+        return TeamColor.BLACK;
     }
 }
