@@ -54,24 +54,29 @@ public class ChessGame {
         board = getBoard();
         piece = board.getPiece(startPosition);
         Collection<ChessMove> kingMoves;
+        Collection<ChessMove> removeMoves = new ArrayList<>();
         boolean moveWillCheck = false;
+        ChessGame.TeamColor teamColor;
+        ChessBoard fakeBoard = new ChessBoard(board);
+
         /// If there is no piece at that location, this method returns null
         if (piece == null) {
             return null;
         }
         /// A move is valid if it is a "piece move" for the piece at the input location and making that move would not leave the team’s king in danger of check.
         // need isInCheck
-        if (piece.getPieceType() == king) {
-            kingMoves = piece.pieceMoves(board, startPosition);
-            for (ChessMove move : kingMoves) {
-                moveWillCheck = checkFutureKingMovesWillCheck(move, piece.getTeamColor());
-                if (!moveWillCheck) {
-                    validMoves = piece.pieceMoves(board, startPosition);
-                }
+        teamColor = piece.getTeamColor();
+        validMoves = piece.pieceMoves(board, startPosition);
+        for (ChessMove move : validMoves) {
+            fakeBoard = new ChessBoard(board);
+            fakeBoard.addPiece(move.getEndPosition(), piece);
+            fakeBoard.removePiece(move.getStartPosition());
+            moveWillCheck = isInCheckFuture(fakeBoard, teamColor);
+            if (moveWillCheck) {
+                removeMoves.add(move);
             }
-        } else {
-            validMoves = piece.pieceMoves(board, startPosition);
         }
+        validMoves.removeAll(removeMoves);
         return validMoves;
     }
 
@@ -248,12 +253,13 @@ public class ChessGame {
         /// Returns true if the specified team’s King could be captured by an opposing piece.
         ChessPiece isPiece;
         ChessPiece landingPiece;
+        Collection<ChessMove> checkMoves;
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 isPiece = fakeBoard.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
-                    validMoves = isPiece.pieceMoves(fakeBoard, new ChessPosition(i,j));
-                    for (ChessMove validMove : validMoves) {
+                    checkMoves = isPiece.pieceMoves(fakeBoard, new ChessPosition(i,j));
+                    for (ChessMove validMove : checkMoves) {
                         landingPiece = fakeBoard.getPiece(validMove.getEndPosition());
                         if (landingPiece != null) {
                             if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() == teamColor) {
