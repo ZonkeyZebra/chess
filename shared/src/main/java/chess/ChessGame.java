@@ -101,6 +101,12 @@ public class ChessGame {
         if (!isValid) {
             throw new InvalidMoveException();
         }
+        if (piece.getTeamColor() != getTeamTurn()) {
+            throw new InvalidMoveException();
+        }
+        if (piece == null) {
+            throw new InvalidMoveException();
+        }
         /// Receives a given move and executes it, provided it is a legal move.
         board.addPiece(move.getEndPosition(), piece);
         board.removePiece(move.getStartPosition());
