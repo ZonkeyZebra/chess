@@ -53,13 +53,25 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         board = getBoard();
         piece = board.getPiece(startPosition);
+        Collection<ChessMove> kingMoves;
+        boolean moveWillCheck = false;
         /// If there is no piece at that location, this method returns null
         if (piece == null) {
             return null;
         }
         /// A move is valid if it is a "piece move" for the piece at the input location and making that move would not leave the team’s king in danger of check.
-        validMoves = piece.pieceMoves(board, startPosition);
         // need isInCheck
+        if (piece.getPieceType() == king) {
+            kingMoves = piece.pieceMoves(board, startPosition);
+            for (ChessMove move : kingMoves) {
+                moveWillCheck = checkFutureKingMovesWillCheck(move, piece.getTeamColor());
+                if (!moveWillCheck) {
+                    validMoves = piece.pieceMoves(board, startPosition);
+                }
+            }
+        } else {
+            validMoves = piece.pieceMoves(board, startPosition);
+        }
         return validMoves;
     }
 
@@ -123,18 +135,12 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         /// Returns true if the given team has no way to protect their king from being captured.
+        // are in check and no valid moves for team
         Collection<ChessPiece> thisTeam;
-        thisTeam = getTeamPieces(teamColor, "thisTeam");
+        thisTeam = getTeamPieces(teamColor);
         ChessPosition theKingPosition = getKingPosition(teamColor);
         Collection<ChessMove> kingMoves;
         boolean moveWillCheck = false;
-        if (thisTeam.size() == 1) {
-            for (ChessPiece piece : thisTeam) {
-                if (piece.getPieceType() == king) {
-                    return true;
-                }
-            }
-        }
         if (isInCheck(teamColor)) {
             for (ChessPiece piece : thisTeam) {
                 if (piece.getPieceType() == king) {
@@ -194,25 +200,19 @@ public class ChessGame {
         return board;
     }
 
-    private Collection<ChessPiece> getTeamPieces(TeamColor teamColor, String returnTeam) {
+    private Collection<ChessPiece> getTeamPieces(TeamColor teamColor) {
         board = getBoard();
         ChessPiece isPiece;
         Collection<ChessPiece> thisTeam = new ArrayList<>();
-        Collection<ChessPiece> otherTeam = new ArrayList<>();
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 isPiece = board.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
                     if (isPiece.getTeamColor() == teamColor) {
                         thisTeam.add(isPiece);
-                    } else {
-                        otherTeam.add(isPiece);
                     }
                 }
             }
-        }
-        if (returnTeam == "otherTeam") {
-            return otherTeam;
         }
         return thisTeam;
     }
@@ -234,7 +234,7 @@ public class ChessGame {
     }
 
     private boolean checkFutureKingMovesWillCheck(ChessMove move, TeamColor teamColor) {
-        ChessBoard fakeBoard = getBoard();
+        ChessBoard fakeBoard = new ChessBoard(board);
         ChessPiece king = new ChessPiece(teamColor, ChessPiece.PieceType.KING);
         fakeBoard.addPiece(move.getEndPosition(), king);
         fakeBoard.removePiece(move.getStartPosition());
@@ -244,7 +244,7 @@ public class ChessGame {
         return false;
     }
 
-    public boolean isInCheckFuture(ChessBoard fakeBoard, TeamColor teamColor) {
+    private boolean isInCheckFuture(ChessBoard fakeBoard, TeamColor teamColor) {
         /// Returns true if the specified team’s King could be captured by an opposing piece.
         ChessPiece isPiece;
         ChessPiece landingPiece;
