@@ -132,24 +132,9 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         /// Returns true if the specified team’s King could be captured by an opposing piece.
-        ChessPiece isPiece;
-        ChessPiece landingPiece;
         board = getBoard();
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                isPiece = board.getPiece(new ChessPosition(i,j));
-                if (isPiece != null) {
-                    validMoves = isPiece.pieceMoves(board, new ChessPosition(i,j));
-                    for (ChessMove validMove : validMoves) {
-                        landingPiece = board.getPiece(validMove.getEndPosition());
-                        if (landingPiece != null) {
-                            if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() == teamColor) {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
+        if(checkBoard(board, teamColor)) {
+            return true;
         }
         return false;
     }
@@ -260,16 +245,30 @@ public class ChessGame {
 
     private boolean isInCheckFuture(ChessBoard fakeBoard, TeamColor teamColor) {
         /// Returns true if the specified team’s King could be captured by an opposing piece.
+        if (checkBoard(fakeBoard, teamColor)) {
+            return true;
+        }
+        return false;
+    }
+
+    private TeamColor getOppositeTeamColor(TeamColor currentTeam) {
+        if (currentTeam == TeamColor.BLACK) {
+            return TeamColor.WHITE;
+        }
+        return TeamColor.BLACK;
+    }
+
+    private boolean checkBoard(ChessBoard theBoard, TeamColor teamColor) {
         ChessPiece isPiece;
         ChessPiece landingPiece;
         Collection<ChessMove> checkMoves;
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                isPiece = fakeBoard.getPiece(new ChessPosition(i,j));
+                isPiece = theBoard.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
-                    checkMoves = isPiece.pieceMoves(fakeBoard, new ChessPosition(i,j));
+                    checkMoves = isPiece.pieceMoves(theBoard, new ChessPosition(i,j));
                     for (ChessMove validMove : checkMoves) {
-                        landingPiece = fakeBoard.getPiece(validMove.getEndPosition());
+                        landingPiece = theBoard.getPiece(validMove.getEndPosition());
                         if (landingPiece != null) {
                             if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() == teamColor) {
                                 return true;
@@ -280,12 +279,5 @@ public class ChessGame {
             }
         }
         return false;
-    }
-
-    private TeamColor getOppositeTeamColor(TeamColor currentTeam) {
-        if (currentTeam == TeamColor.BLACK) {
-            return TeamColor.WHITE;
-        }
-        return TeamColor.BLACK;
     }
 }
