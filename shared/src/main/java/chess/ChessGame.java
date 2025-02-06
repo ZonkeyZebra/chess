@@ -163,7 +163,6 @@ public class ChessGame {
         /// Returns true if the given team has no way to protect their king from being captured. Is in check and no valid moves for team
         Collection<ChessPiece> thisTeam;
         thisTeam = getTeamPieces(teamColor);
-        ChessPosition thePiecePosition;
         Collection<Boolean> wasEmpty = new ArrayList<>();
 
         if (isInCheck(teamColor)) {
@@ -184,7 +183,6 @@ public class ChessGame {
         /// Returns true if the given team has no legal moves but their king is not in immediate danger.
         Collection<ChessPiece> thisTeam;
         thisTeam = getTeamPieces(teamColor);
-        ChessPosition thePiecePosition;
         Collection<Boolean> wasEmpty = new ArrayList<>();
 
         if (!isInCheck(teamColor)) {
