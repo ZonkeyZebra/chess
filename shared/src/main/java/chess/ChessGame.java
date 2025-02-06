@@ -109,8 +109,15 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
         /// Receives a given move and executes it, provided it is a legal move.
-        board.addPiece(move.getEndPosition(), piece);
-        board.removePiece(move.getStartPosition());
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if (move.getPromotionPiece() != null) {
+                board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+                board.removePiece(move.getStartPosition());
+            }
+        } else {
+            board.addPiece(move.getEndPosition(), piece);
+            board.removePiece(move.getStartPosition());
+        }
         TeamColor currentTeam = getTeamTurn();
         TeamColor nextTeam = getOppositeTeamColor(currentTeam);
         setTeamTurn(nextTeam);
