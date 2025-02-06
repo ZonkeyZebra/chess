@@ -2,7 +2,6 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -53,11 +52,10 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         board = getBoard();
         piece = board.getPiece(startPosition);
-        Collection<ChessMove> kingMoves;
         Collection<ChessMove> removeMoves = new ArrayList<>();
-        boolean moveWillCheck = false;
-        ChessGame.TeamColor teamColor;
-        ChessBoard fakeBoard = new ChessBoard(board);
+        boolean moveWillCheck;
+        TeamColor teamColor;
+        ChessBoard fakeBoard;
 
         /// If there is no piece at that location, this method returns null
         if (piece == null) {
@@ -155,19 +153,15 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        /// Returns true if the given team has no way to protect their king from being captured.
-        // are in check and no valid moves for team
+        /// Returns true if the given team has no way to protect their king from being captured. Is in check and no valid moves for team
         Collection<ChessPiece> thisTeam;
         thisTeam = getTeamPieces(teamColor);
         ChessPosition thePiecePosition;
+        Collection<Boolean> wasEmpty = new ArrayList<>();
 
         if (isInCheck(teamColor)) {
-            for (ChessPiece piece : thisTeam) {
-                thePiecePosition = getPiecePosition(teamColor, piece.getPieceType());
-                validMoves = validMoves(thePiecePosition);
-                if (validMoves.isEmpty()) {
-                    return true;
-                }
+            if (checkNoValidMoves(teamColor, thisTeam, wasEmpty)) {
+                return true;
             }
         }
 
@@ -184,14 +178,28 @@ public class ChessGame {
         Collection<ChessPiece> thisTeam;
         thisTeam = getTeamPieces(teamColor);
         ChessPosition thePiecePosition;
+        Collection<Boolean> wasEmpty = new ArrayList<>();
+
         if (!isInCheck(teamColor)) {
-            for (ChessPiece piece : thisTeam) {
-                thePiecePosition = getPiecePosition(teamColor, piece.getPieceType());
-                validMoves = validMoves(thePiecePosition);
-                if (validMoves.isEmpty()) {
-                    return true;
-                }
+            if (checkNoValidMoves(teamColor, thisTeam, wasEmpty)) {
+                return true;
             }
+        }
+
+        return false;
+    }
+
+    private boolean checkNoValidMoves(TeamColor teamColor, Collection<ChessPiece> thisTeam, Collection<Boolean> wasEmpty) {
+        ChessPosition thePiecePosition;
+        for (ChessPiece piece : thisTeam) {
+            thePiecePosition = getPiecePosition(teamColor, piece.getPieceType());
+            validMoves = validMoves(thePiecePosition);
+            if (validMoves.isEmpty()) {
+                wasEmpty.add(true);
+            }
+        }
+        if (wasEmpty.size() == thisTeam.size()) {
+            return true;
         }
         return false;
     }
