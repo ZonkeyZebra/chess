@@ -70,6 +70,9 @@ public class ChessGame {
         for (ChessMove move : validMoves) {
             fakeBoard = new ChessBoard(board);
             if (move.getEndPosition().getColumn() >= 1 && move.getEndPosition().getRow() >= 1 && move.getEndPosition().getRow() <= 8 && move.getEndPosition().getColumn() <= 8) {
+                if (fakeBoard.getPiece(move.getEndPosition()) != null) {
+                    fakeBoard.removePiece(move.getEndPosition());
+                } /// deals with capture?
                 fakeBoard.addPiece(move.getEndPosition(), piece);
                 fakeBoard.removePiece(move.getStartPosition());
                 moveWillCheck = isInCheckFuture(fakeBoard, teamColor);
@@ -93,7 +96,10 @@ public class ChessGame {
         boolean isValid = false;
         board = getBoard();
         piece = board.getPiece(move.getStartPosition());
-        validMoves = piece.pieceMoves(board, move.getStartPosition());
+        if (piece == null) {
+            throw new InvalidMoveException();
+        }
+        validMoves = validMoves(move.getStartPosition());
         if (validMoves.contains(move)) {
             isValid = true;
         }
@@ -102,9 +108,6 @@ public class ChessGame {
             throw new InvalidMoveException();
         }
         if (piece.getTeamColor() != getTeamTurn()) {
-            throw new InvalidMoveException();
-        }
-        if (piece == null) {
             throw new InvalidMoveException();
         }
         /// Receives a given move and executes it, provided it is a legal move.
