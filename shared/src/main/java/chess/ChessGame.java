@@ -17,7 +17,9 @@ public class ChessGame {
     private final ChessPiece.PieceType king = ChessPiece.PieceType.KING;
 
     public ChessGame() {
-        setBoard(new ChessBoard());
+        board = new ChessBoard();
+        board.resetBoard();
+        setBoard(board);
         setTeamTurn(TeamColor.WHITE);
     }
 
@@ -70,7 +72,7 @@ public class ChessGame {
             if (move.getEndPosition().getColumn() >= 1 && move.getEndPosition().getRow() >= 1 && move.getEndPosition().getRow() <= 8 && move.getEndPosition().getColumn() <= 8) {
                 if (fakeBoard.getPiece(move.getEndPosition()) != null) {
                     fakeBoard.removePiece(move.getEndPosition());
-                } /// deals with capture?
+                }
                 fakeBoard.addPiece(move.getEndPosition(), piece);
                 fakeBoard.removePiece(move.getStartPosition());
                 moveWillCheck = isInCheckFuture(fakeBoard, teamColor);
@@ -112,6 +114,9 @@ public class ChessGame {
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
             if (move.getPromotionPiece() != null) {
                 board.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+                board.removePiece(move.getStartPosition());
+            } else {
+                board.addPiece(move.getEndPosition(), piece);
                 board.removePiece(move.getStartPosition());
             }
         } else {
