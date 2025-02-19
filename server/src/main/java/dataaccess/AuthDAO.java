@@ -2,16 +2,14 @@ package dataaccess;
 
 import model.AuthData;
 
+/// MemoryAuthDAO
+/// SQLAuthDAO
+
 public interface AuthDAO {
-    /**
-     * clear: A method for clearing all data from the database. This is used during testing.
-     * createAuth: Create a new authorization.
-     * getAuth: Retrieve an authorization given an authToken.
-     * deleteAuth: Delete an authorization so that it is no longer valid.
-     */
-    /// MemoryAuthDAO
-    /// SQLAuthDAO
+    /// create new authorization
     public void createAuth(AuthData authData);
-    public String getAuth(AuthData authData);
+    /// retrieve an authorization given an authToken
+    public AuthData getAuth(AuthData authData);
+    /// delete authorization so it's no longer valid
     public void deleteAuth();
 }
