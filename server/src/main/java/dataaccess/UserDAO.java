@@ -2,16 +2,14 @@ package dataaccess;
 
 import model.UserData;
 
+/// MemoryUserDAO
+/// SQLUserDAO
+
 public interface UserDAO {
-    /**
-     * clear: A method for clearing all data from the database. This is used during testing.
-     * createUser: Create a new user.
-     * getUser: Retrieve a user with the given username.
-     * deleteUser: Deletes users
-     */
-    /// MemoryUserDAO
-    /// SQLUserDAO
-    public void createUser(UserData userData);
-    public void getUser(UserData username); /// not sure on type
-    public void deleteUser();
+    /// create a new user
+    void createUser(UserData user) throws DataAccessException;
+    /// retrieve a user given the username
+    UserData getUser(String username) throws DataAccessException;
+    /// deletes user
+    void deleteUser();
 }
