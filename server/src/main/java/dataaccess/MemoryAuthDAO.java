@@ -14,11 +14,11 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     public String createAuth(AuthData authData) {
-        return authData.generateToken();
+        return AuthData.generateToken();
     }
 
     public AuthData getAuth(AuthData authData) {
-        return auths.get(authData);
+        return auths.get(authData.authToken());
     }
 
     public void deleteAuth() {

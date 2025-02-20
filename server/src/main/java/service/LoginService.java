@@ -1,13 +1,26 @@
 package service;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.UserDAO;
+import model.AuthData;
+import model.UserData;
+
 public class LoginService {
-    /*
-     * Description	Logs in an existing user (returns a new authToken).
-     * URL path	/session
-     * HTTP Method	POST
-     * Body	{ "username":"", "password":"" }
-     * Success response	[200] { "username":"", "authToken":"" }
-     * Failure response	[401] { "message": "Error: unauthorized" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     */
+    private final UserDAO userDataAccess;
+    private final AuthDAO authDataAccess;
+
+    public LoginService(UserDAO userDataAccess, AuthDAO authDataAccess) {
+        this.userDataAccess = userDataAccess;
+        this.authDataAccess = authDataAccess;
+    }
+
+    public UserData getUser(String username) throws DataAccessException {
+        return userDataAccess.getUser(username);
+    }
+
+    public AuthData getAuth(AuthData authData) {
+        return authDataAccess.getAuth(authData);
+    }
+
 }
