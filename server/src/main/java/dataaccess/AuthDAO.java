@@ -7,7 +7,7 @@ import model.AuthData;
 
 public interface AuthDAO {
     /// create new authorization
-    public void createAuth(AuthData authData);
+    public String createAuth(AuthData authData);
     /// retrieve an authorization given an authToken
     public AuthData getAuth(AuthData authData);
     /// delete authorization so it's no longer valid
