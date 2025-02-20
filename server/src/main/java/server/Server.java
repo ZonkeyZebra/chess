@@ -4,12 +4,11 @@ import spark.*;
 import service.ClearService;
 
 public class Server {
-    //private final ClearService clearService;
+    private final ClearService clearService;
 
-//    public Server() {
-//        this.service = service;
-//        webSocketHandler = new WebSocketHandler();
-//    }
+    public Server() {
+        this.clearService = null;
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -17,7 +16,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        clear();
+        Spark.delete("/db", this::clear);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -26,25 +25,17 @@ public class Server {
         return Spark.port();
     }
 
-    /// authTokens required except for register, login, and clear
-//    private Object clear(Request req, Response res) {
-//        service.deleteAllPets();
-//        res.status(204);
-//        return "";
-//    }
-
-    private static void clear() {
-        Spark.delete("/db", (req, res) -> {
-            res.status(200);
-            res.type("text/plain");
-            res.header("CS240", "Awesome!");
-            res.body("Hello BYU!");
-            return res.body();
-        });
-    }
-
     public void stop() {
         Spark.stop();
         Spark.awaitStop();
+    }
+
+    /// authTokens required except for register, login, and clear
+    private Object clear(Request request, Response response) {
+        if (clearService != null) {
+            clearService.clear();
+            response.status(200);
+        }
+        return "";
     }
 }

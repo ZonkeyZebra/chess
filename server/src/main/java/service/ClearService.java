@@ -5,16 +5,16 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 
 public class ClearService {
-    /*
-     * Description	Clears the database. Removes all users, games, and authTokens.
-     * URL path	/db
-     * HTTP Method	DELETE
-     * Success response	[200] {}
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     */
     AuthDAO authData;
     GameDAO gameData;
     UserDAO userData;
+
+    public ClearService(AuthDAO authData, GameDAO gameData, UserDAO userData) {
+        this.authData = authData;
+        this.gameData = gameData;
+        this.userData = userData;
+    }
+
     public void clear() {
         authData.deleteAuth();
         gameData.deleteGame();
