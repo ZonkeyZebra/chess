@@ -1,5 +1,10 @@
 package server;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
+import dataaccess.*;
+import model.AuthData;
+import model.RegisterRequest;
 import model.RegisterResult;
 import model.UserData;
 import service.RegisterService;
@@ -7,12 +12,15 @@ import spark.*;
 import service.ClearService;
 
 public class Server {
-    private final ClearService clearService;
-    private final RegisterService registerService;
+    private final UserDAO user = new MemoryUserDAO();
+    private final AuthDAO auth = new MemoryAuthDAO();
+    private final GameDAO game = new MemoryGameDAO();
+    private final RegisterService registerService = new RegisterService(user, auth);
+    private final ClearService clearService = new ClearService(auth, game, user);
+    private Gson gson = new Gson();
 
     public Server() {
-        this.clearService = null;
-        this.registerService = null;
+
     }
 
     public int run(int desiredPort) {
@@ -38,20 +46,17 @@ public class Server {
 
     /// authTokens required except for register, login, and clear
     private Object clear(Request request, Response response) {
-        if (clearService != null) {
-            clearService.clear();
-            response.status(200);
-        }
-        return "";
+        clearService.clear();
+        response.status(200);
+        response.body("Cleared");
+        return response.body();
     }
 
-    private Object registerUser(Request request, Response response) {
-        /// registerService.createUser(request); need help with this
-        /// registerService.createAuth(); need help with this
-        RegisterResult result = null;
+    private Object registerUser(Request request, Response response) throws DataAccessException {
+        RegisterRequest regRequest = gson.fromJson(request.body(), RegisterRequest.class);
+        RegisterResult result = registerService.register(regRequest);
         response.status(200);
-        response.body("username: " + result.username() + "authToken: " + result.authToken());
-        return "";
+        return gson.toJson(result);
     }
 
     /**
