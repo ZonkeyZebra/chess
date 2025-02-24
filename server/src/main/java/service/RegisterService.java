@@ -27,7 +27,7 @@ public class RegisterService {
         email = request.email();
         UserData user = getUser(username);
         if (user != null) {
-            /// throw error
+            throw new DataAccessException("already taken");
         }
         user = new UserData(username, password, email);
         createUser(user);

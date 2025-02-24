@@ -15,7 +15,7 @@ public class Server {
     private final UserDAO user = new MemoryUserDAO();
     private final AuthDAO auth = new MemoryAuthDAO();
     private final GameDAO game = new MemoryGameDAO();
-    private final RegisterService registerService = new RegisterService(user, auth);
+    private RegisterService registerService = new RegisterService(user, auth);
     private final ClearService clearService = new ClearService(auth, game, user);
     private Gson gson = new Gson();
 
@@ -45,18 +45,17 @@ public class Server {
     }
 
     /// authTokens required except for register, login, and clear
-    private Object clear(Request request, Response response) {
-        clearService.clear();
-        response.status(200);
-        response.body("Cleared");
-        return response.body();
-    }
 
     private Object registerUser(Request request, Response response) throws DataAccessException {
         RegisterRequest regRequest = gson.fromJson(request.body(), RegisterRequest.class);
         RegisterResult result = registerService.register(regRequest);
         response.status(200);
         return gson.toJson(result);
+    }
+
+    private Object clear(Request request, Response response) {
+        clearService.clear();
+        return "{}";
     }
 
     /**
