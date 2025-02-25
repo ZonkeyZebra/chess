@@ -4,11 +4,10 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.*;
-import service.LoginService;
-import service.LogoutService;
-import service.RegisterService;
+import service.*;
 import spark.*;
-import service.ClearService;
+
+import java.util.StringTokenizer;
 
 public class Server {
     private final UserDAO user = new MemoryUserDAO();
@@ -18,7 +17,9 @@ public class Server {
     private final ClearService clearService = new ClearService(auth, game, user);
     private final LoginService loginService = new LoginService(user, auth);
     private final LogoutService logoutService = new LogoutService(auth);
+    private final JoinGameService joinGameService = new JoinGameService(null, 404, game);
     private final Gson gson = new Gson();
+    private String authToken = null;
 
     public Server() {
 
@@ -34,6 +35,7 @@ public class Server {
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
+        Spark.put("/game", this::joinGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -70,7 +72,15 @@ public class Server {
     }
 
     private Object logout(Request request, Response response) {
+        var authToken = request.headers();
         logoutService.logout();
+        response.status(200);
+        return "{}";
+    }
+
+    private Object joinGame(Request request, Response response) {
+        JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
+        joinGameService.joinGame(joinGameRequest.playerColor(), joinGameRequest.gameID());
         response.status(200);
         return "{}";
     }

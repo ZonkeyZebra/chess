@@ -18,8 +18,8 @@ public class MemoryGameDAO implements GameDAO {
 
     }
 
-    public GameData getGame(GameData gameID) {
-        return games.get(gameID.gameName());
+    public GameData getGame(int gameID) {
+        return games.get(gameID);
     }
 
     public void updateGame(GameData gameID) {
