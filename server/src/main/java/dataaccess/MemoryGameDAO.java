@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO {
     private Map<String, GameData> games;
-    private int id = 0;
+    private int id = 1;
 
     public MemoryGameDAO() {
         games = new HashMap<String, GameData>();
