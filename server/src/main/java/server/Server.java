@@ -1,6 +1,5 @@
 package server;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.*;
@@ -8,7 +7,6 @@ import service.*;
 import spark.*;
 
 import java.util.Collection;
-import java.util.StringTokenizer;
 
 public class Server {
     private final UserDAO user = new MemoryUserDAO();
@@ -40,6 +38,7 @@ public class Server {
         Spark.put("/game", this::joinGame);
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
+        Spark.exception(DataAccessException.class, this::exceptionHandler);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -78,13 +77,13 @@ public class Server {
     }
 
     private Object login(Request request, Response response) throws DataAccessException {
+        LoginResult result = null;
         LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
+        response.status(200);
         if (loginService.getUser(loginRequest.username()) == null) {
             response.status(401);
-            throw new DataAccessException("Error: unauthorized");
         }
-        LoginResult result = loginService.login(loginRequest);
-        response.status(200);
+        result = loginService.login(loginRequest);
         return gson.toJson(result);
     }
 
@@ -117,5 +116,11 @@ public class Server {
         CreateGameResult result = createGameService.createGame(createGameRequest);
         response.status(200);
         return gson.toJson(result);
+    }
+
+    private void exceptionHandler(DataAccessException ex, Request req, Response res) {
+        //res.status(ex.StatusCode());
+        //res.body(ex.toJson());
+        gson.toJson(ex);
     }
 }

@@ -13,16 +13,20 @@ public class LoginService {
     private final AuthDAO authDataAccess;
     private String username;
     private String password;
+    private LoginResult result;
 
     public LoginService(UserDAO userDataAccess, AuthDAO authDataAccess) {
         this.userDataAccess = userDataAccess;
         this.authDataAccess = authDataAccess;
     }
 
-    public LoginResult login(LoginRequest request) {
+    public LoginResult login(LoginRequest request) throws DataAccessException {
         username = request.username();
         password = request.password();
-        LoginResult result = new LoginResult(username, password);
+        if (getUser(request.username()) == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+        result = new LoginResult(username, password);
         return result;
     }
 
