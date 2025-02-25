@@ -5,6 +5,7 @@ import model.GameData;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO {
@@ -19,16 +20,22 @@ public class MemoryGameDAO implements GameDAO {
         games.put(gameName, new GameData(newGameID(), "user", "user", gameName, new ChessGame()));
     }
 
-    public GameData getGame(int gameID) {
-        return games.get(gameID);
-    }
-
-    public GameData getGameID(String gameName) {
+    public GameData getGame(String gameName) {
         return games.get(gameName);
     }
 
-    public void updateGame(GameData gameID) {
+    public GameData getGameFromID(int gameID) {
+        Collection<GameData> gameList = listGames();
+        for (GameData game : gameList) {
+            if (game.gameID() == gameID) {
+                return game;
+            }
+        }
+        return null;
+    }
 
+    public void updateGame(GameData game) {
+        games.put(game.gameName(), game);
     }
 
     public Collection<GameData> listGames() {

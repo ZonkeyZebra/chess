@@ -14,7 +14,7 @@ public class CreateGameService {
 
     public CreateGameResult createGame(CreateGameRequest request) {
         gameDataAccess.createGame(request.gameName());
-        GameData newGame = gameDataAccess.getGameID(request.gameName());
+        GameData newGame = gameDataAccess.getGame(request.gameName());
         CreateGameResult createGameResult = new CreateGameResult(newGame.gameID());
         return createGameResult;
     }

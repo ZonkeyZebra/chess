@@ -32,7 +32,7 @@ public class JoinGameService {
     }
 
     public boolean gameExists(int gameID) {
-        game = gameDataAccess.getGame(gameID);
+        game = gameDataAccess.getGameFromID(gameID);
         return game.gameID() == gameID;
     }
 }

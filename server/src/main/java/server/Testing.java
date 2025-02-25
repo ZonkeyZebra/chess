@@ -14,7 +14,7 @@ public class Testing {
         RegisterRequest request = new RegisterRequest("angela", "angel", "heaven@above.com");
         RegisterResult result = registerService.register(request);
         System.out.println(result);
-        UserData thisUser = user.getUser("angela");
-        System.out.println(thisUser);
+
+
     }
 }
