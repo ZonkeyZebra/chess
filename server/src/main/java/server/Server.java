@@ -85,7 +85,7 @@ public class Server {
 
     private Object joinGame(Request request, Response response) {
         JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
-        joinGameService.joinGame(joinGameRequest.playerColor(), joinGameRequest.gameID());
+        joinGameService.joinGame(joinGameRequest);
         response.status(200);
         return "{}";
     }

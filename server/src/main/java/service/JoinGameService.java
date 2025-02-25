@@ -4,6 +4,7 @@ import chess.ChessGame;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
+import model.JoinGameRequest;
 import model.UserData;
 
 public class JoinGameService {
@@ -20,7 +21,9 @@ public class JoinGameService {
         this.gameDataAccess = gameDataAccess;
     }
 
-    public void joinGame(ChessGame.TeamColor playerColor, int gameID) {
+    public void joinGame(JoinGameRequest joinGameRequest) {
+        gameID = joinGameRequest.gameID();
+        playerColor = joinGameRequest.playerColor();
         if (gameExists(gameID)) {
             if (playerColor == ChessGame.TeamColor.BLACK) {
                 gameDataAccess.updateGame(game);
