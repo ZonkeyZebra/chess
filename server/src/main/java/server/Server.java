@@ -58,6 +58,15 @@ public class Server {
 
     private Object registerUser(Request request, Response response) throws DataAccessException {
         RegisterRequest regRequest = gson.fromJson(request.body(), RegisterRequest.class);
+        if (regRequest.username() == null || regRequest.password() == null || regRequest.email() == null) {
+            response.status(400);
+            throw new DataAccessException("bad request");
+        }
+        UserData user = new UserData(regRequest.username(), regRequest.password(), regRequest.email());
+        if (user == registerService.getUser(user.username())) {
+            response.status(403);
+            throw new DataAccessException("already taken");
+        }
         RegisterResult result = registerService.register(regRequest);
         response.status(200);
         return gson.toJson(result);
@@ -69,8 +78,12 @@ public class Server {
         return "{}";
     }
 
-    private Object login(Request request, Response response) {
+    private Object login(Request request, Response response) throws DataAccessException {
         LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
+        if (loginService.getUser(loginRequest.username()) == null) {
+            response.status(401);
+            throw new DataAccessException("Error: unauthorized");
+        }
         LoginResult result = loginService.login(loginRequest);
         response.status(200);
         return gson.toJson(result);
@@ -102,81 +115,4 @@ public class Server {
         response.status(200);
         return result;
     }
-
-    /**
-     * Clear application
-     * property	value
-     * Description	Clears the database. Removes all users, games, and authTokens.
-     * URL path	/db
-     * HTTP Method	DELETE
-     * Success response	[200] {}
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     *
-     * Register
-     * property	value
-     * Description	Register a new user.
-     * URL path	/user
-     * HTTP Method	POST
-     * Body	{ "username":"", "password":"", "email":"" }
-     * Success response	[200] { "username":"", "authToken":"" }
-     * Failure response	[400] { "message": "Error: bad request" }
-     * Failure response	[403] { "message": "Error: already taken" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     *
-     * Login
-     * property	value
-     * Description	Logs in an existing user (returns a new authToken).
-     * URL path	/session
-     * HTTP Method	POST
-     * Body	{ "username":"", "password":"" }
-     * Success response	[200] { "username":"", "authToken":"" }
-     * Failure response	[401] { "message": "Error: unauthorized" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     *
-     * Logout
-     * property	value
-     * Description	Logs out the user represented by the authToken.
-     * URL path	/session
-     * HTTP Method	DELETE
-     * Headers	authorization: <authToken>
-     * Success response	[200] {}
-     * Failure response	[401] { "message": "Error: unauthorized" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     *
-     * List Games
-     * Note that whiteUsername and blackUsername may be null.
-     * property	value
-     * Description	Gives a list of all games.
-     * URL path	/game
-     * HTTP Method	GET
-     * Headers	authorization: <authToken>
-     * Success response	[200] { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
-     * Failure response	[401] { "message": "Error: unauthorized" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     *
-     * Create Game
-     * property	value
-     * Description	Creates a new game.
-     * URL path	/game
-     * HTTP Method	POST
-     * Headers	authorization: <authToken>
-     * Body	{ "gameName":"" }
-     * Success response	[200] { "gameID": 1234 }
-     * Failure response	[400] { "message": "Error: bad request" }
-     * Failure response	[401] { "message": "Error: unauthorized" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     *
-     * Join Game
-     * property	value
-     * Description	Verifies that the specified game exists and adds the caller as the requested color to the game.
-     * URL path	/game
-     * HTTP Method	PUT
-     * Headers	authorization: <authToken>
-     * Body	{ "playerColor":"WHITE/BLACK", "gameID": 1234 }
-     * Success response	[200] {}
-     * Failure response	[400] { "message": "Error: bad request" }
-     * Failure response	[401] { "message": "Error: unauthorized" }
-     * Failure response	[403] { "message": "Error: already taken" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     */
 }

@@ -13,12 +13,6 @@ public class MemoryUserDAO implements UserDAO {
     }
 
     public void createUser(UserData user) throws DataAccessException {
-        if (user.username() == null || user.password() == null || user.email() == null) {
-            throw new DataAccessException("bad request");
-        }
-        if (user == getUser(user.username())) {
-            throw new DataAccessException("already taken");
-        }
         users.put(user.username(), user);
     }
 
