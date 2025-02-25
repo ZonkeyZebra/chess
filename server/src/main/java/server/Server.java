@@ -48,6 +48,13 @@ public class Server {
 
     private Object registerUser(Request request, Response response) throws DataAccessException {
         RegisterRequest regRequest = gson.fromJson(request.body(), RegisterRequest.class);
+        if (regRequest.username() == null || regRequest.password() == null || regRequest.email() == null) {
+            throw new DataAccessException("bad request");
+        }
+        UserData user = registerService.getUser(regRequest.username());
+        if (user != null) {
+            throw new DataAccessException("already taken");
+        }
         RegisterResult result = registerService.register(regRequest);
         response.status(200);
         return gson.toJson(result);

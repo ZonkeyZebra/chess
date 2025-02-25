@@ -5,19 +5,19 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 
 public class ClearService {
-    AuthDAO authData;
-    GameDAO gameData;
-    UserDAO userData;
+    private final AuthDAO auths;
+    private final GameDAO games;
+    private final UserDAO users;
 
-    public ClearService(AuthDAO authData, GameDAO gameData, UserDAO userData) {
-        this.authData = authData;
-        this.gameData = gameData;
-        this.userData = userData;
+    public ClearService(AuthDAO auths, GameDAO games, UserDAO users) {
+        this.auths = auths;
+        this.games = games;
+        this.users = users;
     }
 
     public void clear() {
-        authData.deleteAuth();
-        gameData.deleteGame();
-        userData.deleteUser();
+        auths.deleteAuth();
+        games.deleteGame();
+        users.deleteUser();
     }
 }
