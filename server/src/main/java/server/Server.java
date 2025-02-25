@@ -3,10 +3,9 @@ package server;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.*;
-import model.AuthData;
-import model.RegisterRequest;
-import model.RegisterResult;
-import model.UserData;
+import model.*;
+import service.LoginService;
+import service.LogoutService;
 import service.RegisterService;
 import spark.*;
 import service.ClearService;
@@ -15,9 +14,11 @@ public class Server {
     private final UserDAO user = new MemoryUserDAO();
     private final AuthDAO auth = new MemoryAuthDAO();
     private final GameDAO game = new MemoryGameDAO();
-    private RegisterService registerService = new RegisterService(user, auth);
+    private final RegisterService registerService = new RegisterService(user, auth);
     private final ClearService clearService = new ClearService(auth, game, user);
-    private Gson gson = new Gson();
+    private final LoginService loginService = new LoginService(user, auth);
+    private final LogoutService logoutService = new LogoutService(auth);
+    private final Gson gson = new Gson();
 
     public Server() {
 
@@ -31,6 +32,8 @@ public class Server {
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::registerUser);
+        Spark.post("/session", this::login);
+        Spark.delete("/session", this::logout);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -55,6 +58,19 @@ public class Server {
 
     private Object clear(Request request, Response response) {
         clearService.clear();
+        response.status(200);
+        return "{}";
+    }
+
+    private Object login(Request request, Response response) {
+        LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
+        LoginResult result = loginService.login(loginRequest);
+        response.status(200);
+        return gson.toJson(result);
+    }
+
+    private Object logout(Request request, Response response) {
+        logoutService.logout();
         response.status(200);
         return "{}";
     }
