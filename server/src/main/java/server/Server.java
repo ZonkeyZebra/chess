@@ -20,6 +20,7 @@ public class Server {
     private final LogoutService logoutService = new LogoutService(auth);
     private final JoinGameService joinGameService = new JoinGameService(null, 404, game);
     private final ListGamesService listGamesService = new ListGamesService(game);
+    private final CreateGameService createGameService = new CreateGameService(game);
     private final Gson gson = new Gson();
     private String authToken = null;
 
@@ -39,6 +40,7 @@ public class Server {
         Spark.delete("/session", this::logout);
         Spark.put("/game", this::joinGame);
         Spark.get("/game", this::listGames);
+        Spark.post("/game", this::createGame);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -92,6 +94,13 @@ public class Server {
         Collection<ListGamesResult> games = listGamesService.listGames();
         response.status(200);
         return gson.toJson(games);
+    }
+
+    private Object createGame(Request request, Response response) {
+        CreateGameRequest createGameRequest = gson.fromJson(request.body(), CreateGameRequest.class);
+        CreateGameResult result = createGameService.createGame(createGameRequest);
+        response.status(200);
+        return result;
     }
 
     /**
