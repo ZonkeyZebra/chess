@@ -25,17 +25,9 @@ public class RegisterService {
         username = request.username();
         password = request.password();
         email = request.email();
-        if (username == null || password == null || email == null) {
-            throw new DataAccessException("bad request");
-        }
-        UserData user = getUser(username);
-        if (user != null) {
-            throw new DataAccessException("already taken");
-        }
-        user = new UserData(username, password, email);
+        UserData user = new UserData(username, password, email);
         createUser(user);
         authToken = createAuth();
-        AuthData auth = new AuthData(authToken, username);
         RegisterResult result = new RegisterResult(username, authToken);
         return result;
     }
