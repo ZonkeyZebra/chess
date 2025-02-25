@@ -22,7 +22,6 @@ public class Server {
     private final ListGamesService listGamesService = new ListGamesService(game);
     private final CreateGameService createGameService = new CreateGameService(game);
     private final Gson gson = new Gson();
-    private String authToken = null;
 
     public Server() {
 
@@ -89,8 +88,12 @@ public class Server {
         return gson.toJson(result);
     }
 
-    private Object logout(Request request, Response response) {
+    private Object logout(Request request, Response response) throws DataAccessException {
         var authToken = request.headers();
+        if (authToken == null) {
+            response.status(401);
+            throw new DataAccessException("Error: unauthorized");
+        }
         logoutService.logout();
         response.status(200);
         return "{}";
@@ -113,6 +116,6 @@ public class Server {
         CreateGameRequest createGameRequest = gson.fromJson(request.body(), CreateGameRequest.class);
         CreateGameResult result = createGameService.createGame(createGameRequest);
         response.status(200);
-        return result;
+        return gson.toJson(result);
     }
 }
