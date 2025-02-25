@@ -1,14 +1,25 @@
 package service;
 
+import dataaccess.GameDAO;
+import model.GameData;
+import model.ListGamesResult;
+
+import java.util.Collection;
+
 public class ListGamesService {
-    /*
-     * Description	Gives a list of all games.
-     * URL path	/game
-     * HTTP Method	GET
-     * Headers	authorization: <authToken>
-     * Success response	[200] { "games": [{"gameID": 1234, "whiteUsername":"", "blackUsername":"", "gameName:""} ]}
-     * Failure response	[401] { "message": "Error: unauthorized" }
-     * Failure response	[500] { "message": "Error: (description of error)" }
-     * Note that whiteUsername and blackUsername may be null
-     */
+    private final GameDAO gameDataAccess;
+    private Collection<GameData> games;
+    private Collection<ListGamesResult> gameList;
+
+    public ListGamesService(GameDAO gameDataAccess) {
+        this.gameDataAccess = gameDataAccess;
+    }
+
+    public Collection<ListGamesResult> listGames() {
+        games = gameDataAccess.listGames();
+        for (GameData game : games) {
+            gameList.add(new ListGamesResult(game.gameID(), game.blackUsername(), game.whiteUsername(), game.gameName()));
+        }
+        return gameList;
+    }
 }

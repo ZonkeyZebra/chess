@@ -14,8 +14,8 @@ public class MemoryGameDAO implements GameDAO {
         games = new HashMap<String, GameData>();
     }
 
-    public void createGame(GameData gameID) {
-
+    public void createGame(GameData game) {
+        games.put(game.gameName(), game);
     }
 
     public GameData getGame(int gameID) {

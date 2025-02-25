@@ -7,6 +7,7 @@ import model.*;
 import service.*;
 import spark.*;
 
+import java.util.Collection;
 import java.util.StringTokenizer;
 
 public class Server {
@@ -18,6 +19,7 @@ public class Server {
     private final LoginService loginService = new LoginService(user, auth);
     private final LogoutService logoutService = new LogoutService(auth);
     private final JoinGameService joinGameService = new JoinGameService(null, 404, game);
+    private final ListGamesService listGamesService = new ListGamesService(game);
     private final Gson gson = new Gson();
     private String authToken = null;
 
@@ -36,6 +38,7 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.put("/game", this::joinGame);
+        Spark.get("/game", this::listGames);
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
@@ -83,6 +86,12 @@ public class Server {
         joinGameService.joinGame(joinGameRequest.playerColor(), joinGameRequest.gameID());
         response.status(200);
         return "{}";
+    }
+
+    private Object listGames(Request request, Response response) {
+        Collection<ListGamesResult> games = listGamesService.listGames();
+        response.status(200);
+        return gson.toJson(games);
     }
 
     /**
