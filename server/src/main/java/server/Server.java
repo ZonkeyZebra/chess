@@ -87,7 +87,7 @@ public class Server {
     }
 
     private Object logout(Request request, Response response) throws DataAccessException {
-        var authToken = request.headers();
+        var authToken = request.headers("Authorization");
         if (authToken == null) {
             response.status(401);
             throw new DataAccessException("Error: unauthorized");
@@ -105,10 +105,10 @@ public class Server {
     }
 
     private Object listGames(Request request, Response response) {
-        //Collection<ListGamesResult> games = listGamesService.listGames();
-        var gameList = listGamesService.getGames().toArray();
+        Collection<GameData> gameList = listGamesService.getGames();
+        ListGamesResult result = new ListGamesResult(gameList);
         response.status(200);
-        return gson.toJson(gameList);
+        return gson.toJson(result);
     }
 
     private Object createGame(Request request, Response response) {
@@ -119,9 +119,9 @@ public class Server {
     }
 
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {
-        res.body(gson.toJson(ex));
         if (Objects.equals(ex.getMessage(), "Error: unauthorized")) {
             res.status(401);
         }
+        res.body(gson.toJson(ex));
     }
 }
