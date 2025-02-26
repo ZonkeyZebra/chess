@@ -26,13 +26,14 @@ public class JoinGameService {
         playerColor = joinGameRequest.playerColor();
         if (gameExists(gameID)) {
             if (playerColor == ChessGame.TeamColor.BLACK) {
+                //check gamedata and see if black is already taken blackusername == null
                 gameDataAccess.updateGame(game);
             }
         }
     }
 
     public boolean gameExists(int gameID) {
-        game = gameDataAccess.getGameFromID(gameID);
+        game = gameDataAccess.getGame(gameID);
         return game.gameID() == gameID;
     }
 }

@@ -7,6 +7,7 @@ import service.*;
 import spark.*;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public class Server {
     private final UserDAO user = new MemoryUserDAO();
@@ -79,11 +80,8 @@ public class Server {
     private Object login(Request request, Response response) throws DataAccessException {
         LoginResult result = null;
         LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
-        response.status(200);
-        if (loginService.getUser(loginRequest.username()) == null) {
-            response.status(401);
-        }
         result = loginService.login(loginRequest);
+        response.status(200);
         return gson.toJson(result);
     }
 
@@ -119,8 +117,9 @@ public class Server {
     }
 
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {
-        //res.status(ex.StatusCode());
-        //res.body(ex.toJson());
-        gson.toJson(ex);
+        res.body(gson.toJson(ex));
+        if (Objects.equals(ex.getMessage(), "Error: unauthorized")) {
+            res.status(401);
+        }
     }
 }

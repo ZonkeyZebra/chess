@@ -3,31 +3,29 @@ package dataaccess;
 import chess.ChessGame;
 import model.GameData;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 public class MemoryGameDAO implements GameDAO {
-    private Map<String, GameData> games;
+    private Map<Integer, GameData> games;
     private int id = 1;
 
     public MemoryGameDAO() {
-        games = new HashMap<String, GameData>();
+        games = new HashMap<Integer, GameData>();
     }
 
     public void createGame(String gameName) {
-        games.put(gameName, new GameData(newGameID(), "user", "user", gameName, new ChessGame()));
+        int gameID = newGameID();
+        games.put(gameID, new GameData(gameID, "user", "user", gameName, new ChessGame()));
     }
 
-    public GameData getGame(String gameName) {
-        return games.get(gameName);
+    public GameData getGame(int gameID) {
+        return games.get(gameID);
     }
 
-    public GameData getGameFromID(int gameID) {
+    public GameData getGameFromName(String gameName) {
         Collection<GameData> gameList = listGames();
         for (GameData game : gameList) {
-            if (game.gameID() == gameID) {
+            if (Objects.equals(game.gameName(), gameName)) {
                 return game;
             }
         }
@@ -35,7 +33,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public void updateGame(GameData game) {
-        games.put(game.gameName(), game);
+        games.put(game.gameID(), game);
     }
 
     public Collection<GameData> listGames() {
