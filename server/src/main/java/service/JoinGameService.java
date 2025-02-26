@@ -24,10 +24,16 @@ public class JoinGameService {
     public void joinGame(JoinGameRequest joinGameRequest) {
         gameID = joinGameRequest.gameID();
         playerColor = joinGameRequest.playerColor();
+        game = gameDataAccess.getGame(gameID);
         if (gameExists(gameID)) {
             if (playerColor == ChessGame.TeamColor.BLACK) {
-                //check gamedata and see if black is already taken blackusername == null
-                gameDataAccess.updateGame(game);
+                if (game.blackUsername() == null) {
+                    gameDataAccess.updateGame(game);
+                }
+            } else if (playerColor == ChessGame.TeamColor.WHITE) {
+                if (game.whiteUsername() == null) {
+                    gameDataAccess.updateGame(game);
+                }
             }
         }
     }

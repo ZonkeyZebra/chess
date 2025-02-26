@@ -54,6 +54,7 @@ public class Server {
     }
 
     /// authTokens required except for register, login, and clear
+    /// request.headers("Authorization");
 
     private Object registerUser(Request request, Response response) throws DataAccessException {
         RegisterRequest regRequest = gson.fromJson(request.body(), RegisterRequest.class);
