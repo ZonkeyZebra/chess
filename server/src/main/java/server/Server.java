@@ -105,9 +105,10 @@ public class Server {
     }
 
     private Object listGames(Request request, Response response) {
-        Collection<ListGamesResult> games = listGamesService.listGames();
+        //Collection<ListGamesResult> games = listGamesService.listGames();
+        var gameList = listGamesService.getGames().toArray();
         response.status(200);
-        return gson.toJson(games);
+        return gson.toJson(gameList);
     }
 
     private Object createGame(Request request, Response response) {
