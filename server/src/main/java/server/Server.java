@@ -20,7 +20,7 @@ public class Server {
     private final LogoutService logoutService = new LogoutService(auth);
     private final JoinGameService joinGameService = new JoinGameService(null, 404, game, auth, user);
     private final ListGamesService listGamesService = new ListGamesService(game);
-    private final CreateGameService createGameService = new CreateGameService(game);
+    private final CreateGameService createGameService = new CreateGameService(game, auth);
     private final Gson gson = new Gson();
     private String authToken;
     private String username;
@@ -104,10 +104,10 @@ public class Server {
         return gson.toJson(result);
     }
 
-    private Object createGame(Request request, Response response) {
+    private Object createGame(Request request, Response response) throws DataAccessException {
         authToken = request.headers("Authorization");
         CreateGameRequest createGameRequest = gson.fromJson(request.body(), CreateGameRequest.class);
-        CreateGameResult result = createGameService.createGame(createGameRequest);
+        CreateGameResult result = createGameService.createGame(createGameRequest, authToken);
         response.status(200);
         return gson.toJson(result);
     }
