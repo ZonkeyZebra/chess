@@ -31,7 +31,9 @@ public class LoginService {
         if (!Objects.equals(getUser(request.username()).password(), request.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
-        result = new LoginResult(username, password);
+        String authToken = authDataAccess.createAuth();
+        authDataAccess.setAuthData(new AuthData(authToken, username));
+        result = new LoginResult(username, authToken);
         return result;
     }
 

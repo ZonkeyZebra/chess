@@ -23,8 +23,6 @@ public class Server {
     private final CreateGameService createGameService = new CreateGameService(game, auth);
     private final Gson gson = new Gson();
     private String authToken;
-    private String username;
-    private String userAuth;
 
     public Server() {
 
