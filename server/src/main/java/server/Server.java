@@ -17,7 +17,7 @@ public class Server {
     private final ClearService clearService = new ClearService(auth, game, user);
     private final LoginService loginService = new LoginService(user, auth);
     private final LogoutService logoutService = new LogoutService(auth);
-    private final JoinGameService joinGameService = new JoinGameService(null, 404, game);
+    private final JoinGameService joinGameService = new JoinGameService(null, 404, game, auth);
     private final ListGamesService listGamesService = new ListGamesService(game);
     private final CreateGameService createGameService = new CreateGameService(game);
     private final Gson gson = new Gson();

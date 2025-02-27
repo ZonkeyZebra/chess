@@ -34,8 +34,8 @@ public class LoginService {
         return userDataAccess.getUser(username);
     }
 
-    public AuthData getAuth(AuthData authData) {
-        return authDataAccess.getAuth(authData);
+    public AuthData getAuth(String authToken) {
+        return authDataAccess.getAuth(authToken);
     }
 
 }

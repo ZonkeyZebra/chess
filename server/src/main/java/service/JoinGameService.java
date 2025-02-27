@@ -1,6 +1,7 @@
 package service;
 
 import chess.ChessGame;
+import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -17,21 +18,27 @@ public class JoinGameService {
     private ChessGame.TeamColor playerColor;
     private int gameID;
     private final GameDAO gameDataAccess;
-    private UserDAO userDataAccess;
+    private AuthDAO authDataAccess;
     private GameData game;
 
-    public JoinGameService(ChessGame.TeamColor playerColor, int gameID, GameDAO gameDataAccess) {
+    public JoinGameService(ChessGame.TeamColor playerColor, int gameID, GameDAO gameDataAccess, AuthDAO authDataAccess) {
         this.playerColor = playerColor;
         this.gameID = gameID;
         this.gameDataAccess = gameDataAccess;
+        this.authDataAccess = authDataAccess;
     }
 
     public void joinGame(JoinGameRequest joinGameRequest, String authToken) {
         gameID = joinGameRequest.gameID();
         playerColor = joinGameRequest.playerColor();
         game = gameDataAccess.getGame(gameID);
+        AuthData authData = getAuth(authToken);
         String userAuth = "";
         String username = "";
+        if (authData != null) {
+            userAuth = authData.authToken();
+            username = authData.username();
+        }
         if (gameExists(gameID)) {
             if (playerColor == ChessGame.TeamColor.BLACK) {
                 if (game.blackUsername() == null) {
@@ -52,5 +59,9 @@ public class JoinGameService {
     public boolean gameExists(int gameID) {
         game = gameDataAccess.getGame(gameID);
         return game.gameID() == gameID;
+    }
+
+    public AuthData getAuth(String authToken) {
+        return authDataAccess.getAuth(authToken);
     }
 }
