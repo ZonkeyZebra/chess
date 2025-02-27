@@ -4,30 +4,24 @@ import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
 import model.JoinGameRequest;
-import model.UserData;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Objects;
 
 public class JoinGameService {
     private ChessGame.TeamColor playerColor;
     private int gameID;
     private final GameDAO gameDataAccess;
-    private AuthDAO authDataAccess;
-    private UserDAO userDataAccess;
+    private final AuthDAO authDataAccess;
     private GameData game;
 
-    public JoinGameService(ChessGame.TeamColor playerColor, int gameID, GameDAO gameDataAccess, AuthDAO authDataAccess, UserDAO userDataAccess) {
+    public JoinGameService(ChessGame.TeamColor playerColor, int gameID, GameDAO gameDataAccess, AuthDAO authDataAccess) {
         this.playerColor = playerColor;
         this.gameID = gameID;
         this.gameDataAccess = gameDataAccess;
         this.authDataAccess = authDataAccess;
-        this.userDataAccess = userDataAccess;
     }
 
     public void joinGame(JoinGameRequest joinGameRequest, String authToken) throws DataAccessException {
