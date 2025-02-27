@@ -13,9 +13,6 @@ import java.util.Objects;
 public class LoginService {
     private final UserDAO userDataAccess;
     private final AuthDAO authDataAccess;
-    private String username;
-    private String password;
-    private LoginResult result;
 
     public LoginService(UserDAO userDataAccess, AuthDAO authDataAccess) {
         this.userDataAccess = userDataAccess;
@@ -23,8 +20,7 @@ public class LoginService {
     }
 
     public LoginResult login(LoginRequest request) throws DataAccessException {
-        username = request.username();
-        password = request.password();
+        String username = request.username();
         if (getUser(request.username()) == null) {
             throw new DataAccessException("Error: unauthorized");
         }
@@ -33,8 +29,7 @@ public class LoginService {
         }
         String authToken = authDataAccess.createAuth();
         authDataAccess.setAuthData(new AuthData(authToken, username));
-        result = new LoginResult(username, authToken);
-        return result;
+        return new LoginResult(username, authToken);
     }
 
     public UserData getUser(String username) throws DataAccessException {
