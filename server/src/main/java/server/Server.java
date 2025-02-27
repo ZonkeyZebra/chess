@@ -88,7 +88,7 @@ public class Server {
         return "{}";
     }
 
-    private Object joinGame(Request request, Response response) {
+    private Object joinGame(Request request, Response response) throws DataAccessException {
         JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
         authToken = request.headers("Authorization");
         joinGameService.joinGame(joinGameRequest, authToken);

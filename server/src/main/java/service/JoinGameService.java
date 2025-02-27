@@ -30,9 +30,15 @@ public class JoinGameService {
         this.userDataAccess = userDataAccess;
     }
 
-    public void joinGame(JoinGameRequest joinGameRequest, String authToken) {
+    public void joinGame(JoinGameRequest joinGameRequest, String authToken) throws DataAccessException {
+        if (authToken == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
         gameID = joinGameRequest.gameID();
         playerColor = joinGameRequest.playerColor();
+        if (playerColor == null) {
+            throw new DataAccessException("Error: bad request");
+        }
         game = gameDataAccess.getGame(gameID);
         AuthData authData = authDataAccess.getAuth(authToken);
         String userAuth = "";
@@ -47,12 +53,16 @@ public class JoinGameService {
                     if (Objects.equals(authToken, userAuth)) {
                         gameDataAccess.updateGame(new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
                     }
+                } else {
+                    throw new DataAccessException("Error: already taken");
                 }
             } else if (playerColor == ChessGame.TeamColor.WHITE) {
                 if (game.whiteUsername() == null) {
                     if (Objects.equals(authToken, userAuth)) {
                         gameDataAccess.updateGame(new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
                     }
+                } else {
+                    throw new DataAccessException("Error: already taken");
                 }
             }
         }
