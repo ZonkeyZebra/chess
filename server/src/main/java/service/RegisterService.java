@@ -11,10 +11,6 @@ import model.UserData;
 public class RegisterService {
     private final UserDAO userDataAccess;
     private final AuthDAO authDataAccess;
-    private String username;
-    private String password;
-    private String email;
-    private String authToken;
 
     public RegisterService(UserDAO userDataAccess, AuthDAO authDataAccess) {
         this.userDataAccess = userDataAccess;
@@ -22,9 +18,9 @@ public class RegisterService {
     }
 
     public RegisterResult register(RegisterRequest request) throws DataAccessException {
-        username = request.username();
-        password = request.password();
-        email = request.email();
+        String username = request.username();
+        String password = request.password();
+        String email = request.email();
         if (username == null || password == null || email == null) {
             throw new DataAccessException("Error: bad request");
         }
@@ -33,10 +29,9 @@ public class RegisterService {
             throw new DataAccessException("Error: already taken");
         }
         createUser(user);
-        authToken = createAuth();
+        String authToken = authDataAccess.createAuth();
         authDataAccess.setAuthData(new AuthData(authToken, user.username()));
-        RegisterResult result = new RegisterResult(username, authToken);
-        return result;
+        return new RegisterResult(username, authToken);
     }
 
     public UserData getUser(String username) throws DataAccessException {
@@ -45,9 +40,5 @@ public class RegisterService {
 
     public void createUser(UserData user) throws DataAccessException {
         userDataAccess.createUser(user);
-    }
-
-    public String createAuth() {
-        return authDataAccess.createAuth();
     }
 }
