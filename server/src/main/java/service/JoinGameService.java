@@ -34,6 +34,9 @@ public class JoinGameService {
         if (authToken == null) {
             throw new DataAccessException("Error: unauthorized");
         }
+        if (joinGameRequest.gameID() == null) {
+            throw new DataAccessException("Error: bad request");
+        }
         gameID = joinGameRequest.gameID();
         playerColor = joinGameRequest.playerColor();
         if (playerColor == null) {
@@ -43,10 +46,11 @@ public class JoinGameService {
         AuthData authData = authDataAccess.getAuth(authToken);
         String userAuth = "";
         String username = "";
-        if (authData != null) {
-            userAuth = authData.authToken();
-            username = authData.username();
+        if (authData == null) {
+            throw new DataAccessException("Error: unauthorized");
         }
+        userAuth = authData.authToken();
+        username = authData.username();
         if (gameExists(gameID)) {
             if (playerColor == ChessGame.TeamColor.BLACK) {
                 if (game.blackUsername() == null) {
