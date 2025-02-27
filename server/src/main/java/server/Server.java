@@ -7,6 +7,7 @@ import service.*;
 import spark.*;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 
 public class Server {
@@ -126,6 +127,6 @@ public class Server {
         if (Objects.equals(ex.getMessage(), "Error: unauthorized")) {
             res.status(401);
         }
-        res.body(gson.toJson(ex));
+        res.body(gson.toJson(Map.of("message", ex.getMessage())));
     }
 }
