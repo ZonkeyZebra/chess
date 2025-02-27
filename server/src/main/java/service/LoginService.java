@@ -8,6 +8,8 @@ import model.LoginRequest;
 import model.LoginResult;
 import model.UserData;
 
+import java.util.Objects;
+
 public class LoginService {
     private final UserDAO userDataAccess;
     private final AuthDAO authDataAccess;
@@ -24,6 +26,9 @@ public class LoginService {
         username = request.username();
         password = request.password();
         if (getUser(request.username()) == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+        if (!Objects.equals(getUser(request.username()).password(), request.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
         result = new LoginResult(username, password);
