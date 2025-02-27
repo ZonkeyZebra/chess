@@ -9,8 +9,8 @@ import model.CreateGameResult;
 import model.GameData;
 
 public class CreateGameService {
-    private GameDAO gameDataAccess;
-    private AuthDAO authDataAccess;
+    private final GameDAO gameDataAccess;
+    private final AuthDAO authDataAccess;
 
     public CreateGameService(GameDAO gameDataAccess, AuthDAO authDataAccess) {
         this.gameDataAccess = gameDataAccess;
@@ -24,7 +24,6 @@ public class CreateGameService {
         }
         gameDataAccess.createGame(request.gameName());
         GameData newGame = gameDataAccess.getGameFromName(request.gameName());
-        CreateGameResult createGameResult = new CreateGameResult(newGame.gameID());
-        return createGameResult;
+        return new CreateGameResult(newGame.gameID());
     }
 }
