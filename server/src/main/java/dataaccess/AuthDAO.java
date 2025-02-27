@@ -12,4 +12,5 @@ public interface AuthDAO {
     public AuthData getAuth(String authToken);
     /// delete authorization so it's no longer valid
     public void deleteAuth();
+    public void setAuthData(AuthData authData);
 }

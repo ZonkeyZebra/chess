@@ -19,20 +19,22 @@ public class JoinGameService {
     private int gameID;
     private final GameDAO gameDataAccess;
     private AuthDAO authDataAccess;
+    private UserDAO userDataAccess;
     private GameData game;
 
-    public JoinGameService(ChessGame.TeamColor playerColor, int gameID, GameDAO gameDataAccess, AuthDAO authDataAccess) {
+    public JoinGameService(ChessGame.TeamColor playerColor, int gameID, GameDAO gameDataAccess, AuthDAO authDataAccess, UserDAO userDataAccess) {
         this.playerColor = playerColor;
         this.gameID = gameID;
         this.gameDataAccess = gameDataAccess;
         this.authDataAccess = authDataAccess;
+        this.userDataAccess = userDataAccess;
     }
 
     public void joinGame(JoinGameRequest joinGameRequest, String authToken) {
         gameID = joinGameRequest.gameID();
         playerColor = joinGameRequest.playerColor();
         game = gameDataAccess.getGame(gameID);
-        AuthData authData = getAuth(authToken);
+        AuthData authData = authDataAccess.getAuth(authToken);
         String userAuth = "";
         String username = "";
         if (authData != null) {
@@ -59,9 +61,5 @@ public class JoinGameService {
     public boolean gameExists(int gameID) {
         game = gameDataAccess.getGame(gameID);
         return game.gameID() == gameID;
-    }
-
-    public AuthData getAuth(String authToken) {
-        return authDataAccess.getAuth(authToken);
     }
 }

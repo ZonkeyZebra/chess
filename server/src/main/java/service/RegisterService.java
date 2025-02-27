@@ -34,6 +34,7 @@ public class RegisterService {
         }
         createUser(user);
         authToken = createAuth();
+        authDataAccess.setAuthData(new AuthData(authToken, user.username()));
         RegisterResult result = new RegisterResult(username, authToken);
         return result;
     }
