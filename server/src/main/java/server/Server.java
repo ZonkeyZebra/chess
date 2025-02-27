@@ -62,15 +62,6 @@ public class Server {
 
     private Object registerUser(Request request, Response response) throws DataAccessException {
         RegisterRequest regRequest = gson.fromJson(request.body(), RegisterRequest.class);
-        if (regRequest.username() == null || regRequest.password() == null || regRequest.email() == null) {
-            response.status(400);
-            throw new DataAccessException("bad request");
-        }
-        UserData user = new UserData(regRequest.username(), regRequest.password(), regRequest.email());
-        if (user == registerService.getUser(user.username())) {
-            response.status(403);
-            throw new DataAccessException("already taken");
-        }
         RegisterResult result = registerService.register(regRequest);
         response.status(200);
         return gson.toJson(result);
@@ -126,6 +117,12 @@ public class Server {
     private void exceptionHandler(DataAccessException ex, Request req, Response res) {
         if (Objects.equals(ex.getMessage(), "Error: unauthorized")) {
             res.status(401);
+        } else if (Objects.equals(ex.getMessage(), "Error: bad request")) {
+            res.status(400);
+        } else if (Objects.equals(ex.getMessage(), "Error: already taken")) {
+            res.status(403);
+        } else {
+            res.status(500);
         }
         res.body(gson.toJson(Map.of("message", ex.getMessage())));
     }
