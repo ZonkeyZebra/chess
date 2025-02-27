@@ -16,7 +16,7 @@ public class ClearService {
     }
 
     public void clear() {
-        auths.deleteAuth();
+        auths.deleteAllAuths();
         games.deleteGame();
         users.deleteUser();
     }

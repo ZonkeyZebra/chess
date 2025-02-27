@@ -44,8 +44,8 @@ public class JoinGameService {
         }
         game = gameDataAccess.getGame(gameID);
         AuthData authData = authDataAccess.getAuth(authToken);
-        String userAuth = "";
-        String username = "";
+        String userAuth;
+        String username;
         if (authData == null) {
             throw new DataAccessException("Error: unauthorized");
         }

@@ -15,7 +15,7 @@ public class LogoutService {
         if (authData == null) {
             throw new DataAccessException("Error: unauthorized");
         }
-        auths.deleteAuth();
+        auths.deleteAuth(authToken);
     }
 
 }
