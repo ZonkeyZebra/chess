@@ -10,8 +10,7 @@ import java.util.Collection;
 
 public class ListGamesService {
     private final GameDAO gameDataAccess;
-    private AuthDAO authDataAccess;
-    private Collection<GameData> games;
+    private final AuthDAO authDataAccess;
 
     public ListGamesService(GameDAO gameDataAccess, AuthDAO authDataAccess) {
         this.gameDataAccess = gameDataAccess;
@@ -23,7 +22,6 @@ public class ListGamesService {
         if (authData == null) {
             throw new DataAccessException("Error: unauthorized");
         }
-        games = gameDataAccess.listGames();
-        return games;
+        return gameDataAccess.listGames();
     }
 }
