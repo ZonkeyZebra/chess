@@ -8,15 +8,8 @@ class KnightMoveCalculator implements PieceMovesCalculator {
     private ChessPosition newPosition;
 
     void addMove(ChessBoard board, ChessPosition myPosition, ChessPosition newPosition, ChessGame.TeamColor pieceColor) {
-        ChessPiece piece = board.getPiece(newPosition);
-        ChessMove newMove = new ChessMove(myPosition, newPosition, null);
-        if (piece != null) {
-            if (piece.getTeamColor() != pieceColor) {
-                moves.add(newMove);
-            }
-        } else {
-            moves.add(newMove);
-        }
+        SharedMoves sharedMoves = new SharedMoves(moves);
+        sharedMoves.addMoveKingKinght(board, myPosition, newPosition, pieceColor);
     }
 
     void getUpRight(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, int row, int col) {
