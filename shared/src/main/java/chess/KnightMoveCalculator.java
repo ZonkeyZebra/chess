@@ -9,7 +9,7 @@ class KnightMoveCalculator implements PieceMovesCalculator {
 
     void addMove(ChessBoard board, ChessPosition myPosition, ChessPosition newPosition, ChessGame.TeamColor pieceColor) {
         SharedMoves sharedMoves = new SharedMoves(moves);
-        sharedMoves.addMoveKingKinght(board, myPosition, newPosition, pieceColor);
+        sharedMoves.addMoveKingKnight(board, myPosition, newPosition, pieceColor);
     }
 
     void getUpRight(ChessBoard board, ChessPosition myPosition, ChessGame.TeamColor pieceColor, int row, int col) {
