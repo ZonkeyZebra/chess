@@ -48,11 +48,17 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object o) {
+        boolean result = false;
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
         ChessMove chessMove = (ChessMove) o;
-        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
+        if (Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition)) {
+            if (promotionPiece == chessMove.promotionPiece) {
+                result = true;
+            }
+        }
+        return result;
     }
 
     @Override

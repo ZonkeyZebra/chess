@@ -15,7 +15,7 @@ public interface GameDAO {
     public GameData getGameFromName(String gameName);
     /// retrieve all games
     public Collection<GameData> listGames();
-    /// Updates a chess game. It should replace the chess game string corresponding to a given gameID. This is used when players join a game or when a move is made.
+    /// Updates a chess game. It should replace the chess game string corresponding to a given gameID.
     public void updateGame(GameData game);
     /// deletes game
     public void deleteGame();
