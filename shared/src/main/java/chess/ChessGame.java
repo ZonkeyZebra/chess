@@ -63,13 +63,14 @@ public class ChessGame {
         if (piece == null) {
             return null;
         }
-        /// A move is valid if it is a "piece move" for the piece at the input location and making that move would not leave the team’s king in danger of check.
+        /// A move is valid if it's a "piece move" for the piece and making that move would not leave the team’s king in danger.
         // need isInCheck
         teamColor = piece.getTeamColor();
         validMoves = piece.pieceMoves(board, startPosition);
         for (ChessMove move : validMoves) {
             fakeBoard = new ChessBoard(board);
-            if (move.getEndPosition().getColumn() >= 1 && move.getEndPosition().getRow() >= 1 && move.getEndPosition().getRow() <= 8 && move.getEndPosition().getColumn() <= 8) {
+            ChessPosition endPosition = move.getEndPosition();
+            if (endPosition.getColumn() >= 1 && endPosition.getRow() >= 1 && endPosition.getRow() <= 8 && endPosition.getColumn() <= 8) {
                 if (fakeBoard.getPiece(move.getEndPosition()) != null) {
                     fakeBoard.removePiece(move.getEndPosition());
                 }
@@ -272,14 +273,21 @@ public class ChessGame {
                 isPiece = theBoard.getPiece(new ChessPosition(i,j));
                 if (isPiece != null) {
                     checkMoves = isPiece.pieceMoves(theBoard, new ChessPosition(i,j));
-                    for (ChessMove validMove : checkMoves) {
-                        landingPiece = theBoard.getPiece(validMove.getEndPosition());
-                        if (landingPiece != null) {
-                            if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() == teamColor) {
-                                return true;
-                            }
-                        }
+                    if (checkFutureMoves(theBoard, teamColor, checkMoves)) {
+                        return true;
                     }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean checkFutureMoves(ChessBoard theBoard, TeamColor teamColor, Collection<ChessMove> checkMoves) {
+        for (ChessMove validMove : checkMoves) {
+            ChessPiece landingPiece = theBoard.getPiece(validMove.getEndPosition());
+            if (landingPiece != null) {
+                if (landingPiece.getPieceType() == king && landingPiece.getTeamColor() == teamColor) {
+                    return true;
                 }
             }
         }
