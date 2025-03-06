@@ -1,18 +1,22 @@
 package dataaccess;
 
+import model.UserData;
 import org.junit.jupiter.api.Test;
+
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class MySqlUserDAOTest {
+    private final UserDAO user = new MySqlUserDAO();
+    private final UserData userData = new UserData("username", "password", "email@emial");
 
-    @Test
-    void testConstructor() {
-
+    MySqlUserDAOTest() throws SQLException, DataAccessException {
     }
 
     @Test
-    void createUser() {
+    void createUser() throws DataAccessException {
+        user.createUser(userData);
     }
 
     @Test
@@ -20,7 +24,8 @@ class MySqlUserDAOTest {
     }
 
     @Test
-    void deleteUser() {
+    void deleteUser() throws DataAccessException {
+        user.deleteUser();
     }
 
     @Test
