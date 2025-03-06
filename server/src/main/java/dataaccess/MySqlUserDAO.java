@@ -12,15 +12,18 @@ public class MySqlUserDAO implements UserDAO {
     }
 
     public void createUser(UserData user) throws DataAccessException {
+        String statement = "INSERT INTO user (username, password, email, json) VALUES (?, ?, ?, ?)";
         //TODO
     }
 
     public UserData getUser(String username) throws DataAccessException {
+        String statement = "SELECT username, json FROM user WHERE username=?";
         //TODO
         return null;
     }
 
     public void deleteUser() {
+        String statement = "TRUNCATE user";
         //TODO
     }
 
