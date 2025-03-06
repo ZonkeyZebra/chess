@@ -4,9 +4,6 @@ import model.GameData;
 
 import java.util.Collection;
 
-/// MemoryGameDAO
-/// SQLGameDAO
-
 public interface GameDAO {
     /// creates a new game
     public void createGame(String gameName);
