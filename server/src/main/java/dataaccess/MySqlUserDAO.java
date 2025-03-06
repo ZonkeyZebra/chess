@@ -3,7 +3,13 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.sql.SQLException;
+
 public class MySqlUserDAO implements UserDAO {
+
+    public MySqlUserDAO() throws SQLException, DataAccessException {
+        configureDatabase();
+    }
 
     public void createUser(UserData user) throws DataAccessException {
         //TODO
@@ -30,8 +36,17 @@ public class MySqlUserDAO implements UserDAO {
             """
     };
 
-    private void configureDatabase() throws DataAccessException {
-        //TODO
+    private void configureDatabase() throws DataAccessException, SQLException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createStatements) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (DataAccessException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
     }
 
     void storeUserPassword(String username, String clearTextPassword) {
@@ -45,15 +60,15 @@ public class MySqlUserDAO implements UserDAO {
         // TODO
     }
 
-    boolean verifyUser(String username, String providedClearTextPassword) {
+    boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
         // read the previously hashed password from the database
-        var hashedPassword = readHashedPasswordFromDatabase(username);
+        String hashedPassword = readHashedPasswordFromDatabase(username);
 
         return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
     }
 
-    private String readHashedPasswordFromDatabase(String username) {
-        //TODO
-        return "hashedPassword";
+    private String readHashedPasswordFromDatabase(String username) throws DataAccessException {
+        String password = getUser(username).password();
+        return BCrypt.hashpw(password, BCrypt.gensalt());
     }
 }
