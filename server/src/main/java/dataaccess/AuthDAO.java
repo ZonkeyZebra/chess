@@ -2,8 +2,6 @@ package dataaccess;
 
 import model.AuthData;
 
-/// MemoryAuthDAO
-/// SQLAuthDAO
 
 public interface AuthDAO {
     /// create new authorization
