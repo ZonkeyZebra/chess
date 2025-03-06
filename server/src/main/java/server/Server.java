@@ -65,7 +65,7 @@ public class Server {
         return gson.toJson(result);
     }
 
-    private Object clear(Request request, Response response) {
+    private Object clear(Request request, Response response) throws DataAccessException {
         clearService.clear();
         response.status(200);
         return "{}";

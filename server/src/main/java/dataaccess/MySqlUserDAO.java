@@ -1,19 +1,33 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
+import static java.sql.Types.NULL;
+
 public class MySqlUserDAO implements UserDAO {
 
     public MySqlUserDAO() throws SQLException, DataAccessException {
-        configureDatabase();
+        String[] createStatements = {
+                """
+            CREATE TABLE IF NOT EXISTS  user (
+              `username` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (`username`),
+            )
+            """
+        };
+        DatabaseManager.configureDatabase(createStatements);
     }
 
     public void createUser(UserData user) throws DataAccessException {
-        String statement = "INSERT INTO user (username, password, email, json) VALUES (?, ?, ?, ?)";
-        //TODO
+        String statement = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        executeUpdate(statement, user.username(), hashedPassword, user.email());
     }
 
     public UserData getUser(String username) throws DataAccessException {
@@ -22,45 +36,9 @@ public class MySqlUserDAO implements UserDAO {
         return null;
     }
 
-    public void deleteUser() {
+    public void deleteUser() throws DataAccessException {
         String statement = "TRUNCATE user";
-        //TODO
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  user (
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              `json` TEXT DEFAULT NULL,
-              PRIMARY KEY (`username`),
-            )
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException, SQLException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (DataAccessException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
-
-    void storeUserPassword(String username, String clearTextPassword) {
-        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
-
-        // write the hashed password in database along with the user's other information
-        writeHashedPasswordToDatabase(username, hashedPassword);
-    }
-
-    private void writeHashedPasswordToDatabase(String username, String hashedPassword) {
-        // TODO
+        executeUpdate(statement);
     }
 
     boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
@@ -73,5 +51,23 @@ public class MySqlUserDAO implements UserDAO {
     private String readHashedPasswordFromDatabase(String username) throws DataAccessException {
         String password = getUser(username).password();
         return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    private void executeUpdate(String statement, Object... params) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                for (var i = 0; i < params.length; i++) {
+                    var param = params[i];
+                    if (param instanceof String p) ps.setString(i + 1, p);
+                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
+                    else if (param instanceof ChessGame p) ps.setString(i + 1, p.toString());
+                    else if (param == null) ps.setNull(i + 1, NULL);
+                }
+                ps.executeUpdate();
+
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
     }
 }
