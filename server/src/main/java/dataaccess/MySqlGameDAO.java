@@ -21,6 +21,7 @@ public class MySqlGameDAO implements GameDAO {
               `blackUsername` varchar(256) NOT NULL,
               `gameName` varchar(256) NOT NULL,
               `game` varchar(256) NOT NULL,
+              `json` TEXT DEFAULT NULL,
               PRIMARY KEY (`id`)
             )
             """
@@ -31,8 +32,9 @@ public class MySqlGameDAO implements GameDAO {
     public void createGame(String gameName) throws DataAccessException {
         int gameID = newGameID();
         GameData game = new GameData(gameID, "", "", gameName, new ChessGame());
-        String statement = "INSERT INTO game (id, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?)";
-        DatabaseManager.executeUpdate(statement, game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
+        String statement = "INSERT INTO game (id, whiteUsername, blackUsername, gameName, game, json) VALUES (?, ?, ?, ?, ?, ?)";
+        var json = new Gson().toJson(game.game());
+        DatabaseManager.executeUpdate(statement, game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName(), game.game(), json);
     }
 
     public GameData getGame(int gameID) throws DataAccessException {
@@ -41,7 +43,7 @@ public class MySqlGameDAO implements GameDAO {
         String blackUsername = null;
         String gameName = null;
         ChessGame game = null;
-        String json;
+        String json = null;
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
@@ -50,14 +52,14 @@ public class MySqlGameDAO implements GameDAO {
                         whiteUsername = rs.getString("whiteUsername");
                         blackUsername = rs.getString("blackUsername");
                         gameName = rs.getString("gameName");
-                        json = rs.getString("game");
-                        game = new Gson().fromJson(json, ChessGame.class);
+                        json = rs.getString("json");
                     }
                 }
             }
         } catch (SQLException | DataAccessException ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
+        game = new Gson().fromJson(json, ChessGame.class);
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 
@@ -88,7 +90,7 @@ public class MySqlGameDAO implements GameDAO {
                         whiteUsername = rs.getString("whiteUsername");
                         blackUsername = rs.getString("blackUsername");
                         gameName = rs.getString("gameName");
-                        json = rs.getString("game");
+                        json = rs.getString("json");
                         game = new Gson().fromJson(json, ChessGame.class);
                         result.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
                     }
