@@ -51,8 +51,12 @@ public class MySqlUserDAO implements UserDAO {
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
-        if (verifyUser(password)) {
-            theUser = new UserData(theUsername, password, theEmail);
+        if (thePassword != null) {
+            if (verifyUser(password)) {
+                if (BCrypt.checkpw(password, thePassword)) {
+                    theUser = new UserData(theUsername, password, theEmail);
+                }
+            }
         }
         return theUser;
     }
