@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RegisterServiceTest {
-    UserDAO user = new MemoryUserDAO();
-    AuthDAO auth = new MemoryAuthDAO();
+    UserDAO user = new MySqlUserDAO();
+    AuthDAO auth = new MySqlAuthDAO();
     RegisterService registerService;
     RegisterRequest request;
     RegisterResult result;

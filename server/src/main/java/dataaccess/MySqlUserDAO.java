@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class MySqlUserDAO implements UserDAO {
 
-    public MySqlUserDAO() throws SQLException, DataAccessException {
+    public MySqlUserDAO() {
         String[] createStatements = {
                 """
             CREATE TABLE IF NOT EXISTS  user (
@@ -18,7 +18,11 @@ public class MySqlUserDAO implements UserDAO {
             )
             """
         };
-        DatabaseManager.configureDatabase(createStatements);
+        try {
+            DatabaseManager.configureDatabase(createStatements);
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createUser(UserData user) throws DataAccessException {

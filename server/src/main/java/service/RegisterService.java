@@ -1,16 +1,14 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.RegisterRequest;
 import model.RegisterResult;
 import model.UserData;
 
 public class RegisterService {
-    private final UserDAO userDataAccess;
-    private final AuthDAO authDataAccess;
+    private UserDAO userDataAccess = new MySqlUserDAO();
+    private AuthDAO authDataAccess = new MySqlAuthDAO();
 
     public RegisterService(UserDAO userDataAccess, AuthDAO authDataAccess) {
         this.userDataAccess = userDataAccess;

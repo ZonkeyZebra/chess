@@ -1,9 +1,7 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.JoinGameRequest;
@@ -13,8 +11,8 @@ import java.util.Objects;
 public class JoinGameService {
     private ChessGame.TeamColor playerColor;
     private int gameID;
-    private final GameDAO gameDataAccess;
-    private final AuthDAO authDataAccess;
+    private GameDAO gameDataAccess = new MemoryGameDAO();
+    private AuthDAO authDataAccess = new MySqlAuthDAO();
     private GameData game;
 
     public JoinGameService(ChessGame.TeamColor playerColor, int gameID, GameDAO gameDataAccess, AuthDAO authDataAccess) {

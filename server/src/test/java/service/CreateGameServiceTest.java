@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CreateGameServiceTest {
-    AuthDAO auths = new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
+    AuthDAO auths = new MySqlAuthDAO();
+    GameDAO games = new MySqlGameDAO();
     CreateGameService createGameService = new CreateGameService(games, auths);
     CreateGameRequest request;
     CreateGameResult result;

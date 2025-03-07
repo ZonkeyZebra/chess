@@ -14,8 +14,8 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LoginServiceTest {
-    AuthDAO auths = new MemoryAuthDAO();
-    UserDAO users = new MemoryUserDAO();
+    AuthDAO auths = new MySqlAuthDAO();
+    UserDAO users = new MySqlUserDAO();
     LoginService loginService = new LoginService(users, auths);
     LoginRequest request;
     LoginResult result;

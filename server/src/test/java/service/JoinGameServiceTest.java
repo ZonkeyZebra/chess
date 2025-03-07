@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class JoinGameServiceTest {
-    AuthDAO auths = new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
+    AuthDAO auths = new MySqlAuthDAO();
+    GameDAO games = new MySqlGameDAO();
     JoinGameService joinGameService = new JoinGameService(ChessGame.TeamColor.BLACK, 1, games, auths);
     JoinGameRequest request;
     AuthData authData;

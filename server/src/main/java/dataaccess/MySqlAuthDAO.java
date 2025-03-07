@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class MySqlAuthDAO implements AuthDAO{
 
-    public MySqlAuthDAO() throws SQLException, DataAccessException {
+    public MySqlAuthDAO() {
         String[] createStatements = {
                 """
             CREATE TABLE IF NOT EXISTS  auth (
@@ -16,7 +16,11 @@ public class MySqlAuthDAO implements AuthDAO{
             )
             """
         };
-        DatabaseManager.configureDatabase(createStatements);
+        try {
+            DatabaseManager.configureDatabase(createStatements);
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String createAuth() {

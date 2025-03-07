@@ -1,16 +1,14 @@
 package service;
 
-import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
+import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 
 import java.util.Collection;
 
 public class ListGamesService {
-    private final GameDAO gameDataAccess;
-    private final AuthDAO authDataAccess;
+    private GameDAO gameDataAccess = new MySqlGameDAO();
+    private AuthDAO authDataAccess = new MySqlAuthDAO();
 
     public ListGamesService(GameDAO gameDataAccess, AuthDAO authDataAccess) {
         this.gameDataAccess = gameDataAccess;

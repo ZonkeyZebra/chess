@@ -10,9 +10,9 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClearServiceTest {
-    AuthDAO auths = new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
-    UserDAO users = new MemoryUserDAO();
+    AuthDAO auths = new MySqlAuthDAO();
+    GameDAO games = new MySqlGameDAO();
+    UserDAO users = new MySqlUserDAO();
     ClearService clearService = new ClearService(auths, games, users);
 
     @BeforeEach

@@ -3,6 +3,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryAuthDAO;
+import dataaccess.MySqlAuthDAO;
 import model.AuthData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class LogoutServiceTest {
-    AuthDAO auths = new MemoryAuthDAO();
+    AuthDAO auths = new MySqlAuthDAO();
     LogoutService logoutService = new LogoutService(auths);
 
     @Test

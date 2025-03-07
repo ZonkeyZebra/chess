@@ -12,7 +12,7 @@ import java.util.Objects;
 public class MySqlGameDAO implements GameDAO {
     private int id = 1;
 
-    public MySqlGameDAO() throws SQLException, DataAccessException {
+    public MySqlGameDAO() {
         String[] createStatements = {
                 """
             CREATE TABLE IF NOT EXISTS  game (
@@ -26,7 +26,11 @@ public class MySqlGameDAO implements GameDAO {
             )
             """
         };
-        DatabaseManager.configureDatabase(createStatements);
+        try {
+            DatabaseManager.configureDatabase(createStatements);
+        } catch (DataAccessException | SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void createGame(String gameName) throws DataAccessException {

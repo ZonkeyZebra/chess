@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Server {
-    private final UserDAO user = new MemoryUserDAO();
-    private final AuthDAO auth = new MemoryAuthDAO();
-    private final GameDAO game = new MemoryGameDAO();
+    private final UserDAO user = new MySqlUserDAO();
+    private final AuthDAO auth = new MySqlAuthDAO();
+    private final GameDAO game = new MySqlGameDAO();
     private final RegisterService registerService = new RegisterService(user, auth);
     private final ClearService clearService = new ClearService(auth, game, user);
     private final LoginService loginService = new LoginService(user, auth);

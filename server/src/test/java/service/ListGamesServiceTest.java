@@ -13,8 +13,8 @@ import java.util.Collection;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ListGamesServiceTest {
-    AuthDAO auths = new MemoryAuthDAO();
-    GameDAO games = new MemoryGameDAO();
+    AuthDAO auths = new MySqlAuthDAO();
+    GameDAO games = new MySqlGameDAO();
     ListGamesService listGamesService = new ListGamesService(games, auths);
     Collection<GameData> result;
     AuthData authData;

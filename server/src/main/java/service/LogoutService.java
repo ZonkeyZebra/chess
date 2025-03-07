@@ -1,10 +1,11 @@
 package service;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import dataaccess.MySqlAuthDAO;
 import model.AuthData;
 
 public class LogoutService {
-    private final AuthDAO auths;
+    private AuthDAO auths = new MySqlAuthDAO();
 
     public LogoutService(AuthDAO auths) {
         this.auths = auths;
