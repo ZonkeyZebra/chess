@@ -45,7 +45,7 @@ public class JoinGameService {
         username = authData.username();
         if (gameExists(gameID)) {
             if (playerColor == ChessGame.TeamColor.BLACK) {
-                if (game.blackUsername() == null) {
+                if (game.blackUsername().isEmpty()) {
                     if (Objects.equals(authToken, userAuth)) {
                         gameDataAccess.updateGame(new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
                     }
@@ -53,7 +53,7 @@ public class JoinGameService {
                     throw new DataAccessException("Error: already taken");
                 }
             } else if (playerColor == ChessGame.TeamColor.WHITE) {
-                if (game.whiteUsername() == null) {
+                if (game.whiteUsername().isEmpty()) {
                     if (Objects.equals(authToken, userAuth)) {
                         gameDataAccess.updateGame(new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
                     }
