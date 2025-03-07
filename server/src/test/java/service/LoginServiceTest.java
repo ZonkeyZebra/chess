@@ -55,12 +55,12 @@ class LoginServiceTest {
     }
 
     @Test
-    void getAuth() {
+    void getAuth() throws DataAccessException {
         Assertions.assertEquals(loginService.getAuth("token"), authData);
     }
 
     @Test
-    void getAuthFail() {
+    void getAuthFail() throws DataAccessException {
         Assertions.assertNotEquals(loginService.getAuth("tken"), authData);
     }
 }

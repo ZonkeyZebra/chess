@@ -36,7 +36,7 @@ public class LoginService {
         return userDataAccess.getUser(username, password);
     }
 
-    public AuthData getAuth(String authToken) {
+    public AuthData getAuth(String authToken) throws DataAccessException {
         return authDataAccess.getAuth(authToken);
     }
 

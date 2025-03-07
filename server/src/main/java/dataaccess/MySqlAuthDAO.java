@@ -2,31 +2,57 @@ package dataaccess;
 
 import model.AuthData;
 
+import java.sql.SQLException;
+
 public class MySqlAuthDAO implements AuthDAO{
-    @Override
+
+    public MySqlAuthDAO() throws SQLException, DataAccessException {
+        String[] createStatements = {
+                """
+            CREATE TABLE IF NOT EXISTS  auth (
+              `authToken` varchar(256) NOT NULL,
+              `username` varchar(256) NOT NULL,
+              PRIMARY KEY (`authToken`)
+            )
+            """
+        };
+        DatabaseManager.configureDatabase(createStatements);
+    }
+
     public String createAuth() {
-        //TODO
-        return "";
+        return AuthData.generateToken();
     }
 
-    @Override
-    public AuthData getAuth(String authToken) {
-        //TODO
-        return null;
+    public AuthData getAuth(String authToken) throws DataAccessException {
+        String statement = "SELECT * FROM auth WHERE authToken=?";
+        String username = null;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        username = rs.getString("username");
+                    }
+                }
+            }
+        } catch (SQLException | DataAccessException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+        return new AuthData(authToken, username);
     }
 
-    @Override
-    public void deleteAuth(String authToken) {
-        //TODO
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var statement = "DELETE FROM auth WHERE authToken=?";
+        DatabaseManager.executeUpdate(statement, authToken);
     }
 
-    @Override
-    public void setAuthData(AuthData authData) {
-        //TODO
+    public void setAuthData(AuthData authData) throws DataAccessException {
+        String statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        DatabaseManager.executeUpdate(statement, authData.authToken(), authData.username());
     }
 
-    @Override
-    public void deleteAllAuths() {
-        //TODO
+    public void deleteAllAuths() throws DataAccessException {
+        String statement = "TRUNCATE auth";
+        DatabaseManager.executeUpdate(statement);
     }
 }

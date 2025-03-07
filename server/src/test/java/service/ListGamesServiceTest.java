@@ -30,7 +30,7 @@ class ListGamesServiceTest {
     }
 
     @Test
-    void getGamesFail() {
+    void getGamesFail() throws DataAccessException {
         auths.setAuthData(new AuthData(null, "username"));
         authData = auths.getAuth(null);
         Assertions.assertNull(authData.authToken());

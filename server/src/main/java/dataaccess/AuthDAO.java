@@ -7,9 +7,9 @@ public interface AuthDAO {
     /// create new authorization
     public String createAuth();
     /// retrieve an authorization given an authToken
-    public AuthData getAuth(String authToken);
+    public AuthData getAuth(String authToken) throws DataAccessException;
     /// delete authorization so it's no longer valid
-    public void deleteAuth(String authToken);
-    public void setAuthData(AuthData authData);
-    public void deleteAllAuths();
+    public void deleteAuth(String authToken) throws DataAccessException;
+    public void setAuthData(AuthData authData) throws DataAccessException;
+    public void deleteAllAuths() throws DataAccessException;
 }
