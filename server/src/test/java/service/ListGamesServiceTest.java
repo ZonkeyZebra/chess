@@ -5,6 +5,7 @@ import model.AuthData;
 import model.GameData;
 import model.ListGamesResult;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.AssertionFailedError;
 
@@ -19,6 +20,12 @@ class ListGamesServiceTest {
     Collection<GameData> result;
     AuthData authData;
 
+    @BeforeEach
+    void setup() throws DataAccessException {
+        auths.deleteAllAuths();
+        games.deleteGame();
+    }
+
     @Test
     void getGames() throws DataAccessException {
         auths.setAuthData(new AuthData("authToken", "username"));
@@ -31,8 +38,6 @@ class ListGamesServiceTest {
 
     @Test
     void getGamesFail() throws DataAccessException {
-        auths.setAuthData(new AuthData(null, "username"));
-        authData = auths.getAuth(null);
-        Assertions.assertNull(authData.authToken());
+        Assertions.assertThrows(DataAccessException.class, () -> listGamesService.getGames(null));
     }
 }

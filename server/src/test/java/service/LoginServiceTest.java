@@ -24,6 +24,8 @@ class LoginServiceTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
+        auths.deleteAllAuths();
+        users.deleteUser();
         authData = new AuthData("token", "name");
         auths.setAuthData(authData);
         userData = new UserData("name", "pass", "mial@mail");
@@ -41,7 +43,7 @@ class LoginServiceTest {
     @Test
     void loginFail() throws DataAccessException {
         LoginRequest badRequest = new LoginRequest("name", "pss");
-        Assertions.assertNotEquals(loginService.getUser(badRequest.username(), badRequest.password()).password(), badRequest.password());
+        Assertions.assertThrows(RuntimeException.class, () -> loginService.getUser(badRequest.username(), badRequest.password()).password());
     }
 
     @Test

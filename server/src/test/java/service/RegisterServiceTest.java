@@ -16,10 +16,11 @@ class RegisterServiceTest {
     RegisterService registerService;
     RegisterRequest request;
     RegisterResult result;
-    String authToken;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws DataAccessException {
+        user.deleteUser();
+        auth.deleteAllAuths();
         registerService = new RegisterService(user, auth);
     }
 

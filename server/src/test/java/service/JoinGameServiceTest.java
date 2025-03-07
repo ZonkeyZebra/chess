@@ -6,6 +6,7 @@ import model.AuthData;
 import model.GameData;
 import model.JoinGameRequest;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,6 +17,12 @@ class JoinGameServiceTest {
     JoinGameService joinGameService = new JoinGameService(ChessGame.TeamColor.BLACK, 1, games, auths);
     JoinGameRequest request;
     AuthData authData;
+
+    @BeforeEach
+    void setup() throws DataAccessException {
+        auths.deleteAllAuths();
+        games.deleteGame();
+    }
 
     @Test
     void joinGame() throws DataAccessException {
@@ -30,9 +37,10 @@ class JoinGameServiceTest {
 
     @Test
     void joinGameFail() throws DataAccessException {
-        auths.setAuthData(new AuthData(null, "username"));
-        authData = auths.getAuth(null);
-        Assertions.assertNull(authData.authToken());
+        auths.setAuthData(new AuthData("", "username"));
+        games.createGame("awesome");
+        request = new JoinGameRequest(ChessGame.TeamColor.BLACK, 1);
+        Assertions.assertThrows(RuntimeException.class, () -> joinGameService.joinGame(request, authData.authToken()));
     }
 
     @Test
@@ -47,6 +55,6 @@ class JoinGameServiceTest {
     void gameExistsFail() throws DataAccessException {
         games.createGame("awesome");
         GameData game = games.getGameFromName("awesome");
-        assertNull(games.getGame(3));
+        assertNull(games.getGame(3).gameName());
     }
 }

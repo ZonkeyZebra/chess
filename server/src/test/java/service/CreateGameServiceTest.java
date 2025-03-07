@@ -18,6 +18,12 @@ class CreateGameServiceTest {
     CreateGameResult result;
     AuthData authData;
 
+    @BeforeEach
+    void setup() throws DataAccessException {
+        auths.deleteAllAuths();
+        games.deleteGame();
+    }
+
     @Test
     void createGame() throws DataAccessException {
         auths.setAuthData(new AuthData("authToken", "username"));
@@ -30,11 +36,9 @@ class CreateGameServiceTest {
 
     @Test
     void createGameFail() throws DataAccessException {
-        auths.setAuthData(new AuthData(null, "username"));
+        auths.setAuthData(new AuthData("", "username"));
         authData = auths.getAuth(null);
         request = new CreateGameRequest("awesome");
-        result = createGameService.createGame(request, null);
-        System.out.println(result);
-        Assertions.assertNull(authData.authToken());
+        Assertions.assertThrows(DataAccessException.class, () -> createGameService.createGame(request, null));
     }
 }

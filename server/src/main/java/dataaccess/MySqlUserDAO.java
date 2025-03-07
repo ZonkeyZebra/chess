@@ -4,6 +4,7 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
+import java.util.Objects;
 
 public class MySqlUserDAO implements UserDAO {
 
@@ -50,6 +51,15 @@ public class MySqlUserDAO implements UserDAO {
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+        if (Objects.equals(theUsername, "")) {
+            theUsername = null;
+        }
+        if (Objects.equals(thePassword, "")) {
+            thePassword = null;
+        }
+        if (Objects.equals(theEmail, "")) {
+            theEmail = null;
         }
         if (thePassword != null) {
             if (verifyUser(password)) {

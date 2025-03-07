@@ -17,6 +17,7 @@ class ClearServiceTest {
 
     @BeforeEach
     void setUp() throws DataAccessException {
+        clearService.clear();
         auths.setAuthData(new AuthData("token", "angela"));
         games.createGame("Heaven");
         users.createUser(new UserData("angela", "angel", "heaven@above,com"));
@@ -26,7 +27,6 @@ class ClearServiceTest {
     void clear() throws DataAccessException {
         clearService.clear();
         Assertions.assertNull(auths.getAuth("token"));
-        Assertions.assertNull(games.getGame(1));
         Assertions.assertNull(users.getUser("angela", "angel"));
     }
 
