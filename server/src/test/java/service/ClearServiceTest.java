@@ -27,13 +27,13 @@ class ClearServiceTest {
         clearService.clear();
         Assertions.assertNull(auths.getAuth("token"));
         Assertions.assertNull(games.getGame(1));
-        Assertions.assertNull(users.getUser("angela"));
+        Assertions.assertNull(users.getUser("angela", "angel"));
     }
 
     @Test
     void clearFail() throws DataAccessException {
         Assertions.assertNotNull(auths.getAuth("token"));
         Assertions.assertNotNull(games.getGame(1));
-        Assertions.assertNotNull(users.getUser("angela"));
+        Assertions.assertNotNull(users.getUser("angela", "angel"));
     }
 }

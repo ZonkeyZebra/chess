@@ -21,10 +21,10 @@ public class LoginService {
 
     public LoginResult login(LoginRequest request) throws DataAccessException {
         String username = request.username();
-        if (getUser(request.username()) == null) {
+        if (getUser(request.username(), request.password()) == null) {
             throw new DataAccessException("Error: unauthorized");
         }
-        if (!Objects.equals(getUser(request.username()).password(), request.password())) {
+        if (!Objects.equals(getUser(request.username(), request.password()).password(), request.password())) {
             throw new DataAccessException("Error: unauthorized");
         }
         String authToken = authDataAccess.createAuth();
@@ -32,8 +32,8 @@ public class LoginService {
         return new LoginResult(username, authToken);
     }
 
-    public UserData getUser(String username) throws DataAccessException {
-        return userDataAccess.getUser(username);
+    public UserData getUser(String username, String password) throws DataAccessException {
+        return userDataAccess.getUser(username, password);
     }
 
     public AuthData getAuth(String authToken) {

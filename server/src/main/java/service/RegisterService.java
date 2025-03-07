@@ -25,7 +25,7 @@ public class RegisterService {
             throw new DataAccessException("Error: bad request");
         }
         UserData user = new UserData(username, password, email);
-        if (user.equals(getUser(username))) {
+        if (user.equals(getUser(username, password))) {
             throw new DataAccessException("Error: already taken");
         }
         createUser(user);
@@ -34,8 +34,8 @@ public class RegisterService {
         return new RegisterResult(username, authToken);
     }
 
-    public UserData getUser(String username) throws DataAccessException {
-        return userDataAccess.getUser(username);
+    public UserData getUser(String username, String password) throws DataAccessException {
+        return userDataAccess.getUser(username, password);
     }
 
     public void createUser(UserData user) throws DataAccessException {

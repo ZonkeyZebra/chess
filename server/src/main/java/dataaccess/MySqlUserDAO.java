@@ -30,10 +30,30 @@ public class MySqlUserDAO implements UserDAO {
         DatabaseManager.executeUpdate(statement, user.username(), hashedPassword, user.email());
     }
 
-    public UserData getUser(String username) throws DataAccessException {
-        String statement = "SELECT username, json FROM user WHERE username=?";
-        //TODO
-        return null;
+    public UserData getUser(String username, String password) throws DataAccessException {
+        String statement = "SELECT * FROM user WHERE username=?";
+        UserData theUser = null;
+        String theUsername = null;
+        String thePassword = null;
+        String theEmail = null;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        theUsername = rs.getString("username");
+                        thePassword = rs.getString("password");
+                        theEmail = rs.getString("email");
+                    }
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+        if (verifyUser(username, password)) {
+            theUser = new UserData(theUsername, password, theEmail);
+        }
+        return theUser;
     }
 
     public void deleteUser() throws DataAccessException {
@@ -43,13 +63,13 @@ public class MySqlUserDAO implements UserDAO {
 
     boolean verifyUser(String username, String providedClearTextPassword) throws DataAccessException {
         // read the previously hashed password from the database
-        String hashedPassword = readHashedPasswordFromDatabase(username);
+        String hashedPassword = readHashedPasswordFromDatabase(username, providedClearTextPassword);
 
         return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
     }
 
-    private String readHashedPasswordFromDatabase(String username) throws DataAccessException {
-        String password = getUser(username).password();
-        return BCrypt.hashpw(password, BCrypt.gensalt());
+    private String readHashedPasswordFromDatabase(String username, String password) throws DataAccessException {
+        String thePassword = getUser(username, password).password();
+        return BCrypt.hashpw(thePassword, BCrypt.gensalt());
     }
 }

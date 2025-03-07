@@ -41,7 +41,7 @@ class RegisterServiceTest {
     void getUser() throws DataAccessException {
         UserData userData = new UserData("angela", "angel", "heaven@above.com");
         registerService.createUser(userData);
-        UserData actual = registerService.getUser("angela");
+        UserData actual = registerService.getUser("angela", "angel");
         Assertions.assertEquals(userData, actual);
     }
 
@@ -49,7 +49,7 @@ class RegisterServiceTest {
     void getUserFail() throws DataAccessException {
         UserData userData = new UserData("angela", "angel", "heaven@above.com");
         registerService.createUser(userData);
-        UserData actual = registerService.getUser("angel");
+        UserData actual = registerService.getUser("angel", "angel");
         Assertions.assertNotEquals(userData, actual);
     }
 
@@ -57,12 +57,12 @@ class RegisterServiceTest {
     void createUser() throws DataAccessException {
         UserData userData = new UserData("angela", "angel", "heaven@above.com");
         registerService.createUser(userData);
-        Assertions.assertNotNull(registerService.getUser(userData.username()));
+        Assertions.assertNotNull(registerService.getUser(userData.username(), userData.password()));
     }
 
     @Test
     void createUserFail() throws DataAccessException {
         UserData userData = new UserData("angela", "angel", null);
-        Assertions.assertNull(registerService.getUser(userData.username()));
+        Assertions.assertNull(registerService.getUser(userData.username(), userData.password()));
     }
 }

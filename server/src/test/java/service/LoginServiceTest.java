@@ -41,17 +41,17 @@ class LoginServiceTest {
     @Test
     void loginFail() throws DataAccessException {
         LoginRequest badRequest = new LoginRequest("name", "pss");
-        Assertions.assertNotEquals(loginService.getUser(badRequest.username()).password(), badRequest.password());
+        Assertions.assertNotEquals(loginService.getUser(badRequest.username(), badRequest.password()).password(), badRequest.password());
     }
 
     @Test
     void getUser() throws DataAccessException {
-        Assertions.assertEquals(loginService.getUser(request.username()).username(), request.username());
+        Assertions.assertEquals(loginService.getUser(request.username(), request.password()).username(), request.username());
     }
 
     @Test
     void getUserFail() throws DataAccessException {
-        Assertions.assertNotEquals(loginService.getUser(request.username()).password(), request.username());
+        Assertions.assertNotEquals(loginService.getUser(request.username(), request.password()).password(), request.username());
     }
 
     @Test
