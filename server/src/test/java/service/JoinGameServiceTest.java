@@ -36,7 +36,7 @@ class JoinGameServiceTest {
     }
 
     @Test
-    void gameExists() {
+    void gameExists() throws DataAccessException {
         games.createGame("awesome");
         GameData game = games.getGameFromName("awesome");
         boolean exists = joinGameService.gameExists(game.gameID());
@@ -44,7 +44,7 @@ class JoinGameServiceTest {
     }
 
     @Test
-    void gameExistsFail() {
+    void gameExistsFail() throws DataAccessException {
         games.createGame("awesome");
         GameData game = games.getGameFromName("awesome");
         assertNull(games.getGame(3));

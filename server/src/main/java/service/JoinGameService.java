@@ -66,7 +66,7 @@ public class JoinGameService {
         }
     }
 
-    public boolean gameExists(int gameID) {
+    public boolean gameExists(int gameID) throws DataAccessException {
         game = gameDataAccess.getGame(gameID);
         return game.gameID() == gameID;
     }
