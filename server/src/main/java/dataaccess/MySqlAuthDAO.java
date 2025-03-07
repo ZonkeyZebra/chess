@@ -42,6 +42,9 @@ public class MySqlAuthDAO implements AuthDAO{
         } catch (SQLException | DataAccessException ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
+        if (username == null) {
+            return null;
+        }
         return new AuthData(authToken, username);
     }
 
