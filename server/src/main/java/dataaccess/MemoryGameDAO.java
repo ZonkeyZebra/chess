@@ -8,6 +8,7 @@ import java.util.*;
 public class MemoryGameDAO implements GameDAO {
     private Map<Integer, GameData> games;
     private int id = 1;
+    GameDataAccessShared shared = new GameDataAccessShared();
 
     public MemoryGameDAO() {
         games = new HashMap<Integer, GameData>();
@@ -24,12 +25,7 @@ public class MemoryGameDAO implements GameDAO {
 
     public GameData getGameFromName(String gameName) {
         Collection<GameData> gameList = listGames();
-        for (GameData game : gameList) {
-            if (Objects.equals(game.gameName(), gameName)) {
-                return game;
-            }
-        }
-        return null;
+        return shared.gameFromName(gameName, gameList);
     }
 
     public void updateGame(GameData game) {

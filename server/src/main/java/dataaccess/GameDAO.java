@@ -3,6 +3,7 @@ package dataaccess;
 import model.GameData;
 
 import java.util.Collection;
+import java.util.Objects;
 
 public interface GameDAO {
     /// creates a new game
@@ -16,4 +17,15 @@ public interface GameDAO {
     public void updateGame(GameData game) throws DataAccessException;
     /// deletes game
     public void deleteGame() throws DataAccessException;
+}
+
+class GameDataAccessShared {
+    public GameData gameFromName(String gameName, Collection<GameData> gameList) {
+        for (GameData game : gameList) {
+            if (Objects.equals(game.gameName(), gameName)) {
+                return game;
+            }
+        }
+        return null;
+    }
 }

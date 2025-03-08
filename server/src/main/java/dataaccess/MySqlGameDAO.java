@@ -2,15 +2,25 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import com.google.gson.JsonStreamParser;
 import model.GameData;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
 public class MySqlGameDAO implements GameDAO {
+    GameDataAccessShared shared = new GameDataAccessShared();
     private int id = 1;
+    int gameID = 0;
+    String whiteUsername = null;
+    String blackUsername = null;
+    String gameName = null;
+    ChessGame game = null;
+    String json = null;
+    ArrayList<GameData> result = new ArrayList<GameData>();
 
     public MySqlGameDAO() {
         String[] createStatements = {
@@ -42,22 +52,13 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     public GameData getGame(int gameID) throws DataAccessException {
+        resetValues();
         String statement = "SELECT * FROM game WHERE id=?";
-        String whiteUsername = null;
-        String blackUsername = null;
-        String gameName = null;
-        ChessGame game = null;
-        String json = null;
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
                 ps.setInt(1, gameID);
                 try (var rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        whiteUsername = rs.getString("whiteUsername");
-                        blackUsername = rs.getString("blackUsername");
-                        gameName = rs.getString("gameName");
-                        json = rs.getString("json");
-                    }
+                    readGetGame(rs);
                 }
             }
         } catch (SQLException | DataAccessException ex) {
@@ -69,41 +70,17 @@ public class MySqlGameDAO implements GameDAO {
 
     public GameData getGameFromName(String gameName) throws DataAccessException {
         Collection<GameData> gameList = listGames();
-        for (GameData game : gameList) {
-            if (Objects.equals(game.gameName(), gameName)) {
-                return game;
-            }
-        }
-        return null;
+        return shared.gameFromName(gameName, gameList);
     }
 
     public Collection<GameData> listGames() throws DataAccessException {
-        var result = new ArrayList<GameData>();
+        resetValues();
+        result = new ArrayList<GameData>();
         String statement = "SELECT * FROM game";
-        int gameID = 0;
-        String whiteUsername = null;
-        String blackUsername = null;
-        String gameName = null;
-        ChessGame game = null;
-        String json;
         try (var conn = DatabaseManager.getConnection()) {
             try (var ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
-                    while (rs.next()) {
-                        gameID = rs.getInt("id");
-                        whiteUsername = rs.getString("whiteUsername");
-                        blackUsername = rs.getString("blackUsername");
-                        gameName = rs.getString("gameName");
-                        json = rs.getString("json");
-                        game = new Gson().fromJson(json, ChessGame.class);
-                        if (Objects.equals(blackUsername, "")) {
-                            blackUsername = null;
-                        }
-                        if (Objects.equals(whiteUsername, "")) {
-                            whiteUsername = null;
-                        }
-                        result.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
-                    }
+                    readGameList(rs);
                 }
             }
         } catch (SQLException | DataAccessException ex) {
@@ -125,5 +102,41 @@ public class MySqlGameDAO implements GameDAO {
 
     private int newGameID() {
         return id++;
+    }
+
+    private void readGetGame(ResultSet rs) throws SQLException {
+        while (rs.next()) {
+            whiteUsername = rs.getString("whiteUsername");
+            blackUsername = rs.getString("blackUsername");
+            gameName = rs.getString("gameName");
+            json = rs.getString("json");
+        }
+    }
+
+    private void readGameList(ResultSet rs) throws SQLException {
+        while (rs.next()) {
+            gameID = rs.getInt("id");
+            whiteUsername = rs.getString("whiteUsername");
+            blackUsername = rs.getString("blackUsername");
+            gameName = rs.getString("gameName");
+            json = rs.getString("json");
+            game = new Gson().fromJson(json, ChessGame.class);
+            if (Objects.equals(blackUsername, "")) {
+                blackUsername = null;
+            }
+            if (Objects.equals(whiteUsername, "")) {
+                whiteUsername = null;
+            }
+            result.add(new GameData(gameID, whiteUsername, blackUsername, gameName, game));
+        }
+    }
+
+    private void resetValues() {
+        gameID = 0;
+        whiteUsername = null;
+        blackUsername = null;
+        gameName = null;
+        game = null;
+        json = null;
     }
 }
