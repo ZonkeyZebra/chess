@@ -92,15 +92,23 @@ public class DatabaseManager {
             try (var ps = conn.prepareStatement(statement)) {
                 for (var i = 0; i < params.length; i++) {
                     var param = params[i];
-                    if (param instanceof String p) ps.setString(i + 1, p);
-                    else if (param instanceof Integer p) ps.setInt(i + 1, p);
-                    else if (param instanceof ChessGame p) ps.setString(i + 1, p.toString());
-                    else if (param == null) ps.setNull(i + 1, NULL);
+                    executeHelper(param, ps, i);
                 }
                 ps.executeUpdate();
             }
         } catch (SQLException ex) {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
+        }
+    }
+
+    private static void executeHelper(Object param, PreparedStatement ps, int i) throws SQLException {
+        switch (param) {
+            case String p -> ps.setString(i + 1, p);
+            case Integer p -> ps.setInt(i + 1, p);
+            case ChessGame p -> ps.setString(i + 1, p.toString());
+            case null -> ps.setNull(i + 1, NULL);
+            default -> {
+            }
         }
     }
 }
