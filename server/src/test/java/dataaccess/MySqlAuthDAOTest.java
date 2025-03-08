@@ -24,6 +24,13 @@ class MySqlAuthDAOTest {
 
     @Test
     void createAuth() {
+        Assertions.assertNotNull(auth.createAuth());
+    }
+
+    @Test
+    void createAuthFail() throws DataAccessException {
+        auth.deleteAllAuths();
+        Assertions.assertThrows(RuntimeException.class, () -> auth.setAuthData(null));
     }
 
     @Test
@@ -33,9 +40,21 @@ class MySqlAuthDAOTest {
     }
 
     @Test
+    void getAuthFail() throws DataAccessException {
+        System.out.println(auth.getAuth(authData2.authToken()));
+        Assertions.assertNull(auth.getAuth(authData2.authToken()));
+    }
+
+    @Test
     void deleteAuth() throws DataAccessException {
         auth.deleteAuth(authData1.authToken());
-        Assertions.assertNotNull(auth.getAuth(authData2.authToken()));
+        Assertions.assertNull(auth.getAuth(authData1.authToken()));
+    }
+
+    @Test
+    void deleteAuthFail() throws DataAccessException {
+        auth.deleteAuth("random");
+        Assertions.assertNotNull(auth.getAuth(authData1.authToken()));
     }
 
     @Test
@@ -45,7 +64,18 @@ class MySqlAuthDAOTest {
     }
 
     @Test
+    void setAuthDataFail() {
+        Assertions.assertThrows(RuntimeException.class, () -> auth.setAuthData(null));
+    }
+
+    @Test
     void deleteAllAuths() throws DataAccessException {
         auth.deleteAllAuths();
+        Assertions.assertNull(auth.getAuth("token"));
+    }
+
+    @Test
+    void deleteAllAuthsFail() throws DataAccessException {
+        Assertions.assertNotNull(auth.getAuth(authData1.authToken()));
     }
 }

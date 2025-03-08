@@ -30,19 +30,31 @@ class MySqlUserDAOTest {
     }
 
     @Test
+    void createUserFail() throws DataAccessException {
+        Assertions.assertNull(user.getUser(userData2.username(), userData2.password()));
+    }
+
+    @Test
     void getUser() throws DataAccessException {
         var result = user.getUser(userData1.username(), userData1.password());
         System.out.println(result);
         Assertions.assertEquals(userData1, result);
     }
 
-
     @Test
-    void verifyUser() {
+    void getUserFail() throws DataAccessException {
+        Assertions.assertNull(user.getUser(null, null));
     }
 
     @Test
     void deleteUser() throws DataAccessException {
         user.deleteUser();
+        var result = user.getUser(userData1.username(), userData1.password());
+        Assertions.assertNull(result);
+    }
+
+    @Test
+    void deleteUserFail() throws DataAccessException {
+        Assertions.assertNull(user.getUser(null, null));
     }
 }

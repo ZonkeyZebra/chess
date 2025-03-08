@@ -76,7 +76,7 @@ public class MySqlUserDAO implements UserDAO {
         DatabaseManager.executeUpdate(statement);
     }
 
-    boolean verifyUser(String providedClearTextPassword) throws DataAccessException {
+    private boolean verifyUser(String providedClearTextPassword) throws DataAccessException {
         // read the previously hashed password from the database
         String hashedPassword = BCrypt.hashpw(providedClearTextPassword, BCrypt.gensalt());
 
