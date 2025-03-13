@@ -7,7 +7,6 @@ import java.util.Arrays;
 public class PreLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
-    private boolean signedIn = false;
 
     public PreLoginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -28,7 +27,6 @@ public class PreLoginClient {
 
     public String login(String[] params) throws DataAccessException {
         if (params.length >= 1) {
-            signedIn = true;
             String username = params[0];
             return String.format("Signed in as %s", username);
         }
@@ -37,7 +35,6 @@ public class PreLoginClient {
 
     public String register(String[] params) throws DataAccessException {
         if (params.length >= 2) {
-            signedIn = true;
             String username = params[0];
             return String.format("Registered as %s", username);
         }
@@ -50,9 +47,5 @@ public class PreLoginClient {
                 - register <username> <password> <email>
                 - quit
                 """;
-    }
-
-    public boolean checkSignedIn() {
-        return signedIn;
     }
 }

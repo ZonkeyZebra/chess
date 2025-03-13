@@ -2,10 +2,7 @@ package ui;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import model.LoginRequest;
-import model.LoginResult;
-import model.RegisterRequest;
-import model.RegisterResult;
+import model.*;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +35,32 @@ public class ServerFacade {
     public LoginResult login(LoginRequest request) throws DataAccessException {
         String path = "/session";
         return this.makeRequest("POST", path, request, LoginResult.class);
+    }
+
+    public void logout() throws DataAccessException {
+        String path = "/session";
+        // logout uses authToken
+        this.makeRequest("DELETE", path, null, null);
+    }
+
+    public void clear() throws DataAccessException {
+        String path = "/db";
+        this.makeRequest("DELETE", path, null, null);
+    }
+
+    public void joinGame(JoinGameRequest request) throws DataAccessException {
+        String path = "/game";
+        this.makeRequest("PUT", path, request, null);
+    }
+
+    public ListGamesResult listGames() throws DataAccessException {
+        String path = "/game";
+        return this.makeRequest("GET", path, null, ListGamesResult.class);
+    }
+
+    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
+        String path = "/game";
+        return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
 
     ///Get requests never have a body?

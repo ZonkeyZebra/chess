@@ -6,6 +6,7 @@ import java.util.Scanner;
 public class ReadEvalPrintLoop {
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
+    private boolean loginStatus = false;
 
     public ReadEvalPrintLoop(String serverUrl) {
         preLoginClient = new PreLoginClient(serverUrl);
@@ -22,10 +23,14 @@ public class ReadEvalPrintLoop {
             printPrompt();
             String line = scanner.nextLine();
             try {
-                if (signedIn()) {
+                if (loginStatus) {
                     result = postLoginClient.eval(line);
+                    if (line.contains("logout")) {
+                        setSignIn(false);
+                    }
                 } else {
                     result = preLoginClient.eval(line);
+                    setSignIn(true);
                 }
                 System.out.print("\u001B[34m" + result);
             } catch (Throwable e) {
@@ -40,7 +45,7 @@ public class ReadEvalPrintLoop {
         System.out.print("\n" + "\u001B[0m" + ">>> " + "\u001B[32m");
     }
 
-    private boolean signedIn() {
-        return preLoginClient.checkSignedIn();
+    private void setSignIn(boolean bool) {
+        loginStatus = bool;
     }
 }
