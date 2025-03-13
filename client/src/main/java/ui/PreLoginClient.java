@@ -1,6 +1,8 @@
 package ui;
 
 import dataaccess.DataAccessException;
+import model.LoginRequest;
+import model.RegisterRequest;
 
 import java.util.Arrays;
 
@@ -26,19 +28,19 @@ public class PreLoginClient {
     }
 
     public String login(String[] params) throws DataAccessException {
-        if (params.length >= 1) {
+        if (params.length >= 2) {
             String username = params[0];
-            String authToken = "randomToken";
-            return String.format("Signed in as %s. Here is your authToken: %s", username, authToken);
+            var result = server.login(new LoginRequest(username, params[1]));
+            return String.format("Signed in as %s. Here is your authToken: %s", username, result.authToken());
         }
         throw new DataAccessException("Expected: login <username> <password>");
     }
 
     public String register(String[] params) throws DataAccessException {
-        if (params.length >= 2) {
+        if (params.length >= 3) {
             String username = params[0];
-            String authToken = "randomToken";
-            return String.format("Registered as %s. Here is your authToken: %s", username, authToken);
+            var result = server.register(new RegisterRequest(username, params[1], params[2]));
+            return String.format("Registered as %s. Here is your authToken: %s", username, result.authToken());
         }
         throw new DataAccessException("Expected: register <username> <password> <email>");
     }
