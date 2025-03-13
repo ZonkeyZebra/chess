@@ -22,23 +22,28 @@ public class ReadEvalPrintLoop {
         while (!Objects.equals(result, "quit")) {
             printPrompt();
             String line = scanner.nextLine();
-            try {
-                if (loginStatus) {
-                    result = postLoginClient.eval(line);
-                    if (line.contains("logout")) {
-                        setSignIn(false);
-                    }
-                } else {
-                    result = preLoginClient.eval(line);
-                    setSignIn(true);
-                }
-                System.out.print("\u001B[34m" + result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
-            }
+            result = getResult(result, line);
         }
         System.out.println();
+    }
+
+    private String getResult(String result, String line) {
+        try {
+            if (loginStatus) {
+                result = postLoginClient.eval(line);
+                if (line.contains("logout")) {
+                    setSignIn(false);
+                }
+            } else {
+                result = preLoginClient.eval(line);
+                setSignIn(true);
+            }
+            System.out.print("\u001B[34m" + result);
+        } catch (Throwable e) {
+            var msg = e.toString();
+            System.out.print(msg);
+        }
+        return result;
     }
 
     private void printPrompt() {

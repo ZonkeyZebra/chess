@@ -28,7 +28,8 @@ public class PreLoginClient {
     public String login(String[] params) throws DataAccessException {
         if (params.length >= 1) {
             String username = params[0];
-            return String.format("Signed in as %s", username);
+            String authToken = "randomToken";
+            return String.format("Signed in as %s. Here is your authToken: %s", username, authToken);
         }
         throw new DataAccessException("Expected: login <username> <password>");
     }
@@ -36,7 +37,8 @@ public class PreLoginClient {
     public String register(String[] params) throws DataAccessException {
         if (params.length >= 2) {
             String username = params[0];
-            return String.format("Registered as %s", username);
+            String authToken = "randomToken";
+            return String.format("Registered as %s. Here is your authToken: %s", username, authToken);
         }
         throw new DataAccessException("Expected: register <username> <password> <email>");
     }

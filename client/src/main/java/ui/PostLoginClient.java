@@ -17,10 +17,10 @@ public class PostLoginClient {
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
             case "logout" -> logout();
-            case "createGame" -> createGame();
+            case "createGame" -> createGame(params);
             case "list" -> listGames();
-            case "join" -> joinGame();
-            case "observe" -> observeGame();
+            case "join" -> joinGame(params);
+            case "observe" -> observeGame(params);
             case "quit" -> "quit";
             default -> help();
         };
@@ -30,7 +30,7 @@ public class PostLoginClient {
         return "TODO: logout";
     }
 
-    public String createGame() {
+    public String createGame(String[] params) {
         return "TODO: createGame";
     }
 
@@ -38,20 +38,20 @@ public class PostLoginClient {
         return "TODO: listGames";
     }
 
-    public String joinGame() {
+    public String joinGame(String[] params) {
         return "TODO: joinGame";
     }
 
-    public String observeGame() {
+    public String observeGame(String[] params) {
         return "TODO: observeGame";
     }
 
     public String help() {
         return """
                 - logout
-                - createGame <gameName>
+                - createGame <name>
                 - list
-                - join <id>
+                - join <id> <white|black>
                 - observe <id>
                 - quit
                 """;
