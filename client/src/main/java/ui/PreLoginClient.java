@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Arrays;
+
 public class PreLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
@@ -10,18 +12,30 @@ public class PreLoginClient {
     }
 
     public String eval(String input) {
-        return null;
+        String[] tokens = input.split(" ");
+        String command = tokens[0];
+        String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        return switch (command) {
+            case "login" -> login(params);
+            case "register" -> register(params);
+            case "quit" -> "quit";
+            default -> help();
+        };
     }
 
-    public String login() {
-        return null;
+    public String login(String[] params) {
+        return "implement login";
     }
 
-    public String register() {
-        return null;
+    public String register(String[] params) {
+        return "implement register";
     }
 
     public String help() {
-        return null;
+        return """
+                - login <username> <password>
+                - register <username> <password> <email>
+                - quit
+                """;
     }
 }

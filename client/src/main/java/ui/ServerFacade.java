@@ -30,12 +30,14 @@ public class ServerFacade {
         this.serverUrl = serverUrl;
     }
 
-    public RegisterResult register(RegisterRequest request) {
-        return null;
+    public RegisterResult register(RegisterRequest request) throws DataAccessException {
+        String path = "/user";
+        return this.makeRequest("POST", path, request, RegisterResult.class);
     }
 
-    public LoginResult login(LoginRequest request) {
-        return null;
+    public LoginResult login(LoginRequest request) throws DataAccessException {
+        String path = "/session";
+        return this.makeRequest("POST", path, request, LoginResult.class);
     }
 
     ///Get requests never have a body?
