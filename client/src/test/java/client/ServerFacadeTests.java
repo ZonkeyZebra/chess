@@ -1,19 +1,23 @@
-//package client; <- this is what the original was, didn't quite work with package
-package java.client;
+package client;
 
+import dataaccess.DataAccessException;
+import model.RegisterRequest;
 import org.junit.jupiter.api.*;
 import server.Server;
+import ui.ServerFacade;
 
 
 public class ServerFacadeTests {
 
     private static Server server;
+    static ServerFacade facade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
         var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        facade = new ServerFacade("http://localhost:0");
     }
 
     @AfterAll
@@ -23,8 +27,9 @@ public class ServerFacadeTests {
 
 
     @Test
-    public void sampleTest() {
-        Assertions.assertTrue(true);
+    public void registerTest() throws DataAccessException {
+        var authData = facade.register(new RegisterRequest("player1", "password", "p1@email.com"));
+        Assertions.assertTrue(authData.authToken().length() > 10);
     }
 
 }
