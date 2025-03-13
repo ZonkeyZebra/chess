@@ -1,10 +1,10 @@
 package ui;
 
-public class PreLoginClient {
+public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
 
-    public PreLoginClient(String serverUrl) {
+    public PostLoginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
     }
@@ -13,11 +13,23 @@ public class PreLoginClient {
         return null;
     }
 
-    public String login() {
+    public String logout() {
         return null;
     }
 
-    public String register() {
+    public String createGame() {
+        return null;
+    }
+
+    public String listGames() {
+        return null;
+    }
+
+    public String playGame() {
+        return null;
+    }
+
+    public String observeGame() {
         return null;
     }
 
