@@ -63,7 +63,7 @@ public class PostLoginClient {
         if (params.length >= 2 && (Objects.equals(params[1], "black") || Objects.equals(params[1], "white"))) {
             int id = Integer.parseInt(params[0]);
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
-            if (params[1] == "black") {
+            if (params[1].equals("black")) {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             server.joinGame(new JoinGameRequest(teamColor, id));
