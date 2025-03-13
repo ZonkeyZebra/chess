@@ -98,8 +98,7 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    //throw DataAccessException.fromJson(respErr);
-                    throw new DataAccessException("");
+                    throw new DataAccessException(respErr.toString());
                 }
             }
 
