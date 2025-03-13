@@ -37,9 +37,8 @@ public class ServerFacade {
         return this.makeRequest("POST", path, request, LoginResult.class);
     }
 
-    public void logout() throws DataAccessException {
+    public void logout(String authToken) throws DataAccessException {
         String path = "/session";
-        // logout uses authToken
         this.makeRequest("DELETE", path, null, null);
     }
 

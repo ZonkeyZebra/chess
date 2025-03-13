@@ -42,7 +42,7 @@ public class ServerFacadeTests {
     @Test
     public void logoutTest() throws DataAccessException {
         var loginResult = facade.login(new LoginRequest("player1", "password"));
-        facade.logout();
+        facade.logout("");
         Assertions.assertNull(loginResult.authToken());
     }
 

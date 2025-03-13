@@ -17,12 +17,12 @@ public class PostLoginClient {
         this.serverUrl = serverUrl;
     }
 
-    public String eval(String input) throws DataAccessException {
+    public String eval(String input, String authToken) throws DataAccessException {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
-            case "logout" -> logout();
+            case "logout" -> logout(authToken);
             case "create" -> createGame(params);
             case "list" -> listGames();
             case "join" -> joinGame(params);
@@ -32,9 +32,9 @@ public class PostLoginClient {
         };
     }
 
-    public String logout() throws DataAccessException {
+    public String logout(String authToken) throws DataAccessException {
         try {
-            server.logout();
+            server.logout(authToken);
             return "See you later!";
         } catch (DataAccessException ex) {
             throw new DataAccessException(ex.getMessage());

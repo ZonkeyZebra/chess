@@ -7,6 +7,7 @@ public class ReadEvalPrintLoop {
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private boolean loginStatus = false;
+    private String authToken;
 
     public ReadEvalPrintLoop(String serverUrl) {
         preLoginClient = new PreLoginClient(serverUrl);
@@ -30,7 +31,8 @@ public class ReadEvalPrintLoop {
     private String getResult(String result, String line) {
         try {
             if (loginStatus) {
-                result = postLoginClient.eval(line);
+                authToken = preLoginClient.getAuthToken();
+                result = postLoginClient.eval(line, authToken);
                 if (line.contains("logout")) {
                     setSignIn(false);
                 }
