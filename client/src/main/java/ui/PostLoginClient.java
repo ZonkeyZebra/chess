@@ -1,5 +1,7 @@
 package ui;
 
+import java.util.Arrays;
+
 public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
@@ -10,30 +12,48 @@ public class PostLoginClient {
     }
 
     public String eval(String input) {
-        return null;
+        String[] tokens = input.split(" ");
+        String command = tokens[0];
+        String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        return switch (command) {
+            case "logout" -> logout();
+            case "createGame" -> createGame();
+            case "list" -> listGames();
+            case "join" -> joinGame();
+            case "observe" -> observeGame();
+            case "quit" -> "quit";
+            default -> help();
+        };
     }
 
     public String logout() {
-        return null;
+        return "TODO: logout";
     }
 
     public String createGame() {
-        return null;
+        return "TODO: createGame";
     }
 
     public String listGames() {
-        return null;
+        return "TODO: listGames";
     }
 
-    public String playGame() {
-        return null;
+    public String joinGame() {
+        return "TODO: joinGame";
     }
 
     public String observeGame() {
-        return null;
+        return "TODO: observeGame";
     }
 
     public String help() {
-        return null;
+        return """
+                - logout
+                - createGame <gameName>
+                - list
+                - join <id>
+                - observe <id>
+                - quit
+                """;
     }
 }
