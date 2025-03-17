@@ -23,7 +23,7 @@ public class PostLoginClient {
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
             case "logout" -> logout(authToken);
-            case "create" -> createGame(params);
+            case "create" -> createGame(params, authToken);
             case "list" -> listGames();
             case "join" -> joinGame(params);
             case "observe" -> observeGame(params);
@@ -41,9 +41,9 @@ public class PostLoginClient {
         }
     }
 
-    public String createGame(String[] params) throws DataAccessException {
+    public String createGame(String[] params, String authToken) throws DataAccessException {
         if (params.length >= 1) {
-            var result = server.createGame(new CreateGameRequest(params[0]));
+            var result = server.createGame(new CreateGameRequest(params[0]), authToken);
             return String.format("Created game! Here is its id: %d", result.gameID());
         }
         throw new DataAccessException("Expected: create <name>");

@@ -38,7 +38,7 @@ public class ServerFacade {
     }
 
     public void logout(String authToken) throws DataAccessException {
-        String path = "/session";
+        String path = String.format("/session/%s", authToken);
         this.makeRequest("DELETE", path, null, null);
     }
 
@@ -57,7 +57,7 @@ public class ServerFacade {
         return this.makeRequest("GET", path, null, ListGamesResult.class);
     }
 
-    public CreateGameResult createGame(CreateGameRequest request) throws DataAccessException {
+    public CreateGameResult createGame(CreateGameRequest request, String authToken) throws DataAccessException {
         String path = "/game";
         return this.makeRequest("POST", path, request, CreateGameResult.class);
     }
