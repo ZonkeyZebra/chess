@@ -2,6 +2,7 @@ package ui;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
@@ -18,7 +19,7 @@ public class DrawBoard {
 
         drawHeaders(out);
 
-        drawTicTacToeBoard(out);
+        drawChessBoard(out);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -58,57 +59,68 @@ public class DrawBoard {
         setBlack(out);
     }
 
-    private static void drawTicTacToeBoard(PrintStream out) {
+    private static void drawChessBoard(PrintStream out) {
 
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-
-            drawRowOfSquares(out);
-
-//            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
-//                // Draw horizontal row separator.
-//                drawHorizontalLine(out);
-//                setBlack(out);
-//            }
-        }
-    }
-
-    private static void drawRowOfSquares(PrintStream out) {
-
-        for (int squareRow = 0; squareRow < 1; ++squareRow) {
-            for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-                setWhite(out);
-                int prefixLength = 0;
-                int suffixLength = 0;
-
-                //out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS));
-
-                if (isEvenNum(boardCol)) {
-                    setGray(out);
-                    out.print(EMPTY.repeat(1));
-                } else {
-                    out.print(EMPTY.repeat(prefixLength));
-                    printPiece(out, BLACK_PAWN);
-                    out.print(EMPTY.repeat(suffixLength));
-                }
-
-                setBlack(out);
+            String evenOdd = "odd";
+            if (isEvenNum(boardRow)) {
+                evenOdd = "even";
             }
 
-            out.println();
+            drawRowOfSquares(out, evenOdd);
+
         }
     }
 
-    private static void drawHorizontalLine(PrintStream out) {
+    private static void drawRowOfSquares(PrintStream out, String evenOdd) {
 
-        int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_PADDED_CHARS + (BOARD_SIZE_IN_SQUARES - 1);
-
-        for (int lineRow = 0; lineRow < 1; ++lineRow) {
-            setGray(out);
-            out.print(EMPTY.repeat(boardSizeInSpaces));
-
-            setBlack(out);
-            out.println();
+        for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
+            if (Objects.equals(evenOdd, "even")) {
+                printEvenRow(out, boardCol);
+            } else {
+                printOddRow(out, boardCol);
+            }
         }
+
+        out.println();
+    }
+
+    private static void printEvenRow(PrintStream out, int boardCol) {
+        setWhite(out);
+        int prefixLength = 0;
+        int suffixLength = 0;
+
+        //out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS));
+
+        if (isEvenNum(boardCol)) {
+            setGray(out);
+            out.print(EMPTY.repeat(1));
+        } else {
+            out.print(EMPTY.repeat(prefixLength));
+            printPiece(out, BLACK_PAWN);
+            out.print(EMPTY.repeat(suffixLength));
+        }
+
+        setBlack(out);
+    }
+
+    private static void printOddRow(PrintStream out, int boardCol) {
+        setGray(out);
+        int prefixLength = 0;
+        int suffixLength = 0;
+
+        //out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS));
+
+        if (isEvenNum(boardCol)) {
+            setWhite(out);
+            out.print(EMPTY.repeat(1));
+        } else {
+            out.print(EMPTY.repeat(prefixLength));
+            printPiece(out, WHITE_BISHOP);
+            out.print(EMPTY.repeat(suffixLength));
+        }
+
+        setBlack(out);
     }
 
     private static void setWhite(PrintStream out) {
@@ -136,13 +148,7 @@ public class DrawBoard {
     }
 
     private static boolean isEvenNum(double num) {
-        if (num == 1) {
-            return false;
-        }
-        while (num > 1) {
-            num = num / 2;
-        }
-        if (num == 1 || num == 0) {
+        if (num == 0 || num == 2 || num == 4 || num == 6 || num == 8) {
             return true;
         }
         return false;
