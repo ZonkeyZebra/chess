@@ -3,9 +3,12 @@ package ui;
 import chess.ChessGame;
 import dataaccess.DataAccessException;
 import model.CreateGameRequest;
+import model.GameData;
 import model.JoinGameRequest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 public class PostLoginClient {
@@ -24,7 +27,7 @@ public class PostLoginClient {
         return switch (command) {
             case "logout" -> logout(authToken);
             case "create" -> createGame(params, authToken);
-            case "list" -> listGames(authToken);
+            case "list" -> listGames(authToken).toString();
             case "join" -> joinGame(params, authToken);
             case "observe" -> observeGame(params);
             case "quit" -> "quit";
@@ -49,11 +52,26 @@ public class PostLoginClient {
         throw new DataAccessException("Expected: create <name>");
     }
 
-    public String listGames(String authToken) throws DataAccessException {
+    public Collection<String> listGames(String authToken) throws DataAccessException {
         try {
             var result = server.listGames(authToken);
-            //return String.format("Games: %s", result.games());
-            return result.games().toString();
+            var resultArray = result.games().toArray();
+            int gameID;
+            String whiteUser;
+            String blackUser;
+            String gameName;
+            //String gameList = "";
+            Collection<String> gameList = new ArrayList<>();
+            for (int i = 0; i < resultArray.length; i++) {
+                gameID = ((GameData) resultArray[i]).gameID();
+                whiteUser = ((GameData) resultArray[i]).whiteUsername();
+                blackUser = ((GameData) resultArray[i]).blackUsername();
+                gameName = ((GameData) resultArray[i]).gameName();
+                //gameList = String.format("%d. Name: %s | White: %s | Black: %s\n", gameID, gameName, whiteUser, blackUser);
+                gameList.add(String.format("%d. Name: %s | White: %s | Black: %s\n", gameID, gameName, whiteUser, blackUser));
+            }
+            //return result.games().toString();
+            return gameList;
         } catch (DataAccessException ex) {
             throw new DataAccessException(ex.getMessage());
         }
