@@ -81,15 +81,21 @@ public class ServerFacade {
     }
 
     private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException {
-        if (request != null) {
+        if (request != null && authToken == null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
-        }
-        else {
+        } else if (request == null) {
             http.addRequestProperty("Authorization", authToken);
+        } else {
+            http.addRequestProperty("Content-Type", "application/json");
+            http.addRequestProperty("Authorization", authToken);
+            String reqData = new Gson().toJson(request);
+            try (OutputStream reqBody = http.getOutputStream()) {
+                reqBody.write(reqData.getBytes());
+            }
         }
     }
 
@@ -98,7 +104,7 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    throw new DataAccessException(String.format(respErr.toString() + "status: " + status));
+                    throw new DataAccessException(String.format(respErr.toString() + " status: " + status));
                 }
             }
 
