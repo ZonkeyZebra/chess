@@ -24,8 +24,8 @@ public class PostLoginClient {
         return switch (command) {
             case "logout" -> logout(authToken);
             case "create" -> createGame(params, authToken);
-            case "list" -> listGames();
-            case "join" -> joinGame(params);
+            case "list" -> listGames(authToken);
+            case "join" -> joinGame(params, authToken);
             case "observe" -> observeGame(params);
             case "quit" -> "quit";
             default -> help();
@@ -49,9 +49,9 @@ public class PostLoginClient {
         throw new DataAccessException("Expected: create <name>");
     }
 
-    public String listGames() throws DataAccessException {
+    public String listGames(String authToken) throws DataAccessException {
         try {
-            var result = server.listGames();
+            var result = server.listGames(authToken);
             //return String.format("Games: %s", result.games());
             return result.games().toString();
         } catch (DataAccessException ex) {
@@ -59,14 +59,14 @@ public class PostLoginClient {
         }
     }
 
-    public String joinGame(String[] params) throws DataAccessException {
+    public String joinGame(String[] params, String authToken) throws DataAccessException {
         if (params.length >= 2 && (Objects.equals(params[1], "black") || Objects.equals(params[1], "white"))) {
             int id = Integer.parseInt(params[0]);
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
             if (params[1].equals("black")) {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
-            server.joinGame(new JoinGameRequest(teamColor, id));
+            server.joinGame(new JoinGameRequest(teamColor, id), authToken);
             return new DrawBoard().toString();
         }
         throw new DataAccessException("Expected: join <id> <white|black>");

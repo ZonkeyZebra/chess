@@ -29,66 +29,67 @@ public class ServerFacade {
 
     public RegisterResult register(RegisterRequest request) throws DataAccessException {
         String path = "/user";
-        return this.makeRequest("POST", path, request, RegisterResult.class);
+        return this.makeRequest("POST", path, request, null, RegisterResult.class);
     }
 
     public LoginResult login(LoginRequest request) throws DataAccessException {
         String path = "/session";
-        return this.makeRequest("POST", path, request, LoginResult.class);
+        return this.makeRequest("POST", path, request, null, LoginResult.class);
     }
 
     public void logout(String authToken) throws DataAccessException {
-        String path = String.format("/session/%s", authToken);
-        this.makeRequest("DELETE", path, null, null);
+        String path = "/session";
+        this.makeRequest("DELETE", path, null, authToken, null);
     }
 
     public void clear() throws DataAccessException {
         String path = "/db";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null, null, null);
     }
 
-    public void joinGame(JoinGameRequest request) throws DataAccessException {
+    public void joinGame(JoinGameRequest request, String authToken) throws DataAccessException {
         String path = "/game";
-        this.makeRequest("PUT", path, request, null);
+        this.makeRequest("PUT", path, request, authToken, null);
     }
 
-    public ListGamesResult listGames() throws DataAccessException {
+    public ListGamesResult listGames(String authToken) throws DataAccessException {
         String path = "/game";
-        return this.makeRequest("GET", path, null, ListGamesResult.class);
+        return this.makeRequest("GET", path, null, authToken, ListGamesResult.class);
     }
 
     public CreateGameResult createGame(CreateGameRequest request, String authToken) throws DataAccessException {
         String path = "/game";
-        return this.makeRequest("POST", path, request, CreateGameResult.class);
+        return this.makeRequest("POST", path, request, authToken, CreateGameResult.class);
     }
 
     ///Get requests never have a body?
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws DataAccessException {
+    private <T> T makeRequest(String method, String path, Object request, String authToken, Class<T> responseClass) throws DataAccessException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            writeBody(request, http);
+            writeBody(request, http, authToken);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
-        } catch (DataAccessException ex) {
-            throw ex;
         } catch (Exception ex) {
             throw new DataAccessException(ex.getMessage());
         }
     }
 
-    private static void writeBody(Object request, HttpURLConnection http) throws IOException {
+    private static void writeBody(Object request, HttpURLConnection http, String authToken) throws IOException {
         if (request != null) {
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
             }
+        }
+        else {
+            http.addRequestProperty("Authorization", authToken);
         }
     }
 
@@ -97,7 +98,7 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    throw new DataAccessException(respErr.toString());
+                    throw new DataAccessException(String.format(respErr.toString() + "status: " + status));
                 }
             }
 
