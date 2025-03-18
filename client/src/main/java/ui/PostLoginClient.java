@@ -27,7 +27,7 @@ public class PostLoginClient {
         return switch (command) {
             case "logout" -> logout(authToken);
             case "create" -> createGame(params, authToken);
-            case "list" -> listGames(authToken).toString();
+            case "list" -> listGames(authToken);
             case "join" -> joinGame(params, authToken);
             case "observe" -> observeGame(params);
             case "quit" -> "quit";
@@ -52,7 +52,7 @@ public class PostLoginClient {
         throw new DataAccessException("Expected: create <name>");
     }
 
-    public Collection<String> listGames(String authToken) throws DataAccessException {
+    public String listGames(String authToken) throws DataAccessException {
         try {
             var result = server.listGames(authToken);
             var resultArray = result.games().toArray();
@@ -60,18 +60,16 @@ public class PostLoginClient {
             String whiteUser;
             String blackUser;
             String gameName;
-            //String gameList = "";
-            Collection<String> gameList = new ArrayList<>();
+            String gameList = "";
             for (int i = 0; i < resultArray.length; i++) {
                 gameID = ((GameData) resultArray[i]).gameID();
                 whiteUser = ((GameData) resultArray[i]).whiteUsername();
                 blackUser = ((GameData) resultArray[i]).blackUsername();
                 gameName = ((GameData) resultArray[i]).gameName();
-                //gameList = String.format("%d. Name: %s | White: %s | Black: %s\n", gameID, gameName, whiteUser, blackUser);
-                gameList.add(String.format("%d. Name: %s | White: %s | Black: %s\n", gameID, gameName, whiteUser, blackUser));
+                gameList = String.format("\u001B[34m" + "%d. Name: %s | White: %s | Black: %s", gameID, gameName, whiteUser, blackUser);
+                System.out.println(gameList);
             }
-            //return result.games().toString();
-            return gameList;
+            return "";
         } catch (DataAccessException ex) {
             throw new DataAccessException(ex.getMessage());
         }
