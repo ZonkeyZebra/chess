@@ -86,16 +86,16 @@ public class DrawBoard {
     }
 
     private static void printEvenRow(PrintStream out, int boardCol) {
-        setWhite(out);
+        setLightGreen(out);
         int prefixLength = 0;
         int suffixLength = 0;
 
         if (isEvenNum(boardCol)) {
-            setGray(out);
+            setLightPurple(out);
             out.print(EMPTY.repeat(1));
         } else {
             out.print(EMPTY.repeat(prefixLength));
-            printPiece(out, BLACK_PAWN, SET_BG_COLOR_WHITE, SET_TEXT_COLOR_BLACK);
+            printPiece(out, BLACK_PAWN, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
             out.print(EMPTY.repeat(suffixLength));
         }
 
@@ -103,20 +103,30 @@ public class DrawBoard {
     }
 
     private static void printOddRow(PrintStream out, int boardCol) {
-        setGray(out);
+        setLightPurple(out);
         int prefixLength = 0;
         int suffixLength = 0;
 
         if (isEvenNum(boardCol)) {
-            setWhite(out);
+            setLightGreen(out);
             out.print(EMPTY.repeat(1));
         } else {
             out.print(EMPTY.repeat(prefixLength));
-            printPiece(out, BLACK_BISHOP, SET_BG_COLOR_LIGHT_GREY, SET_TEXT_COLOR_WHITE);
+            printPiece(out, WHITE_BISHOP, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
             out.print(EMPTY.repeat(suffixLength));
         }
 
         setBlack(out);
+    }
+
+    private static void setLightPurple(PrintStream out) {
+        out.print(SET_BG_COLOR_LIGHT_PURPLE);
+        out.print(SET_TEXT_COLOR_LIGHT_PURPLE);
+    }
+
+    private static void setLightGreen(PrintStream out) {
+        out.print(SET_BG_COLOR_LIGHT_GREEN);
+        out.print(SET_TEXT_COLOR_LIGHT_GREEN);
     }
 
     private static void setWhite(PrintStream out) {
