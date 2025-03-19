@@ -95,7 +95,7 @@ public class DrawBoard {
             out.print(EMPTY.repeat(1));
         } else {
             out.print(EMPTY.repeat(prefixLength));
-            printPiece(out, BLACK_PAWN);
+            printPiece(out, BLACK_PAWN, SET_BG_COLOR_WHITE, SET_TEXT_COLOR_BLACK);
             out.print(EMPTY.repeat(suffixLength));
         }
 
@@ -111,11 +111,9 @@ public class DrawBoard {
             setWhite(out);
             out.print(EMPTY.repeat(1));
         } else {
-//            out.print(EMPTY.repeat(prefixLength));
-//            printPiece(out, BLACK_BISHOP);
-//            out.print(EMPTY.repeat(suffixLength));
-            setGray(out);
-            out.print(EMPTY.repeat(1));
+            out.print(EMPTY.repeat(prefixLength));
+            printPiece(out, BLACK_BISHOP, SET_BG_COLOR_LIGHT_GREY, SET_TEXT_COLOR_WHITE);
+            out.print(EMPTY.repeat(suffixLength));
         }
 
         setBlack(out);
@@ -136,9 +134,9 @@ public class DrawBoard {
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
-    private static void printPiece(PrintStream out, String piece) {
-        out.print(SET_BG_COLOR_WHITE);
-        out.print(SET_TEXT_COLOR_BLACK);
+    private static void printPiece(PrintStream out, String piece, String background, String textColor) {
+        out.print(background);
+        out.print(textColor);
 
         out.print(piece);
 
