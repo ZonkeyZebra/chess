@@ -39,16 +39,18 @@ public class ReadEvalPrintLoop {
                     setSignIn(false);
                 }
                 if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
-                    new DrawBoard(ChessGame.TeamColor.WHITE);
+                    new DrawBoard(ChessGame.TeamColor.WHITE); // in phase 6 this will go to GameClient
                 }
                 if (result.contains("Draw Board: BLACK")) {
-                    new DrawBoard(ChessGame.TeamColor.BLACK);
+                    new DrawBoard(ChessGame.TeamColor.BLACK); // in phase 6 this will go to GameClient
                 }
             } else {
                 result = preLoginClient.eval(line);
                 setSignIn(true);
             }
-            System.out.print("\u001B[34m" + result);
+            if (!result.contains("Draw Board: observe") && !result.contains("Draw Board: WHITE") && !result.contains("Draw Board: BLACK")) {
+                System.out.print("\u001B[34m" + result);
+            }
         } catch (Throwable e) {
             var msg = e.toString();
             System.out.print(msg);

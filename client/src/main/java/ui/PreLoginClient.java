@@ -23,7 +23,7 @@ public class PreLoginClient {
         return switch (command) {
             case "login" -> login(params);
             case "register" -> register(params);
-            case "quit" -> "quit";
+            case "quit" -> "quitting...";
             default -> help();
         };
     }
