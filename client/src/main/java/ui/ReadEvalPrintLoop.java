@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -35,6 +37,12 @@ public class ReadEvalPrintLoop {
                 result = postLoginClient.eval(line, authToken);
                 if (line.contains("logout")) {
                     setSignIn(false);
+                }
+                if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
+                    new DrawBoard(ChessGame.TeamColor.WHITE);
+                }
+                if (result.contains("Draw Board: BLACK")) {
+                    new DrawBoard(ChessGame.TeamColor.BLACK);
                 }
             } else {
                 result = preLoginClient.eval(line);

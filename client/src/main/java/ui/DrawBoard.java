@@ -12,11 +12,11 @@ import static ui.EscapeSequences.*;
 public class DrawBoard {
     // Board dimensions.
     private static final int BOARD_SIZE_IN_SQUARES = 8;
+    private static final String[] whiteHeaders = { "a", "b", "c", "d", "e", "f", "g", "h" };
+    private static final String[] blackHeaders = { "h", "g", "f", "e", "d", "c", "b", "a" };
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        String[] whiteHeaders = { "a", "b", "c", "d", "e", "f", "g", "h" };
-        String[] blackHeaders = { "h", "g", "f", "e", "d", "c", "b", "a" };
         ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
 
         out.print(ERASE_SCREEN);
@@ -31,6 +31,21 @@ public class DrawBoard {
         drawChessBoard(out, teamColor);
         drawHeaders(out, blackHeaders);
 
+        out.print(SET_BG_COLOR_BLACK);
+        out.print(SET_TEXT_COLOR_WHITE);
+    }
+
+    DrawBoard (ChessGame.TeamColor teamColor) {
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            drawHeaders(out, blackHeaders);
+            drawChessBoard(out, teamColor);
+            drawHeaders(out, blackHeaders);
+        } else {
+            drawHeaders(out, whiteHeaders);
+            drawChessBoard(out, teamColor);
+            drawHeaders(out, whiteHeaders);
+        }
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
