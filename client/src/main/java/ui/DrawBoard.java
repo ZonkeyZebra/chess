@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -10,18 +12,17 @@ import static ui.EscapeSequences.*;
 public class DrawBoard {
     // Board dimensions.
     private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         String[] whiteHeaders = { "a", "b", "c", "d", "e", "f", "g", "h" };
+        ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
 
         out.print(ERASE_SCREEN);
 
+        // draw board from white perspective
         drawHeaders(out, whiteHeaders);
-
-        drawChessBoard(out);
-
+        drawChessBoard(out, teamColor);
         drawHeaders(out, whiteHeaders);
 
         out.print(SET_BG_COLOR_BLACK);
@@ -53,52 +54,94 @@ public class DrawBoard {
         setBlack(out);
     }
 
-    private static void drawChessBoard(PrintStream out) {
+    private static void drawChessBoard(PrintStream out, ChessGame.TeamColor teamColor) {
 
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-            //black perspective: printHeaderText(out, String.format((boardRow + 1) + " "));
-            printHeaderText(out, (8 - boardRow) + " ");
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                printHeaderText(out, (8 - boardRow) + " ");
+            } else {
+                printHeaderText(out, String.format((boardRow + 1) + " "));
+            }
             String evenOdd = "odd";
             if (isEvenNum(boardRow)) {
                 evenOdd = "even";
             }
 
-            drawRowOfSquares(out, evenOdd, boardRow);
+            drawRowOfSquares(out, evenOdd, boardRow, teamColor);
 
         }
     }
 
-    private static void drawRowOfSquares(PrintStream out, String evenOdd, int boardRow) {
+    private static void drawRowOfSquares(PrintStream out, String evenOdd, int boardRow, ChessGame.TeamColor teamColor) {
+        String setTextColorEven = SET_TEXT_COLOR_WHITE;
+        String setTextColorOdd = SET_TEXT_COLOR_BLACK;
+        String rookEven = WHITE_ROOK;
+        String rookOdd = BLACK_ROOK;
+        String bishopEven = WHITE_BISHOP;
+        String bishopOdd = BLACK_BISHOP;
+        String queenEven = WHITE_QUEEN;
+        String queenOdd = BLACK_QUEEN;
+        String kingEven = WHITE_KING;
+        String kingOdd = BLACK_KING;
+        String knightEven = WHITE_KNIGHT;
+        String knightOdd = BLACK_KNIGHT;
+        String pawnEven = BLACK_PAWN;
+        String pawnOdd = WHITE_PAWN;
+        String pawnColorEven = SET_TEXT_COLOR_BLACK;
+        String pawnColorOdd = SET_TEXT_COLOR_WHITE;
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            rookEven = BLACK_ROOK;
+            setTextColorEven = SET_TEXT_COLOR_BLACK;
+            bishopEven = BLACK_BISHOP;
+            queenEven = BLACK_QUEEN;
+            knightEven = BLACK_KNIGHT;
+            kingEven = BLACK_KING;
+            rookOdd = WHITE_ROOK;
+            setTextColorOdd = SET_TEXT_COLOR_WHITE;
+            bishopOdd = WHITE_BISHOP;
+            queenOdd = WHITE_QUEEN;
+            kingOdd = WHITE_KING;
+            knightOdd = WHITE_KNIGHT;
+            pawnEven = WHITE_PAWN;
+            pawnOdd = BLACK_PAWN;
+            pawnColorEven = SET_TEXT_COLOR_WHITE;
+            pawnColorOdd = SET_TEXT_COLOR_BLACK;
+        }
 
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             if (Objects.equals(evenOdd, "even")) {
-                printEvenRow(out, boardCol, boardRow);
+                printEvenRow(out, boardCol, boardRow, setTextColorEven, rookEven, bishopEven, queenEven, knightEven, kingEven, pawnEven, pawnColorEven);
             } else {
-                printOddRow(out, boardCol, boardRow);
+                printOddRow(out, boardCol, boardRow, setTextColorOdd, rookOdd, bishopOdd, queenOdd, knightOdd, kingOdd, pawnOdd, pawnColorOdd);
             }
         }
-        //black perspective: printHeaderText(out, String.format(" " + (boardRow + 1)));
-        printHeaderText(out, " " + (8 - boardRow));
+
+        if (teamColor == ChessGame.TeamColor.WHITE) {
+            printHeaderText(out, " " + (8 - boardRow));
+        } else {
+            printHeaderText(out, String.format(" " + (boardRow + 1)));
+        }
         out.println();
     }
 
-    private static void printEvenRow(PrintStream out, int boardCol, int boardRow) {
+    private static void printEvenRow(PrintStream out, int boardCol, int boardRow, String setTextColor, String rook,
+                                     String bishop, String queen, String knight, String king, String pawn, String pawnColor) {
         setLightGreen(out);
 
         if (isEvenNum(boardCol)) {
             setLightPurple(out);
             if (boardRow == 0) {
-                getEvenPieces(out, boardCol, BLACK_ROOK, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_BLACK, BLACK_BISHOP, BLACK_KING, BLACK_KNIGHT);
+                getEvenPieces(out, boardCol, rook, SET_BG_COLOR_LIGHT_PURPLE, setTextColor, bishop, king, knight);
             } else if (boardRow == 6) {
-                printPiece(out, WHITE_PAWN, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
+                printPiece(out, pawn, SET_BG_COLOR_LIGHT_PURPLE, pawnColor);
             } else {
                 out.print(EMPTY.repeat(1));
             }
         } else {
             if (boardRow == 0) {
-                getOddPieces(out, boardCol, BLACK_ROOK, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK, BLACK_BISHOP, BLACK_QUEEN, BLACK_KNIGHT);
+                getOddPieces(out, boardCol, rook, SET_BG_COLOR_LIGHT_GREEN, setTextColor, bishop, queen, knight);
             } else if (boardRow == 6) {
-                printPiece(out, WHITE_PAWN, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_WHITE);
+                printPiece(out, pawn, SET_BG_COLOR_LIGHT_GREEN, pawnColor);
             } else {
                 out.print(EMPTY.repeat(1));
             }
@@ -107,47 +150,48 @@ public class DrawBoard {
         setBlack(out);
     }
 
-    private static void getOddPieces(PrintStream out, int boardCol, String blackRook, String setBgColorLightGreen, String setTextColorBlack, String blackBishop, String blackQueen, String blackKnight) {
+    private static void getOddPieces(PrintStream out, int boardCol, String rook, String setBgColor, String setTextColor, String bishop, String queen, String knight) {
         if (boardCol == 7) {
-            printPiece(out, blackRook, setBgColorLightGreen, setTextColorBlack);
+            printPiece(out, rook, setBgColor, setTextColor);
         } else if (boardCol == 5) {
-            printPiece(out, blackBishop, setBgColorLightGreen, setTextColorBlack);
+            printPiece(out, bishop, setBgColor, setTextColor);
         } else if (boardCol == 3) {
-            printPiece(out, blackQueen, setBgColorLightGreen, setTextColorBlack);
+            printPiece(out, queen, setBgColor, setTextColor);
         } else if (boardCol == 1) {
-            printPiece(out, blackKnight, setBgColorLightGreen, setTextColorBlack);
+            printPiece(out, knight, setBgColor, setTextColor);
         }
     }
 
-    private static void getEvenPieces(PrintStream out, int boardCol, String blackRook, String setBgColorLightPurple, String setTextColorBlack, String blackBishop, String blackKing, String blackKnight) {
+    private static void getEvenPieces(PrintStream out, int boardCol, String rook, String setBgColor, String setTextColor, String bishop, String king, String knight) {
         if (boardCol == 0) {
-            printPiece(out, blackRook, setBgColorLightPurple, setTextColorBlack);
+            printPiece(out, rook, setBgColor, setTextColor);
         } else if (boardCol == 2) {
-            printPiece(out, blackBishop, setBgColorLightPurple, setTextColorBlack);
+            printPiece(out, bishop, setBgColor, setTextColor);
         } else if (boardCol == 4) {
-            printPiece(out, blackKing, setBgColorLightPurple, setTextColorBlack);
+            printPiece(out, king, setBgColor, setTextColor);
         } else if (boardCol == 6) {
-            printPiece(out, blackKnight, setBgColorLightPurple, setTextColorBlack);
+            printPiece(out, knight, setBgColor, setTextColor);
         }
     }
 
-    private static void printOddRow(PrintStream out, int boardCol, int boardRow) {
+    private static void printOddRow(PrintStream out, int boardCol, int boardRow, String setTextColor, String rook,
+                                    String bishop, String queen, String knight, String king, String pawn, String pawnColor) {
         setLightPurple(out);
 
         if (isEvenNum(boardCol)) {
             setLightGreen(out);
             if (boardRow == 1) {
-                printPiece(out, BLACK_PAWN, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
+                printPiece(out, pawn, SET_BG_COLOR_LIGHT_GREEN, pawnColor);
             } else if (boardRow == 7) {
-                getEvenPieces(out, boardCol, WHITE_ROOK, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_WHITE, WHITE_BISHOP, WHITE_KING, WHITE_KNIGHT);
+                getEvenPieces(out, boardCol, rook, SET_BG_COLOR_LIGHT_GREEN, setTextColor, bishop, king, knight);
             } else {
                 out.print(EMPTY.repeat(1));
             }
         } else {
             if (boardRow == 1) {
-                printPiece(out, BLACK_PAWN, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_BLACK);
+                printPiece(out, pawn, SET_BG_COLOR_LIGHT_PURPLE, pawnColor);
             } else if (boardRow == 7) {
-                getOddPieces(out, boardCol, WHITE_ROOK, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE, WHITE_BISHOP, WHITE_QUEEN, WHITE_KNIGHT);
+                getOddPieces(out, boardCol, rook, SET_BG_COLOR_LIGHT_PURPLE, setTextColor, bishop, queen, knight);
             } else {
                 out.print(EMPTY.repeat(1));
             }

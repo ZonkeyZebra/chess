@@ -83,13 +83,17 @@ public class PostLoginClient {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             server.joinGame(new JoinGameRequest(teamColor, id), authToken);
-            return new DrawBoard().toString();
+            return "Draw Board: "+ teamColor + id;
         }
         throw new DataAccessException("Expected: join <id> <white|black>");
     }
 
-    public String observeGame(String[] params) {
-        return "TODO: observeGame";
+    public String observeGame(String[] params) throws DataAccessException {
+        if (params.length >= 1) {
+            int id = Integer.parseInt(params[0]);
+            return "Draw Board: observe" + id;
+        }
+        throw new DataAccessException("Expected: observe <id>");
     }
 
     public String help() {
