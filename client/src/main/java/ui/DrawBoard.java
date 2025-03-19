@@ -90,8 +90,6 @@ public class DrawBoard {
         int prefixLength = 0;
         int suffixLength = 0;
 
-        //out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS));
-
         if (isEvenNum(boardCol)) {
             setGray(out);
             out.print(EMPTY.repeat(1));
@@ -109,15 +107,15 @@ public class DrawBoard {
         int prefixLength = 0;
         int suffixLength = 0;
 
-        //out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS));
-
         if (isEvenNum(boardCol)) {
             setWhite(out);
             out.print(EMPTY.repeat(1));
         } else {
-            out.print(EMPTY.repeat(prefixLength));
-            printPiece(out, WHITE_BISHOP);
-            out.print(EMPTY.repeat(suffixLength));
+//            out.print(EMPTY.repeat(prefixLength));
+//            printPiece(out, BLACK_BISHOP);
+//            out.print(EMPTY.repeat(suffixLength));
+            setGray(out);
+            out.print(EMPTY.repeat(1));
         }
 
         setBlack(out);
