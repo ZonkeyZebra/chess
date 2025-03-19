@@ -236,16 +236,6 @@ public class DrawBoard {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void setLightGray(PrintStream out) {
-        out.print(SET_BG_COLOR_LIGHT_GREY);
-        out.print(SET_TEXT_COLOR_LIGHT_GREY);
-    }
-
-    private static void setDarkGray(PrintStream out) {
-        out.print(SET_BG_COLOR_DARK_GREY);
-        out.print(SET_TEXT_COLOR_DARK_GREY);
-    }
-
     private static void setBlack(PrintStream out) {
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_BLACK);
