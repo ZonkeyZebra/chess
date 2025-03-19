@@ -31,23 +31,15 @@ public class DrawBoard {
 
         String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h" };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-            drawHeader(out, headers[boardCol]);
-
-            if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                out.print(EMPTY.repeat(1));
+            if (boardCol == 3 || boardCol == 5) {
+                out.print("  ");
+            } else {
+                out.print("   ");
             }
+            printHeaderText(out, headers[boardCol]);
         }
 
         out.println();
-    }
-
-    private static void drawHeader(PrintStream out, String headerText) {
-        int prefixLength = 1;
-        int suffixLength = 0;
-
-        //out.print(EMPTY.repeat(prefixLength));
-        printHeaderText(out, headerText);
-        out.print(EMPTY.repeat(suffixLength));
     }
 
     private static void printHeaderText(PrintStream out, String text) {
@@ -62,6 +54,7 @@ public class DrawBoard {
     private static void drawChessBoard(PrintStream out) {
 
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
+            printHeaderText(out, String.format((boardRow + 1) + " "));
             String evenOdd = "odd";
             if (isEvenNum(boardRow)) {
                 evenOdd = "even";
