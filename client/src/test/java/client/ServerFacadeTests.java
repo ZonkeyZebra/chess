@@ -17,6 +17,7 @@ public class ServerFacadeTests {
 
     private static Server server;
     static ServerFacade facade;
+    private static final String badAuth = "";
 
     @BeforeAll
     public static void init() {
@@ -45,9 +46,19 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void registerFail() {
+        Assertions.assertThrows(DataAccessException.class, () -> facade.register(new RegisterRequest("player1", null, "p1@email.com")));
+    }
+
+    @Test
     public void loginTest() throws DataAccessException {
         var result = facade.login(new LoginRequest("new", "new"));
         Assertions.assertTrue(result.authToken().length() > 10);
+    }
+
+    @Test
+    public void loginFail() {
+        Assertions.assertThrows(DataAccessException.class, () -> facade.login(new LoginRequest("new", null)));
     }
 
     @Test
@@ -58,13 +69,24 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void logoutFail() {
+        Assertions.assertThrows(DataAccessException.class, () -> facade.logout(badAuth));
+    }
+
+    @Test
     public void joinGameTest() throws DataAccessException {
         var loginResult = facade.login(new LoginRequest("new", "new"));
         String authToken = loginResult.authToken();
-        var game = facade.createGame(new CreateGameRequest("awesome"), authToken);
-        var list = facade.listGames(authToken);
-        //facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.BLACK, 1), authToken);
+        facade.createGame(new CreateGameRequest("awesome"), authToken);
         Assertions.assertAll(() -> facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.BLACK, 1), authToken));
+    }
+
+    @Test
+    public void joinGameFail() throws DataAccessException {
+        var loginResult = facade.login(new LoginRequest("new", "new"));
+        String authToken = loginResult.authToken();
+        facade.createGame(new CreateGameRequest("awesome"), authToken);
+        Assertions.assertThrows(DataAccessException.class, () -> facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.BLACK, 1), badAuth));
     }
 
     @Test
@@ -76,6 +98,11 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void listFail() {
+        Assertions.assertThrows(DataAccessException.class, () -> facade.listGames(badAuth));
+    }
+
+    @Test
     public void createGameTest() throws DataAccessException {
         var loginResult = facade.login(new LoginRequest("new", "new"));
         String authToken = loginResult.authToken();
@@ -84,8 +111,19 @@ public class ServerFacadeTests {
     }
 
     @Test
+    public void createGameFail() {
+        Assertions.assertThrows(DataAccessException.class, () -> facade.createGame(new CreateGameRequest("another"), badAuth));
+    }
+
+    @Test
     public void clearTest() {
         Assertions.assertAll(() -> facade.clear());
+    }
+
+    @Test
+    public void clearFail() throws DataAccessException {
+        var loginResult = facade.login(new LoginRequest("new", "new"));
+        Assertions.assertNotNull(loginResult);
     }
 
 }
