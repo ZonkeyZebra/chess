@@ -67,53 +67,105 @@ public class DrawBoard {
                 evenOdd = "even";
             }
 
-            drawRowOfSquares(out, evenOdd);
+            drawRowOfSquares(out, evenOdd, boardRow);
 
         }
     }
 
-    private static void drawRowOfSquares(PrintStream out, String evenOdd) {
+    private static void drawRowOfSquares(PrintStream out, String evenOdd, int boardRow) {
 
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             if (Objects.equals(evenOdd, "even")) {
-                printEvenRow(out, boardCol);
+                printEvenRow(out, boardCol, boardRow);
             } else {
-                printOddRow(out, boardCol);
+                printOddRow(out, boardCol, boardRow);
             }
         }
 
         out.println();
     }
 
-    private static void printEvenRow(PrintStream out, int boardCol) {
+    private static void printEvenRow(PrintStream out, int boardCol, int boardRow) {
         setLightGreen(out);
         int prefixLength = 0;
         int suffixLength = 0;
 
         if (isEvenNum(boardCol)) {
             setLightPurple(out);
-            out.print(EMPTY.repeat(1));
+            if (boardRow == 0) {
+                if (boardCol == 0) {
+                    printPiece(out, BLACK_ROOK, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_BLACK);
+                } else if (boardCol == 2) {
+                    printPiece(out, BLACK_BISHOP, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_BLACK);
+                } else if (boardCol == 4) {
+                    printPiece(out, BLACK_KING, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_BLACK);
+                } else if (boardCol == 6) {
+                    printPiece(out, BLACK_KNIGHT, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_BLACK);
+                }
+            } else if (boardRow == 6) {
+                printPiece(out, WHITE_PAWN, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
+            } else {
+                out.print(EMPTY.repeat(1));
+            }
         } else {
-            out.print(EMPTY.repeat(prefixLength));
-            printPiece(out, BLACK_PAWN, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
-            out.print(EMPTY.repeat(suffixLength));
+            if (boardRow == 0) {
+                if (boardCol == 7) {
+                    printPiece(out, BLACK_ROOK, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
+                } else if (boardCol == 5) {
+                    printPiece(out, BLACK_BISHOP, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
+                } else if (boardCol == 3) {
+                    printPiece(out, BLACK_QUEEN, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
+                } else if (boardCol == 1) {
+                    printPiece(out, BLACK_KNIGHT, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
+                }
+            } else if (boardRow == 6) {
+                printPiece(out, WHITE_PAWN, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_WHITE);
+            } else {
+                out.print(EMPTY.repeat(1));
+            }
         }
 
         setBlack(out);
     }
 
-    private static void printOddRow(PrintStream out, int boardCol) {
+    private static void printOddRow(PrintStream out, int boardCol, int boardRow) {
         setLightPurple(out);
         int prefixLength = 0;
         int suffixLength = 0;
 
         if (isEvenNum(boardCol)) {
             setLightGreen(out);
-            out.print(EMPTY.repeat(1));
+            if (boardRow == 1) {
+                printPiece(out, BLACK_PAWN, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_BLACK);
+            } else if (boardRow == 7) {
+                if (boardCol == 0) {
+                    printPiece(out, WHITE_ROOK, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_WHITE);
+                } else if (boardCol == 2) {
+                    printPiece(out, WHITE_BISHOP, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_WHITE);
+                } else if (boardCol == 4) {
+                    printPiece(out, WHITE_KING, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_WHITE);
+                } else if (boardCol == 6) {
+                    printPiece(out, WHITE_KNIGHT, SET_BG_COLOR_LIGHT_GREEN, SET_TEXT_COLOR_WHITE);
+                }
+            } else {
+                out.print(EMPTY.repeat(1));
+            }
         } else {
-            out.print(EMPTY.repeat(prefixLength));
-            printPiece(out, WHITE_BISHOP, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
-            out.print(EMPTY.repeat(suffixLength));
+            if (boardRow == 1) {
+                printPiece(out, BLACK_PAWN, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_BLACK);
+            } else if (boardRow == 7) {
+                if (boardCol == 7) {
+                    printPiece(out, WHITE_ROOK, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
+                } else if (boardCol == 5) {
+                    printPiece(out, WHITE_BISHOP, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
+                } else if (boardCol == 3) {
+                    printPiece(out, WHITE_QUEEN, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
+                } else if (boardCol == 1) {
+                    printPiece(out, WHITE_KNIGHT, SET_BG_COLOR_LIGHT_PURPLE, SET_TEXT_COLOR_WHITE);
+                }
+            } else {
+                out.print(EMPTY.repeat(1));
+            }
         }
 
         setBlack(out);
