@@ -14,22 +14,24 @@ public class DrawBoard {
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        String[] whiteHeaders = { "a", "b", "c", "d", "e", "f", "g", "h" };
 
         out.print(ERASE_SCREEN);
 
-        drawHeaders(out);
+        drawHeaders(out, whiteHeaders);
 
         drawChessBoard(out);
+
+        drawHeaders(out, whiteHeaders);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    private static void drawHeaders(PrintStream out) {
+    private static void drawHeaders(PrintStream out, String[] headers) {
 
         setBlack(out);
 
-        String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h" };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             if (boardCol == 3 || boardCol == 5) {
                 out.print("  ");
@@ -54,7 +56,8 @@ public class DrawBoard {
     private static void drawChessBoard(PrintStream out) {
 
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-            printHeaderText(out, String.format((boardRow + 1) + " "));
+            //black perspective: printHeaderText(out, String.format((boardRow + 1) + " "));
+            printHeaderText(out, (8 - boardRow) + " ");
             String evenOdd = "odd";
             if (isEvenNum(boardRow)) {
                 evenOdd = "even";
@@ -74,7 +77,8 @@ public class DrawBoard {
                 printOddRow(out, boardCol, boardRow);
             }
         }
-
+        //black perspective: printHeaderText(out, String.format(" " + (boardRow + 1)));
+        printHeaderText(out, " " + (8 - boardRow));
         out.println();
     }
 
