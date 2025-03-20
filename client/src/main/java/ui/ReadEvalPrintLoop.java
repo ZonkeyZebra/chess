@@ -46,7 +46,9 @@ public class ReadEvalPrintLoop {
                 }
             } else {
                 result = preLoginClient.eval(line);
-                setSignIn(true);
+                if (result.contains("Signed in") || result.contains("Registered as")) {
+                    setSignIn(true);
+                }
             }
             if (!result.contains("Draw Board: observe") && !result.contains("Draw Board: WHITE") && !result.contains("Draw Board: BLACK")) {
                 System.out.print("\u001B[34m" + result);
