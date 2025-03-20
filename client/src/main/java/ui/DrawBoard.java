@@ -12,8 +12,8 @@ import static ui.EscapeSequences.*;
 public class DrawBoard {
     // Board dimensions.
     private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final String[] whiteHeaders = { "a", "b", "c", "d", "e", "f", "g", "h" };
-    private static final String[] blackHeaders = { "h", "g", "f", "e", "d", "c", "b", "a" };
+    private static final String[] WHITE_HEADERS = { "a", "b", "c", "d", "e", "f", "g", "h" };
+    private static final String[] BLACK_HEADERS = { "h", "g", "f", "e", "d", "c", "b", "a" };
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -22,14 +22,14 @@ public class DrawBoard {
         out.print(ERASE_SCREEN);
 
         // draw board from white perspective
-        drawHeaders(out, whiteHeaders);
+        drawHeaders(out, WHITE_HEADERS);
         drawChessBoard(out, teamColor);
-        drawHeaders(out, whiteHeaders);
+        drawHeaders(out, WHITE_HEADERS);
 
         teamColor = ChessGame.TeamColor.BLACK;
-        drawHeaders(out, blackHeaders);
+        drawHeaders(out, BLACK_HEADERS);
         drawChessBoard(out, teamColor);
-        drawHeaders(out, blackHeaders);
+        drawHeaders(out, BLACK_HEADERS);
 
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -38,13 +38,13 @@ public class DrawBoard {
     DrawBoard (ChessGame.TeamColor teamColor) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         if (teamColor == ChessGame.TeamColor.BLACK) {
-            drawHeaders(out, blackHeaders);
+            drawHeaders(out, BLACK_HEADERS);
             drawChessBoard(out, teamColor);
-            drawHeaders(out, blackHeaders);
+            drawHeaders(out, BLACK_HEADERS);
         } else {
-            drawHeaders(out, whiteHeaders);
+            drawHeaders(out, WHITE_HEADERS);
             drawChessBoard(out, teamColor);
-            drawHeaders(out, whiteHeaders);
+            drawHeaders(out, WHITE_HEADERS);
         }
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
@@ -131,9 +131,11 @@ public class DrawBoard {
 
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             if (Objects.equals(evenOdd, "even")) {
-                printEvenRow(out, boardCol, boardRow, setTextColorEven, rookEven, bishopEven, queenEven, knightEven, kingEven, pawnEven, pawnColorEven);
+                printEvenRow(out, boardCol, boardRow, setTextColorEven, rookEven, bishopEven, queenEven,
+                        knightEven, kingEven, pawnEven, pawnColorEven);
             } else {
-                printOddRow(out, boardCol, boardRow, setTextColorOdd, rookOdd, bishopOdd, queenOdd, knightOdd, kingOdd, pawnOdd, pawnColorOdd);
+                printOddRow(out, boardCol, boardRow, setTextColorOdd, rookOdd, bishopOdd, queenOdd,
+                        knightOdd, kingOdd, pawnOdd, pawnColorOdd);
             }
         }
 
@@ -171,7 +173,8 @@ public class DrawBoard {
         setBlack(out);
     }
 
-    private static void getOddPieces(PrintStream out, int boardCol, String rook, String setBgColor, String setTextColor, String bishop, String queen, String knight) {
+    private static void getOddPieces(PrintStream out, int boardCol, String rook, String setBgColor, String setTextColor,
+                                     String bishop, String queen, String knight) {
         if (boardCol == 7) {
             printPiece(out, rook, setBgColor, setTextColor);
         } else if (boardCol == 5) {
@@ -183,7 +186,8 @@ public class DrawBoard {
         }
     }
 
-    private static void getEvenPieces(PrintStream out, int boardCol, String rook, String setBgColor, String setTextColor, String bishop, String king, String knight) {
+    private static void getEvenPieces(PrintStream out, int boardCol, String rook, String setBgColor, String setTextColor,
+                                      String bishop, String king, String knight) {
         if (boardCol == 0) {
             printPiece(out, rook, setBgColor, setTextColor);
         } else if (boardCol == 2) {

@@ -47,29 +47,27 @@ public class JoinGameService {
         if (gameExists(gameID)) {
             if (playerColor == ChessGame.TeamColor.BLACK) {
                 if (game.blackUsername() == null) {
-                    if (Objects.equals(authToken, userAuth)) {
-                        gameDataAccess.updateGame(new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
-                    }
+                    updateGame(authToken, userAuth, game.whiteUsername(), username);
                 } else if (game.blackUsername().isEmpty()) {
-                    if (Objects.equals(authToken, userAuth)) {
-                        gameDataAccess.updateGame(new GameData(game.gameID(), game.whiteUsername(), username, game.gameName(), game.game()));
-                    }
+                    updateGame(authToken, userAuth, game.whiteUsername(), username);
                 } else {
                     throw new DataAccessException("Error: already taken");
                 }
             } else if (playerColor == ChessGame.TeamColor.WHITE) {
                 if (game.whiteUsername() == null) {
-                    if (Objects.equals(authToken, userAuth)) {
-                        gameDataAccess.updateGame(new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
-                    }
+                    updateGame(authToken, userAuth, username, game.blackUsername());
                 } else if (game.whiteUsername().isEmpty()) {
-                    if (Objects.equals(authToken, userAuth)) {
-                        gameDataAccess.updateGame(new GameData(game.gameID(), username, game.blackUsername(), game.gameName(), game.game()));
-                    }
+                    updateGame(authToken, userAuth, username, game.blackUsername());
                 } else {
                     throw new DataAccessException("Error: already taken");
                 }
             }
+        }
+    }
+
+    private void updateGame(String authToken, String userAuth, String whiteUser, String blackUser) throws DataAccessException {
+        if (Objects.equals(authToken, userAuth)) {
+            gameDataAccess.updateGame(new GameData(game.gameID(), whiteUser, blackUser, game.gameName(), game.game()));
         }
     }
 

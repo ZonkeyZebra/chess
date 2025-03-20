@@ -15,7 +15,7 @@ public class ServerFacadeTests {
 
     private static Server server;
     static ServerFacade facade;
-    private static final String badAuth = "";
+    private static final String BAD_AUTH = "";
 
     @BeforeAll
     public static void init() {
@@ -68,7 +68,7 @@ public class ServerFacadeTests {
 
     @Test
     public void logoutFail() {
-        Assertions.assertThrows(DataAccessException.class, () -> facade.logout(badAuth));
+        Assertions.assertThrows(DataAccessException.class, () -> facade.logout(BAD_AUTH));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ServerFacadeTests {
         var loginResult = facade.login(new LoginRequest("new", "new"));
         String authToken = loginResult.authToken();
         facade.createGame(new CreateGameRequest("awesome"), authToken);
-        Assertions.assertThrows(DataAccessException.class, () -> facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.BLACK, 1), badAuth));
+        Assertions.assertThrows(DataAccessException.class, () -> facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.BLACK, 1), BAD_AUTH));
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ServerFacadeTests {
 
     @Test
     public void listFail() {
-        Assertions.assertThrows(DataAccessException.class, () -> facade.listGames(badAuth));
+        Assertions.assertThrows(DataAccessException.class, () -> facade.listGames(BAD_AUTH));
     }
 
     @Test
@@ -110,7 +110,7 @@ public class ServerFacadeTests {
 
     @Test
     public void createGameFail() {
-        Assertions.assertThrows(DataAccessException.class, () -> facade.createGame(new CreateGameRequest("another"), badAuth));
+        Assertions.assertThrows(DataAccessException.class, () -> facade.createGame(new CreateGameRequest("another"), BAD_AUTH));
     }
 
     @Test
