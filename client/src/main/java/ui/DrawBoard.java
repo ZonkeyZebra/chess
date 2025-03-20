@@ -130,12 +130,22 @@ public class DrawBoard {
         }
 
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-            if (Objects.equals(evenOdd, "even")) {
-                printEvenRow(out, boardCol, boardRow, setTextColorEven, rookEven, bishopEven, queenEven,
-                        knightEven, kingEven, pawnEven, pawnColorEven);
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                if (Objects.equals(evenOdd, "even")) {
+                    printEvenRow(out, boardCol, boardRow, setTextColorEven, rookEven, bishopEven, queenEven,
+                            knightEven, kingEven, pawnEven, pawnColorEven);
+                } else {
+                    printOddRow(out, boardCol, boardRow, setTextColorOdd, rookOdd, bishopOdd, queenOdd,
+                            knightOdd, kingOdd, pawnOdd, pawnColorOdd);
+                }
             } else {
-                printOddRow(out, boardCol, boardRow, setTextColorOdd, rookOdd, bishopOdd, queenOdd,
-                        knightOdd, kingOdd, pawnOdd, pawnColorOdd);
+                if (Objects.equals(evenOdd, "even")) {
+                    printEvenRow(out, boardCol, boardRow, setTextColorEven, rookEven, bishopEven, kingEven,
+                            knightEven, queenEven, pawnEven, pawnColorEven);
+                } else {
+                    printOddRow(out, boardCol, boardRow, setTextColorOdd, rookOdd, bishopOdd, kingOdd,
+                            knightOdd, queenOdd, pawnOdd, pawnColorOdd);
+                }
             }
         }
 

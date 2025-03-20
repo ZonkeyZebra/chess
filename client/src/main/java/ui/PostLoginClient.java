@@ -47,7 +47,7 @@ public class PostLoginClient {
     public String createGame(String[] params, String authToken) throws DataAccessException {
         if (params.length >= 1) {
             var result = server.createGame(new CreateGameRequest(params[0]), authToken);
-            return String.format("Created game! Here is its id: %d", result.gameID());
+            return "Created game!";
         }
         throw new DataAccessException("Expected create <name>");
     }
