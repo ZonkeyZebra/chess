@@ -16,7 +16,7 @@ public class PreLoginClient {
         this.serverUrl = serverUrl;
     }
 
-    public String eval(String input) throws DataAccessException {
+    public String eval(String input) throws Exception {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -28,14 +28,18 @@ public class PreLoginClient {
         };
     }
 
-    public String login(String[] params) throws DataAccessException {
+    public String login(String[] params) throws Exception {
         if (params.length >= 2) {
             String username = params[0];
-            var result = server.login(new LoginRequest(username, params[1]));
-            setAuthToken(result.authToken());
-            return String.format("Signed in as %s. Here is your authToken: %s", username, result.authToken());
+            try {
+                var result = server.login(new LoginRequest(username, params[1]));
+                setAuthToken(result.authToken());
+                return String.format("Signed in as %s. Here is your authToken: %s", username, result.authToken());
+            } catch (Exception e) {
+                throw new Exception("Not a user");
+            }
         }
-        throw new DataAccessException("Expected: login <username> <password>");
+        throw new Exception("Expected login <username> <password>");
     }
 
     public String register(String[] params) throws DataAccessException {
@@ -45,7 +49,7 @@ public class PreLoginClient {
             setAuthToken(result.authToken());
             return String.format("Registered as %s. Here is your authToken: %s", username, result.authToken());
         }
-        throw new DataAccessException("Expected: register <username> <password> <email>");
+        throw new DataAccessException("Expected register <username> <password> <email>");
     }
 
     public String help() {

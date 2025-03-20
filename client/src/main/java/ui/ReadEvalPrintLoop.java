@@ -53,7 +53,12 @@ public class ReadEvalPrintLoop {
             }
         } catch (Throwable e) {
             var msg = e.toString();
-            System.out.print(msg);
+            var error = msg.split(":");
+            if (msg.contains("For input string")) {
+                System.out.print(error[2] + " is not a valid input. Type help for more info.");
+            } else {
+                System.out.print(error[1]);
+            }
         }
         return result;
     }

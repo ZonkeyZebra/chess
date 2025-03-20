@@ -47,7 +47,7 @@ public class PostLoginClient {
             var result = server.createGame(new CreateGameRequest(params[0]), authToken);
             return String.format("Created game! Here is its id: %d", result.gameID());
         }
-        throw new DataAccessException("Expected: create <name>");
+        throw new DataAccessException("Expected create <name>");
     }
 
     public String listGames(String authToken) throws DataAccessException {
@@ -83,7 +83,7 @@ public class PostLoginClient {
             server.joinGame(new JoinGameRequest(teamColor, id), authToken);
             return "Draw Board: "+ teamColor + " " + id;
         }
-        throw new DataAccessException("Expected: join <id> <white|black>");
+        throw new DataAccessException("Expected join <id> <white|black>");
     }
 
     public String observeGame(String[] params) throws DataAccessException {
@@ -91,7 +91,7 @@ public class PostLoginClient {
             int id = Integer.parseInt(params[0]);
             return "Draw Board: observe " + id;
         }
-        throw new DataAccessException("Expected: observe <id>");
+        throw new DataAccessException("Expected observe <id>");
     }
 
     public String help() {
