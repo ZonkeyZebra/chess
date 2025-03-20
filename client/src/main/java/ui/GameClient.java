@@ -53,6 +53,7 @@ public class GameClient {
                 - makeMove
                 - resign
                 - highlight
+                - help
                 - quit
                 """;
     }

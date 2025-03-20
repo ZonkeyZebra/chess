@@ -13,10 +13,6 @@ import java.net.URI;
 import java.net.URL;
 
 /**
- * PreLogin UI phase
- * PostLogin UI Phase
- * Game UI Phase
- * in petshop repl runs and then calls commands from PetClient
  * ANSI Escape Codes on Wikipedia will be a good resource
  */
 
@@ -104,7 +100,7 @@ public class ServerFacade {
         if (!isSuccessful(status)) {
             try (InputStream respErr = http.getErrorStream()) {
                 if (respErr != null) {
-                    throw new DataAccessException(String.format(respErr.toString() + " status: " + status));
+                    throw new DataAccessException(String.format(respErr + " status: " + status));
                 }
             }
 
