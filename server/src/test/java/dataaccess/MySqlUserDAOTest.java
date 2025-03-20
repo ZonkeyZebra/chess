@@ -1,14 +1,12 @@
 package dataaccess;
 
+import exception.DataAccessException;
 import model.UserData;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MySqlUserDAOTest {
     private final UserDAO user = new MySqlUserDAO();

@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.*;
+import exception.DataAccessException;
 import model.AuthData;
 import model.LoginRequest;
 import model.LoginResult;
@@ -8,10 +9,6 @@ import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.Objects;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class LoginServiceTest {
     AuthDAO auths = new MySqlAuthDAO();

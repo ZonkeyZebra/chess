@@ -1,7 +1,7 @@
 package ui;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import exception.DataAccessException;
 import model.*;
 
 import java.io.IOException;

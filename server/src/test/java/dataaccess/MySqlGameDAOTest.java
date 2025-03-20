@@ -1,6 +1,7 @@
 package dataaccess;
 
 import chess.ChessGame;
+import exception.DataAccessException;
 import model.GameData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,8 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class MySqlGameDAOTest {
     GameDAO game = new MySqlGameDAO();

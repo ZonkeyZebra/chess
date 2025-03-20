@@ -1,13 +1,12 @@
 package service;
 
 import dataaccess.*;
+import exception.DataAccessException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ClearServiceTest {
     AuthDAO auths = new MySqlAuthDAO();

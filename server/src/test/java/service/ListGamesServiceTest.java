@@ -1,17 +1,14 @@
 package service;
 
 import dataaccess.*;
+import exception.DataAccessException;
 import model.AuthData;
 import model.GameData;
-import model.ListGamesResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 
 import java.util.Collection;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ListGamesServiceTest {
     AuthDAO auths = new MySqlAuthDAO();

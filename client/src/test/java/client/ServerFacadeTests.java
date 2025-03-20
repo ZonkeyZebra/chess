@@ -1,15 +1,13 @@
 package client;
 
 import chess.ChessGame;
-import dataaccess.DataAccessException;
+import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.JoinGameRequest;
 import model.LoginRequest;
 import model.RegisterRequest;
 import org.junit.jupiter.api.*;
 import server.Server;
-import ui.PostLoginClient;
-import ui.PreLoginClient;
 import ui.ServerFacade;
 
 

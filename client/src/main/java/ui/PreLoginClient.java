@@ -1,6 +1,6 @@
 package ui;
 
-import dataaccess.DataAccessException;
+import exception.DataAccessException;
 import model.LoginRequest;
 import model.RegisterRequest;
 
