@@ -76,7 +76,7 @@ public class ServerFacade {
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception ex) {
-            throw new DataAccessException(ex.getMessage());
+            throw new DataAccessException("There was an issue with connecting " + ex.getMessage());
         }
     }
 

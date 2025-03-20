@@ -29,7 +29,7 @@ public class PreLoginClient {
     }
 
     public String login(String[] params) throws Exception {
-        if (params.length >= 2) {
+        if (params.length == 2) {
             String username = params[0];
             try {
                 var result = server.login(new LoginRequest(username, params[1]));
@@ -42,12 +42,16 @@ public class PreLoginClient {
         throw new Exception("Expected login <username> <password>");
     }
 
-    public String register(String[] params) throws DataAccessException {
-        if (params.length >= 3) {
+    public String register(String[] params) throws Exception {
+        if (params.length == 3) {
             String username = params[0];
-            var result = server.register(new RegisterRequest(username, params[1], params[2]));
-            setAuthToken(result.authToken());
-            return String.format("Registered as %s.", username);
+            try {
+                var result = server.register(new RegisterRequest(username, params[1], params[2]));
+                setAuthToken(result.authToken());
+                return String.format("Registered as %s.", username);
+            } catch (Exception e) {
+                throw new Exception("User already taken");
+            }
         }
         throw new DataAccessException("Expected register <username> <password> <email>");
     }
@@ -56,6 +60,7 @@ public class PreLoginClient {
         return """
                 - login <username> <password>
                 - register <username> <password> <email>
+                - help
                 - quit
                 """;
     }

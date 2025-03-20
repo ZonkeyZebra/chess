@@ -68,6 +68,12 @@ public class PostLoginClient {
                 whiteUser = ((GameData) resultArray[i]).whiteUsername();
                 blackUser = ((GameData) resultArray[i]).blackUsername();
                 gameName = ((GameData) resultArray[i]).gameName();
+                if (whiteUser == null) {
+                    whiteUser = "<empty>";
+                }
+                if (blackUser == null) {
+                    blackUser = "<empty>";
+                }
                 gameList = String.format("\u001B[34m" + "%d. Name: %s | White: %s | Black: %s", listNum, gameName, whiteUser, blackUser);
                 listNum++;
                 System.out.println(gameList);
@@ -79,15 +85,24 @@ public class PostLoginClient {
     }
 
     public String joinGame(String[] params, String authToken) throws DataAccessException {
-        if (params.length >= 2 && (Objects.equals(params[1], "black") || Objects.equals(params[1], "white"))) {
+        if (params.length == 2 && (Objects.equals(params[1], "black") || Objects.equals(params[1], "white"))) {
             int num = Integer.parseInt(params[0]);
-            int id = idList.get(num);
+            int id = 0;
+            try {
+                id = idList.get(num);
+            } catch (Exception e) {
+                throw new DataAccessException("This game does not exist.");
+            }
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
             if (params[1].equals("black")) {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
-            server.joinGame(new JoinGameRequest(teamColor, id), authToken);
-            return "Draw Board: "+ teamColor + " " + num;
+            try {
+                server.joinGame(new JoinGameRequest(teamColor, id), authToken);
+                return "Draw Board: " + teamColor + " " + num;
+            } catch (DataAccessException e) {
+                throw new DataAccessException("Spot is already taken. Join another game or as another color.");
+            }
         }
         throw new DataAccessException("Expected join <id> <white|black>");
     }
@@ -107,6 +122,7 @@ public class PostLoginClient {
                 - list
                 - join <id> <white|black>
                 - observe <id>
+                - help
                 - quit
                 """;
     }
