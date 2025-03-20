@@ -34,7 +34,7 @@ public class PreLoginClient {
             try {
                 var result = server.login(new LoginRequest(username, params[1]));
                 setAuthToken(result.authToken());
-                return String.format("Signed in as %s. Here is your authToken: %s", username, result.authToken());
+                return String.format("Signed in as %s.", username);
             } catch (Exception e) {
                 throw new Exception("Not a user");
             }
@@ -47,7 +47,7 @@ public class PreLoginClient {
             String username = params[0];
             var result = server.register(new RegisterRequest(username, params[1], params[2]));
             setAuthToken(result.authToken());
-            return String.format("Registered as %s. Here is your authToken: %s", username, result.authToken());
+            return String.format("Registered as %s.", username);
         }
         throw new DataAccessException("Expected register <username> <password> <email>");
     }

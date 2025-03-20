@@ -7,11 +7,13 @@ import model.GameData;
 import model.JoinGameRequest;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
+    private HashMap<Integer, Integer> idList = new HashMap<>();
 
     public PostLoginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -54,6 +56,7 @@ public class PostLoginClient {
         try {
             var result = server.listGames(authToken);
             var resultArray = result.games().toArray();
+            int listNum = 1;
             int gameID;
             String whiteUser;
             String blackUser;
@@ -61,10 +64,12 @@ public class PostLoginClient {
             String gameList = "";
             for (int i = 0; i < resultArray.length; i++) {
                 gameID = ((GameData) resultArray[i]).gameID();
+                idList.put(listNum, gameID);
                 whiteUser = ((GameData) resultArray[i]).whiteUsername();
                 blackUser = ((GameData) resultArray[i]).blackUsername();
                 gameName = ((GameData) resultArray[i]).gameName();
-                gameList = String.format("\u001B[34m" + "%d. Name: %s | White: %s | Black: %s", gameID, gameName, whiteUser, blackUser);
+                gameList = String.format("\u001B[34m" + "%d. Name: %s | White: %s | Black: %s", listNum, gameName, whiteUser, blackUser);
+                listNum++;
                 System.out.println(gameList);
             }
             return "";
@@ -75,13 +80,14 @@ public class PostLoginClient {
 
     public String joinGame(String[] params, String authToken) throws DataAccessException {
         if (params.length >= 2 && (Objects.equals(params[1], "black") || Objects.equals(params[1], "white"))) {
-            int id = Integer.parseInt(params[0]);
+            int num = Integer.parseInt(params[0]);
+            int id = idList.get(num);
             ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
             if (params[1].equals("black")) {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             server.joinGame(new JoinGameRequest(teamColor, id), authToken);
-            return "Draw Board: "+ teamColor + " " + id;
+            return "Draw Board: "+ teamColor + " " + num;
         }
         throw new DataAccessException("Expected join <id> <white|black>");
     }
