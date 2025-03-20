@@ -28,7 +28,7 @@ public class PostLoginClient {
             case "list" -> listGames(authToken);
             case "join" -> joinGame(params, authToken);
             case "observe" -> observeGame(params);
-            case "quit" -> "quitting...";
+            case "quit" -> "quit";
             default -> help();
         };
     }
