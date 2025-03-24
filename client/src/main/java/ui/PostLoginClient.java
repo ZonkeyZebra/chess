@@ -1,6 +1,9 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import dataaccess.GameDAO;
+import dataaccess.MemoryGameDAO;
 import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.GameData;
@@ -14,6 +17,8 @@ public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private HashMap<Integer, Integer> idList = new HashMap<>();
+    private GameDAO gameDataAccess = new MemoryGameDAO();
+    private ChessBoard gameBoard;
 
     public PostLoginClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -99,6 +104,8 @@ public class PostLoginClient {
             }
             try {
                 server.joinGame(new JoinGameRequest(teamColor, id), authToken);
+                ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
+                setBoard(board);
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
                 throw new DataAccessException("Spot is already taken. Join another game or as another color.");
@@ -110,6 +117,8 @@ public class PostLoginClient {
     public String observeGame(String[] params) throws DataAccessException {
         if (params.length >= 1) {
             int id = Integer.parseInt(params[0]);
+            ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
+            setBoard(board);
             return "Draw Board: observe " + id;
         }
         throw new DataAccessException("Expected observe <id>");
@@ -125,5 +134,13 @@ public class PostLoginClient {
                 - help
                 - quit
                 """;
+    }
+
+    private void setBoard(ChessBoard board) {
+        this.gameBoard = board;
+    }
+
+    public ChessBoard getGameBoard() {
+        return gameBoard;
     }
 }

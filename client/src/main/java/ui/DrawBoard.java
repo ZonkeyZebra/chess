@@ -1,6 +1,9 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -31,11 +34,22 @@ public class DrawBoard {
         drawChessBoard(out, teamColor);
         drawHeaders(out, BLACK_HEADERS);
 
+        ChessBoard board = new ChessBoard();
+        board.resetWhiteBoard();
+        drawHeaders(out, WHITE_HEADERS);
+        drawBoard(out, ChessGame.TeamColor.WHITE, board);
+        drawHeaders(out, WHITE_HEADERS);
+
+        board.resetBoard();
+        drawHeaders(out, BLACK_HEADERS);
+        drawBoard(out, ChessGame.TeamColor.BLACK, board);
+        drawHeaders(out, BLACK_HEADERS);
+
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-    DrawBoard (ChessGame.TeamColor teamColor) {
+    DrawBoard (ChessGame.TeamColor teamColor, ChessBoard board) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         if (teamColor == ChessGame.TeamColor.BLACK) {
             drawHeaders(out, BLACK_HEADERS);
@@ -255,6 +269,16 @@ public class DrawBoard {
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
+    private static void setDarkGray(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREY);
+        out.print(SET_TEXT_COLOR_DARK_GREY);
+    }
+
+    private static void setLightGray(PrintStream out) {
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_LIGHT_GREY);
+    }
+
     private static void printPiece(PrintStream out, String piece, String background, String textColor) {
         out.print(background);
         out.print(textColor);
@@ -271,4 +295,101 @@ public class DrawBoard {
         return false;
     }
 
+    private static void drawBoard(PrintStream out, ChessGame.TeamColor teamColor, ChessBoard board) {
+        for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                printHeaderText(out, (8 - row) + " ");
+            } else {
+                printHeaderText(out, String.format((row + 1) + " "));
+            }
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (isEvenNum(row)) {
+                    if (isEvenNum(col)) {
+                        setLightGray(out);
+                        printSquare(out, teamColor, board, row, col, SET_BG_COLOR_LIGHT_GREY);
+                    } else {
+                        setDarkGray(out);
+                        printSquare(out, teamColor, board, row, col, SET_BG_COLOR_DARK_GREY);
+                    }
+                } else {
+                    if (isEvenNum(col)) {
+                        setDarkGray(out);
+                        printSquare(out, teamColor, board, row, col, SET_BG_COLOR_DARK_GREY);
+                    } else {
+                        setLightGray(out);
+                        printSquare(out, teamColor, board, row, col, SET_BG_COLOR_LIGHT_GREY);
+                    }
+                }
+            }
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                printHeaderText(out, " " + (8 - row));
+            } else {
+                printHeaderText(out, String.format(" " + (row + 1)));
+            }
+            out.println();
+        }
+    }
+
+    private static void printSquare(PrintStream out, ChessGame.TeamColor teamColor, ChessBoard board, int row, int col, String setBgColorWhite) {
+        ChessPiece piece = board.getPiece(new ChessPosition(row+1, col+1));
+        if (piece == null) {
+            out.print(EMPTY.repeat(1));
+        } else {
+            String pieceString = getPieceString(piece.getPieceType(), piece.getTeamColor());
+            printPiece(out, pieceString, setBgColorWhite, getPieceTextColor(piece.getTeamColor()));
+        }
+        setBlack(out);
+    }
+
+    private static String getPieceString(ChessPiece.PieceType type, ChessGame.TeamColor color) {
+        String pieceString = null;
+        if (type == ChessPiece.PieceType.PAWN) {
+            if (color == ChessGame.TeamColor.BLACK) {
+                pieceString = BLACK_PAWN;
+            } else {
+                pieceString = WHITE_PAWN;
+            }
+        } else if (type == ChessPiece.PieceType.ROOK) {
+            if (color == ChessGame.TeamColor.BLACK) {
+                pieceString = BLACK_ROOK;
+            } else {
+                pieceString = WHITE_ROOK;
+            }
+        } else if (type == ChessPiece.PieceType.KNIGHT) {
+            if (color == ChessGame.TeamColor.BLACK) {
+                pieceString = BLACK_KNIGHT;
+            } else {
+                pieceString = WHITE_KNIGHT;
+            }
+        } else if (type == ChessPiece.PieceType.BISHOP) {
+            if (color == ChessGame.TeamColor.BLACK) {
+                pieceString = BLACK_BISHOP;
+            } else {
+                pieceString = WHITE_BISHOP;
+            }
+        } else if (type == ChessPiece.PieceType.QUEEN) {
+            if (color == ChessGame.TeamColor.BLACK) {
+                pieceString = BLACK_QUEEN;
+            } else {
+                pieceString = WHITE_QUEEN;
+            }
+        } else if (type == ChessPiece.PieceType.KING) {
+            if (color == ChessGame.TeamColor.BLACK) {
+                pieceString = BLACK_KING;
+            } else {
+                pieceString = WHITE_KING;
+            }
+        }
+        return pieceString;
+    }
+
+    private static String getPieceTextColor(ChessGame.TeamColor teamColor) {
+        String color = null;
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            color = SET_TEXT_COLOR_BLUE;
+        } else {
+            color = SET_TEXT_COLOR_WHITE;
+        }
+        return color;
+    }
 }

@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 
 import java.util.Objects;
@@ -39,10 +40,12 @@ public class ReadEvalPrintLoop {
                     setSignIn(false);
                 }
                 if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
-                    new DrawBoard(ChessGame.TeamColor.WHITE); // in phase 6 this will go to GameClient
+                    ChessBoard board = postLoginClient.getGameBoard();
+                    new DrawBoard(ChessGame.TeamColor.WHITE, board); // in phase 6 this will go to GameClient
                 }
                 if (result.contains("Draw Board: BLACK")) {
-                    new DrawBoard(ChessGame.TeamColor.BLACK); // in phase 6 this will go to GameClient
+                    ChessBoard board = postLoginClient.getGameBoard();
+                    new DrawBoard(ChessGame.TeamColor.BLACK, board); // in phase 6 this will go to GameClient
                 }
             } else {
                 result = preLoginClient.eval(line);

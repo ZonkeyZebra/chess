@@ -71,38 +71,46 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        addPiece(new ChessPosition(1, 1), new ChessPiece(white, rook));
-        addPiece(new ChessPosition(1, 2), new ChessPiece(white, knight));
-        addPiece(new ChessPosition(1, 3), new ChessPiece(white, bishop));
-        addPiece(new ChessPosition(1, 4), new ChessPiece(white, queen));
-        addPiece(new ChessPosition(1, 5), new ChessPiece(white, king));
-        addPiece(new ChessPosition(1, 6), new ChessPiece(white, bishop));
-        addPiece(new ChessPosition(1, 7), new ChessPiece(white, knight));
-        addPiece(new ChessPosition(1, 8), new ChessPiece(white, rook));
-        addPiece(new ChessPosition(2, 1), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(2, 2), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(2, 3), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(2, 4), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(2, 5), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(2, 6), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(2, 7), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(2, 8), new ChessPiece(white, pawn));
-        addPiece(new ChessPosition(7, 1), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(7, 2), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(7, 3), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(7, 4), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(7, 5), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(7, 6), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(7, 7), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(7, 8), new ChessPiece(black, pawn));
-        addPiece(new ChessPosition(8, 1), new ChessPiece(black, rook));
-        addPiece(new ChessPosition(8, 2), new ChessPiece(black, knight));
-        addPiece(new ChessPosition(8, 3), new ChessPiece(black, bishop));
-        addPiece(new ChessPosition(8, 4), new ChessPiece(black, queen));
-        addPiece(new ChessPosition(8, 5), new ChessPiece(black, king));
-        addPiece(new ChessPosition(8, 6), new ChessPiece(black, bishop));
-        addPiece(new ChessPosition(8, 7), new ChessPiece(black, knight));
-        addPiece(new ChessPosition(8, 8), new ChessPiece(black, rook));
+        resetPieces(white, queen, king, black);
+    }
+
+    public void resetWhiteBoard() {
+        resetPieces(black, king, queen, white);
+    }
+
+    private void resetPieces(ChessGame.TeamColor firstColor, ChessPiece.PieceType king, ChessPiece.PieceType queen, ChessGame.TeamColor otherColor) {
+        addPiece(new ChessPosition(1, 1), new ChessPiece(firstColor, rook));
+        addPiece(new ChessPosition(1, 2), new ChessPiece(firstColor, knight));
+        addPiece(new ChessPosition(1, 3), new ChessPiece(firstColor, bishop));
+        addPiece(new ChessPosition(1, 4), new ChessPiece(firstColor, king));
+        addPiece(new ChessPosition(1, 5), new ChessPiece(firstColor, queen));
+        addPiece(new ChessPosition(1, 6), new ChessPiece(firstColor, bishop));
+        addPiece(new ChessPosition(1, 7), new ChessPiece(firstColor, knight));
+        addPiece(new ChessPosition(1, 8), new ChessPiece(firstColor, rook));
+        addPiece(new ChessPosition(2, 1), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(2, 2), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(2, 3), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(2, 4), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(2, 5), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(2, 6), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(2, 7), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(2, 8), new ChessPiece(firstColor, pawn));
+        addPiece(new ChessPosition(7, 1), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(7, 2), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(7, 3), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(7, 4), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(7, 5), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(7, 6), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(7, 7), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(7, 8), new ChessPiece(otherColor, pawn));
+        addPiece(new ChessPosition(8, 1), new ChessPiece(otherColor, rook));
+        addPiece(new ChessPosition(8, 2), new ChessPiece(otherColor, knight));
+        addPiece(new ChessPosition(8, 3), new ChessPiece(otherColor, bishop));
+        addPiece(new ChessPosition(8, 4), new ChessPiece(otherColor, king));
+        addPiece(new ChessPosition(8, 5), new ChessPiece(otherColor, queen));
+        addPiece(new ChessPosition(8, 6), new ChessPiece(otherColor, bishop));
+        addPiece(new ChessPosition(8, 7), new ChessPiece(otherColor, knight));
+        addPiece(new ChessPosition(8, 8), new ChessPiece(otherColor, rook));
     }
 
     @Override
