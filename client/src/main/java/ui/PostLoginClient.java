@@ -4,6 +4,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import dataaccess.GameDAO;
 import dataaccess.MemoryGameDAO;
+import dataaccess.MySqlGameDAO;
 import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.GameData;
@@ -17,7 +18,7 @@ public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private HashMap<Integer, Integer> idList = new HashMap<>();
-    private GameDAO gameDataAccess = new MemoryGameDAO();
+    private GameDAO gameDataAccess = new MySqlGameDAO();
     private ChessBoard gameBoard;
 
     public PostLoginClient(String serverUrl) {
