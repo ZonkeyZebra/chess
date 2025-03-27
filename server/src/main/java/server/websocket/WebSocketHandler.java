@@ -5,11 +5,8 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 
-import java.io.IOException;
-import java.util.Timer;
-
 public class WebSocketHandler {
-    private WebSocketSessions sessions;
+    private WebSocketConnections connections = new WebSocketConnections();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
