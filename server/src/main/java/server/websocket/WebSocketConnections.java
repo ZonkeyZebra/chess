@@ -10,29 +10,25 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketConnections {
     private final ConcurrentHashMap<Integer, Connection> connections = new ConcurrentHashMap<>();
 
-    public void addSessionToGame(int gameID, Session session) {
+    public void addConnection(int gameID, Session session) {
         var connection = new Connection(gameID, session);
         connections.put(gameID, connection);
     }
 
-    public void removeSessionFromGame(int gameID, Session session) {
+    public void removeConnection(int gameID, Session session) {
         connections.remove(gameID);
     }
 
-    public void removeSession(Session session) {
-        //TODO
-    }
-
-    public Connection getConnectionForGame(int gameID) {
+    public Connection getConnection(int gameID) {
         return connections.get(gameID);
     }
 
-    public void broadcast(int excludeGame, ServerMessage notification) throws IOException {
+    public void broadcast(String excludeSession, ServerMessage notification, String message) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var connection : connections.values()) {
             if (connection.session.isOpen()) {
-                if (connection.gameID != excludeGame) {
-                    connection.send(notification.toString());
+                if (!connection.session.toString().equals(excludeSession)) {
+                    connection.send(String.format(message, notification));
                 }
             } else {
                 removeList.add(connection);
