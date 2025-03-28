@@ -2,19 +2,24 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import ui.websocket.NotificationHandler;
+import websocket.messages.ServerMessage;
 
 import java.util.Objects;
 import java.util.Scanner;
 
-public class ReadEvalPrintLoop {
+public class ReadEvalPrintLoop implements NotificationHandler {
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
+    private final GameClient gameClient;
     private boolean loginStatus = false;
     private String authToken;
 
+
     public ReadEvalPrintLoop(String serverUrl) {
         preLoginClient = new PreLoginClient(serverUrl);
-        postLoginClient = new PostLoginClient(serverUrl);
+        postLoginClient = new PostLoginClient(serverUrl, this);
+        gameClient = new GameClient(serverUrl);
     }
 
     public void run() {
@@ -74,5 +79,10 @@ public class ReadEvalPrintLoop {
 
     private void setSignIn(boolean bool) {
         loginStatus = bool;
+    }
+
+    public void notify(ServerMessage notification) {
+        System.out.println("\u001b[31m" + notification.getServerMessageType() + " notification");
+        printPrompt();
     }
 }

@@ -3,12 +3,13 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import dataaccess.GameDAO;
-import dataaccess.MemoryGameDAO;
 import dataaccess.MySqlGameDAO;
 import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.GameData;
 import model.JoinGameRequest;
+import ui.websocket.NotificationHandler;
+import ui.websocket.WebSocketFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,16 +18,19 @@ import java.util.Objects;
 public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
-    private HashMap<Integer, Integer> idList = new HashMap<>();
-    private GameDAO gameDataAccess = new MySqlGameDAO();
+    private final HashMap<Integer, Integer> idList = new HashMap<>();
+    private final GameDAO gameDataAccess = new MySqlGameDAO();
     private ChessBoard gameBoard;
+    private WebSocketFacade ws;
+    private final NotificationHandler notificationHandler;
 
-    public PostLoginClient(String serverUrl) {
+    public PostLoginClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+        this.notificationHandler = notificationHandler;
     }
 
-    public String eval(String input, String authToken) throws DataAccessException {
+    public String eval(String input, String authToken) throws Exception {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -35,7 +39,7 @@ public class PostLoginClient {
             case "create" -> createGame(params, authToken);
             case "list" -> listGames(authToken);
             case "join" -> joinGame(params, authToken);
-            case "observe" -> observeGame(params);
+            case "observe" -> observeGame(params, authToken);
             case "quit" -> "quit";
             default -> help();
         };
@@ -115,11 +119,13 @@ public class PostLoginClient {
         throw new DataAccessException("Expected join <id> <white|black>");
     }
 
-    public String observeGame(String[] params) throws DataAccessException {
+    public String observeGame(String[] params, String authToken) throws Exception {
         if (params.length >= 1) {
             int id = Integer.parseInt(params[0]);
             ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
             setBoard(board);
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.connect(id, authToken);
             return "Draw Board: observe " + id;
         }
         throw new DataAccessException("Expected observe <id>");

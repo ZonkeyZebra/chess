@@ -25,12 +25,11 @@ public class DrawBoard {
         out.print(ERASE_SCREEN);
 
         ChessBoard board = new ChessBoard();
-        board.resetWhiteBoard();
+        board.resetBoard();
         drawHeaders(out, WHITE_HEADERS);
         drawBoard(out, ChessGame.TeamColor.WHITE, board);
         drawHeaders(out, WHITE_HEADERS);
 
-        board.resetBoard();
         drawHeaders(out, BLACK_HEADERS);
         drawBoard(out, ChessGame.TeamColor.BLACK, board);
         drawHeaders(out, BLACK_HEADERS);

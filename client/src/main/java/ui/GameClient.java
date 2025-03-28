@@ -1,10 +1,13 @@
 package ui;
 
+import ui.websocket.WebSocketFacade;
+
 import java.util.Arrays;
 
 public class GameClient {
     private final ServerFacade server;
     private final String serverUrl;
+    private WebSocketFacade ws;
 
     public GameClient(String serverUrl) {
         server = new ServerFacade(serverUrl);

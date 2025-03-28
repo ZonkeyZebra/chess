@@ -12,6 +12,7 @@ import websocket.messages.ServerMessage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+@WebSocket
 public class WebSocketHandler {
     private final WebSocketConnections connections = new WebSocketConnections();
     private AuthDAO authDAO;

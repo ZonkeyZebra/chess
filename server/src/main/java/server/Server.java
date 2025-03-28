@@ -7,7 +7,9 @@ import model.*;
 import server.websocket.WebSocketHandler;
 import service.*;
 import spark.*;
+import websocket.messages.ServerMessage;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +38,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        //Spark.webSocket("/ws", webSocketHandler);
+        Spark.webSocket("/ws", webSocketHandler);
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::registerUser);
@@ -75,7 +77,7 @@ public class Server {
         return "{}";
     }
 
-    private Object login(Request request, Response response) throws DataAccessException {
+    private Object login(Request request, Response response) throws DataAccessException, IOException {
         LoginResult result = null;
         LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
         result = loginService.login(loginRequest);
@@ -90,11 +92,12 @@ public class Server {
         return "{}";
     }
 
-    private Object joinGame(Request request, Response response) throws DataAccessException {
+    private Object joinGame(Request request, Response response) throws DataAccessException, IOException {
         JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
         authToken = request.headers("Authorization");
         joinGameService.joinGame(joinGameRequest, authToken);
         response.status(200);
+        webSocketHandler.broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION), "join!");
         return "{}";
     }
 
