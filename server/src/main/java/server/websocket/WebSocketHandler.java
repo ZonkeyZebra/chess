@@ -10,6 +10,7 @@ import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class WebSocketHandler {
     private final WebSocketConnections connections = new WebSocketConnections();
@@ -36,26 +37,30 @@ public class WebSocketHandler {
         connections.addConnection(gameID, session);
         String message = String.format("%s has joined the game.", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), notification, message);
     }
 
     public void makeMove(int gameID, Session session, String username) throws IOException {
         String message = String.format("%s made a move.", username);
         ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), notification, message);
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException {
         connections.removeConnection(gameID, session);
         String message = String.format("%s left the game.", username);
         ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), notification, message);
     }
 
     public void resignGame(int gameID, Session session, String username) throws IOException {
         connections.removeConnection(gameID, session);
         String message = String.format("%s forfeited the game.", username);
         ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), notification, message);
+    }
+
+    public void broadcast(String excludeSession, ServerMessage notification, String message) throws IOException {
+        connections.broadcast(excludeSession, notification, message);
     }
 }
