@@ -34,6 +34,11 @@ public class WebSocketHandler {
         }
     }
 
+    @OnWebSocketError
+    public void onError(Session session, Throwable throwable) {
+        System.out.println("Error: " + throwable.getMessage());
+    }
+
     public void connect(int gameID, Session session, String username) throws IOException {
         connections.addConnection(gameID, session);
         String message = String.format("%s has joined the game.", username);
