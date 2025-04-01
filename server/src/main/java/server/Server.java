@@ -97,7 +97,6 @@ public class Server {
         authToken = request.headers("Authorization");
         joinGameService.joinGame(joinGameRequest, authToken);
         response.status(200);
-        webSocketHandler.broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION), "join!");
         return "{}";
     }
 

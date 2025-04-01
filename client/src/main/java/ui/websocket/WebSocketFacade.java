@@ -22,7 +22,7 @@ public class WebSocketFacade extends Endpoint {
         //Endpoint requires this method, but you don't have to do anything
     }
 
-    public WebSocketFacade(String url, NotificationHandler notificationHandler) throws Exception {
+    public WebSocketFacade(String url, GameHandler handler) throws Exception {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
@@ -35,7 +35,7 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    notificationHandler.notify(notification);
+                    //handler.notify(notification);
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {

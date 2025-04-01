@@ -42,31 +42,31 @@ public class WebSocketHandler {
     public void connect(int gameID, Session session, String username) throws IOException {
         connections.addSession(gameID, session);
         String message = String.format("%s has joined the game.", username);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), gameID, message);
     }
 
     public void makeMove(int gameID, Session session, String username) throws IOException {
         String message = String.format("%s made a move.", username);
-        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), gameID, message);
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s left the game.", username);
-        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), gameID, message);
     }
 
     public void resignGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s forfeited the game.", username);
-        ServerMessage notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        broadcast(session.toString(), notification, message);
+        broadcast(session.toString(), gameID, message);
     }
 
-    public void broadcast(String excludeSession, ServerMessage notification, String message) throws IOException {
+    public void sendMessage(Session session) {
+
+    }
+
+    public void broadcast(String excludeSession, int gameID, String message) throws IOException {
 
     }
 }

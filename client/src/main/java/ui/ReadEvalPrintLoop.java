@@ -2,13 +2,13 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
-import ui.websocket.NotificationHandler;
+import ui.websocket.GameHandler;
 import websocket.messages.ServerMessage;
 
 import java.util.Objects;
 import java.util.Scanner;
 
-public class ReadEvalPrintLoop implements NotificationHandler {
+public class ReadEvalPrintLoop implements GameHandler {
     private final PreLoginClient preLoginClient;
     private final PostLoginClient postLoginClient;
     private final GameClient gameClient;
@@ -84,5 +84,13 @@ public class ReadEvalPrintLoop implements NotificationHandler {
     public void notify(ServerMessage notification) {
         System.out.println("\u001b[31m" + notification.getServerMessageType() + " notification");
         printPrompt();
+    }
+
+    public void updateGame(ChessGame game) {
+
+    }
+
+    public void printMessage(String message) {
+
     }
 }

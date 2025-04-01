@@ -8,7 +8,7 @@ import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.GameData;
 import model.JoinGameRequest;
-import ui.websocket.NotificationHandler;
+import ui.websocket.GameHandler;
 import ui.websocket.WebSocketFacade;
 
 import java.util.Arrays;
@@ -22,12 +22,12 @@ public class PostLoginClient {
     private final GameDAO gameDataAccess = new MySqlGameDAO();
     private ChessBoard gameBoard;
     private WebSocketFacade ws;
-    private final NotificationHandler notificationHandler;
+    private final GameHandler handler;
 
-    public PostLoginClient(String serverUrl, NotificationHandler notificationHandler) {
+    public PostLoginClient(String serverUrl, GameHandler handler) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-        this.notificationHandler = notificationHandler;
+        this.handler = handler;
     }
 
     public String eval(String input, String authToken) throws Exception {
@@ -124,7 +124,7 @@ public class PostLoginClient {
             int id = Integer.parseInt(params[0]);
             ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
             setBoard(board);
-            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws = new WebSocketFacade(serverUrl, handler);
             ws.connect(id, authToken);
             return "Draw Board: observe " + id;
         }
