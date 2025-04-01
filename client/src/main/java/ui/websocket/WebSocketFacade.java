@@ -35,7 +35,7 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    //handler.notify(notification);
+                    gameHandler.printMessage(notification.toString()); //?
                 }
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
@@ -79,5 +79,10 @@ public class WebSocketFacade extends Endpoint {
         } catch (Exception e) {
             throw new DataAccessException(e.getMessage());
         }
+    }
+
+    private void sendMessage() {
+        // create command message
+        // send message to server
     }
 }

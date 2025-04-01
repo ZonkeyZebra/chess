@@ -124,8 +124,6 @@ public class PostLoginClient {
             int id = Integer.parseInt(params[0]);
             ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
             setBoard(board);
-            ws = new WebSocketFacade(serverUrl, handler);
-            ws.connect(id, authToken);
             return "Draw Board: observe " + id;
         }
         throw new DataAccessException("Expected observe <id>");
