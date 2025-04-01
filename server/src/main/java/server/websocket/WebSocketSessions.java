@@ -1,0 +1,40 @@
+package server.websocket;
+
+import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.ServerMessage;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class WebSocketSessions {
+    private final ConcurrentHashMap<Integer, Set<Session>> gameMap;
+    private final ConcurrentHashMap<Session, Integer> sessionMap;
+    private final Set<Session> sessions;
+
+    public WebSocketSessions() {
+        this.sessions = new HashSet<>();
+        this.gameMap = new ConcurrentHashMap<>();
+        this.sessionMap = new ConcurrentHashMap<>();
+    }
+
+    public void addSession(int gameID, Session session) {
+        sessions.add(session);
+        gameMap.put(gameID, sessions);
+        sessionMap.put(session, gameID);
+    }
+
+    public void removeSessionFromGame(int gameID, Session session) {
+        gameMap.remove(gameID);
+    }
+
+    public void removeSession(Session session) {
+        sessionMap.remove(session);
+    }
+
+    public Set<Session> getSessionsForGame(int gameID) {
+        return gameMap.get(gameID);
+    }
+}
