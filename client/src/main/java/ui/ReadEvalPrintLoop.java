@@ -15,6 +15,7 @@ public class ReadEvalPrintLoop implements GameHandler {
     private boolean loginStatus = false;
     private String authToken;
     private boolean inGame = false;
+    private ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
 
 
     public ReadEvalPrintLoop(String serverUrl) {
@@ -51,12 +52,14 @@ public class ReadEvalPrintLoop implements GameHandler {
                 }
                 if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
                     ChessBoard board = postLoginClient.getGameBoard();
-                    new DrawBoard(ChessGame.TeamColor.WHITE, board);
+                    teamColor = ChessGame.TeamColor.WHITE;
+                    new DrawBoard(teamColor, board);
                     setInGame(true);
                 }
                 if (result.contains("Draw Board: BLACK")) {
                     ChessBoard board = postLoginClient.getGameBoard();
-                    new DrawBoard(ChessGame.TeamColor.BLACK, board);
+                    teamColor = ChessGame.TeamColor.BLACK;
+                    new DrawBoard(teamColor, board);
                     setInGame(true);
                 }
             } else {
@@ -82,8 +85,8 @@ public class ReadEvalPrintLoop implements GameHandler {
 
     private String getGameResult(String result, String line, String authToken) {
         try {
-            result = gameClient.eval(line, authToken);
-            if (line.contains("leave")) {
+            result = gameClient.eval(line, authToken, teamColor, postLoginClient.getGameBoard());
+            if (line.contains("leave") || line.contains("resign")) {
                 setInGame(false);
             }
             System.out.print("\u001B[34m" + result);
