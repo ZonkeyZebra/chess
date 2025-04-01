@@ -14,6 +14,7 @@ public class ReadEvalPrintLoop implements GameHandler {
     private final GameClient gameClient;
     private boolean loginStatus = false;
     private String authToken;
+    private boolean inGame = false;
 
 
     public ReadEvalPrintLoop(String serverUrl) {
@@ -31,7 +32,11 @@ public class ReadEvalPrintLoop implements GameHandler {
         while (!Objects.equals(result, "quit")) {
             printPrompt();
             String line = scanner.nextLine();
-            result = getResult(result, line);
+            if (inGame) {
+                result = getGameResult(result, line, preLoginClient.getAuthToken());
+            } else {
+                result = getResult(result, line);
+            }
         }
         System.out.println();
     }
@@ -46,11 +51,13 @@ public class ReadEvalPrintLoop implements GameHandler {
                 }
                 if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
                     ChessBoard board = postLoginClient.getGameBoard();
-                    new DrawBoard(ChessGame.TeamColor.WHITE, board); // in phase 6 this will go to GameClient
+                    new DrawBoard(ChessGame.TeamColor.WHITE, board);
+                    setInGame(true);
                 }
                 if (result.contains("Draw Board: BLACK")) {
                     ChessBoard board = postLoginClient.getGameBoard();
-                    new DrawBoard(ChessGame.TeamColor.BLACK, board); // in phase 6 this will go to GameClient
+                    new DrawBoard(ChessGame.TeamColor.BLACK, board);
+                    setInGame(true);
                 }
             } else {
                 result = preLoginClient.eval(line);
@@ -73,12 +80,35 @@ public class ReadEvalPrintLoop implements GameHandler {
         return result;
     }
 
+    private String getGameResult(String result, String line, String authToken) {
+        try {
+            result = gameClient.eval(line, authToken);
+            if (line.contains("leave")) {
+                setInGame(false);
+            }
+            System.out.print("\u001B[34m" + result);
+        } catch (Throwable e) {
+            var msg = e.toString();
+            var error = msg.split(":");
+            if (msg.contains("For input string")) {
+                System.out.print(error[2] + " is not a valid input. Type help for more info.");
+            } else {
+                System.out.print(error[1]);
+            }
+        }
+        return result;
+    }
+
     private void printPrompt() {
         System.out.print("\n" + "\u001B[0m" + ">>> " + "\u001B[32m");
     }
 
     private void setSignIn(boolean bool) {
         loginStatus = bool;
+    }
+
+    private void setInGame(boolean bool) {
+        inGame = bool;
     }
 
     public void notify(ServerMessage notification) {
