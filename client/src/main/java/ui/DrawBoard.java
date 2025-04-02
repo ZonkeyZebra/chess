@@ -24,12 +24,21 @@ public class DrawBoard {
 
         ChessBoard board = new ChessBoard();
         board.resetBoard();
+
+        // Draw normal white and black board
         drawHeaders(out, WHITE_HEADERS);
         drawBoard(out, ChessGame.TeamColor.WHITE, board, emptyMoves);
         drawHeaders(out, WHITE_HEADERS);
 
         drawHeaders(out, BLACK_HEADERS);
         drawBoard(out, ChessGame.TeamColor.BLACK, board, emptyMoves);
+        drawHeaders(out, BLACK_HEADERS);
+
+        // Draw valid moves board
+        ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        Collection<ChessMove> testMoves = piece.pieceMoves(board, new ChessPosition(2,2));
+        drawHeaders(out, BLACK_HEADERS);
+        drawBoard(out, ChessGame.TeamColor.BLACK, board, testMoves);
         drawHeaders(out, BLACK_HEADERS);
 
         out.print(SET_BG_COLOR_BLACK);
@@ -161,11 +170,19 @@ public class DrawBoard {
         }
         if (reverse) {
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
-                squareCheck(out, board, row, col, moves);
+                if (moves.isEmpty()) {
+                    squareCheck(out, board, row, col, moves);
+                } else {
+                    validSquareCheck(out, board, row, col, moves);
+                }
             }
         } else {
             for (int col = BOARD_SIZE_IN_SQUARES - 1; col >= 0; col--) {
-                squareCheck(out, board, row, col, moves);
+                if (moves.isEmpty()) {
+                    squareCheck(out, board, row, col, moves);
+                } else {
+                    validSquareCheck(out, board, row, col, moves);
+                }
             }
         }
         if (teamColor == ChessGame.TeamColor.WHITE) {
@@ -176,16 +193,22 @@ public class DrawBoard {
         out.println();
     }
 
-    private static void squareCheck(PrintStream out, ChessBoard board, int row, int col, Collection<ChessMove> moves) {
-        if (!moves.isEmpty()) {
-            for (ChessMove move : moves) {
-                ChessPosition position = move.getEndPosition();
-                if (row == position.getRow() && col == position.getColumn()) {
-                    setLightGreen(out);
-                    printSquare(out, board, row, col, SET_BG_COLOR_LIGHT_GREEN);
-                }
+    private static void validSquareCheck(PrintStream out, ChessBoard board, int row, int col, Collection<ChessMove> moves) {
+        boolean wasValid = false;
+        for (ChessMove move : moves) {
+            ChessPosition position = move.getEndPosition();
+            if (row == position.getRow() && col == position.getColumn()) {
+                setLightGreen(out);
+                printSquare(out, board, row, col, SET_BG_COLOR_LIGHT_GREEN);
+                wasValid = true;
             }
         }
+        if (!wasValid) {
+            squareCheck(out, board, row, col, moves);
+        }
+    }
+
+    private static void squareCheck(PrintStream out, ChessBoard board, int row, int col, Collection<ChessMove> moves) {
         if (isEvenNum(row)) {
             if (isEvenNum(col)) {
                 setLightGray(out);

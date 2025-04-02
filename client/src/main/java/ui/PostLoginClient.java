@@ -21,6 +21,7 @@ public class PostLoginClient {
     private final HashMap<Integer, Integer> idList = new HashMap<>();
     private final GameDAO gameDataAccess = new MySqlGameDAO();
     private ChessBoard gameBoard;
+    private ChessGame chessGame;
     private WebSocketFacade ws;
     private final GameHandler handler;
 
@@ -111,6 +112,7 @@ public class PostLoginClient {
                 server.joinGame(new JoinGameRequest(teamColor, id), authToken);
                 ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
                 setBoard(board);
+                setGame(gameDataAccess.getGame(id).game());
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
                 throw new DataAccessException("Spot is already taken. Join another game or as another color.");
@@ -124,6 +126,7 @@ public class PostLoginClient {
             int id = Integer.parseInt(params[0]);
             ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
             setBoard(board);
+            setGame(gameDataAccess.getGame(id).game());
             return "Draw Board: observe " + id;
         }
         throw new DataAccessException("Expected observe <id>");
@@ -147,5 +150,13 @@ public class PostLoginClient {
 
     public ChessBoard getGameBoard() {
         return gameBoard;
+    }
+
+    private void setGame(ChessGame game) {
+        this.chessGame = game;
+    }
+
+    public ChessGame getChessGame() {
+        return chessGame;
     }
 }

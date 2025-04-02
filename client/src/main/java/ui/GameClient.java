@@ -7,6 +7,7 @@ import ui.websocket.WebSocketFacade;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Objects;
 
 public class GameClient {
@@ -19,7 +20,7 @@ public class GameClient {
         this.serverUrl = serverUrl;
     }
 
-    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board) {
+    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame chessGame) {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
@@ -56,7 +57,7 @@ public class GameClient {
         ChessPiece piece = board.getPiece(position);
         Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
         new DrawBoard().getValidMoveBoard(teamColor, board, validMoves);
-        return "TODO: highlightLegalMoves";
+        return "Valid Moves: " + validMoves;
     }
 
     private String help() {
@@ -157,5 +158,9 @@ public class GameClient {
         }
 
         return new ChessPosition(row, col);
+    }
+
+    private void printValidMoves(Collection<ChessMove> validMoves) {
+
     }
 }
