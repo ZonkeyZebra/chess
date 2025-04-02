@@ -3,6 +3,9 @@ package ui;
 import chess.ChessBoard;
 import chess.ChessGame;
 import ui.websocket.GameHandler;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.util.Objects;
@@ -114,16 +117,36 @@ public class ReadEvalPrintLoop implements GameHandler {
         inGame = bool;
     }
 
-    public void notify(ServerMessage notification) {
-        System.out.println("\u001b[31m" + notification.getServerMessageType() + " notification");
-        printPrompt();
+//    public void notify(ServerMessage notification) {
+//        System.out.println("\u001b[31m" + notification.getServerMessageType() + " notification");
+//        printPrompt();
+//    }
+
+    public void notify(ServerMessage message) {
+        switch (message.getServerMessageType()) {
+            case NOTIFICATION -> displayNotification(((NotificationMessage) message).getMessage());
+            case ERROR -> displayError(((ErrorMessage) message).getErrorMessage());
+            case LOAD_GAME -> loadGame(((LoadGameMessage) message).getGame());
+        }
     }
 
     public void updateGame(ChessGame game) {
-
+        //TODO
     }
 
     public void printMessage(String message) {
+        //TODO
+    }
 
+    private void displayNotification(String message) {
+        //TODO
+    }
+
+    private void displayError(String message) {
+        //TODO
+    }
+
+    private void loadGame(ChessGame game) {
+        //TODO
     }
 }

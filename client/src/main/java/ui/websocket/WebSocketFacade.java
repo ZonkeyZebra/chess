@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
     private final Session session;
     private GameHandler gameHandler;
+    private Gson gson;
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
@@ -32,11 +33,17 @@ public class WebSocketFacade extends Endpoint {
 
             //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
+
                 @Override
                 public void onMessage(String message) {
-                    ServerMessage notification = new Gson().fromJson(message, ServerMessage.class);
-                    gameHandler.printMessage(notification.toString()); //?
+                    try {
+                        ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
+                        gameHandler.notify(serverMessage);
+                    } catch(Exception ex) {
+                        gameHandler.printMessage(ex.getMessage()); //?
+                    }
                 }
+
             });
         } catch (DeploymentException | IOException | URISyntaxException ex) {
             throw new DataAccessException(ex.getMessage());
