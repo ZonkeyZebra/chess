@@ -11,7 +11,6 @@ import ui.websocket.WebSocketFacade;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class GameClient {
@@ -30,18 +29,18 @@ public class GameClient {
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
-            case "redraw" -> redrawChessBoard(teamColor, board);
+            case "redraw" -> redrawChessBoard(teamColor, chessGame);
             case "leave" -> leave(teamColor, chessGame, gameID);
-            case "move" -> makeMove(params, teamColor, board, chessGame);
-            case "resign" -> resign(teamColor, gameID);
+            case "move" -> makeMove(params, teamColor, chessGame);
+            case "resign" -> resign(gameID);
             case "highlight" -> highlightLegalMoves(params, teamColor, board);
             case "quit" -> "quit";
             default -> help();
         };
     }
 
-    private String redrawChessBoard(ChessGame.TeamColor teamColor, ChessBoard board) {
-        new DrawBoard(teamColor, board);
+    private String redrawChessBoard(ChessGame.TeamColor teamColor, ChessGame game) {
+        new DrawBoard(teamColor, game.getBoard());
         return "";
     }
 
@@ -61,33 +60,44 @@ public class GameClient {
         return "You left the game.";
     }
 
-    private String makeMove(String[] params, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame game) throws Exception {
-        ChessPosition startPosition = getPositionFromString(params[0], teamColor);
-        ChessPosition endPosition = getPositionFromString(params[1], teamColor);
-        ChessPiece.PieceType promotion = getPieceType(params[2]);
-        if (teamColor == game.getTeamTurn()) {
-            game.makeMove(new ChessMove(startPosition, endPosition, promotion));
+    private String makeMove(String[] params, ChessGame.TeamColor teamColor, ChessGame game) throws Exception {
+        if (params.length >= 2 && params.length < 4) {
+            ChessPosition startPosition = getPositionFromString(params[0], teamColor);
+            ChessPosition endPosition = getPositionFromString(params[1], teamColor);
+            ChessPiece.PieceType promotion = null;
+            if (params.length == 3) {
+                promotion = getPieceType(params[2]);
+            }
+            if (teamColor == game.getTeamTurn()) {
+                game.makeMove(new ChessMove(startPosition, endPosition, promotion));
+            } else {
+                throw new Exception("Not your turn!");
+            }
+            redrawChessBoard(teamColor, game);
+            return "";
         } else {
-            throw new Exception("Not your turn!");
+            return "move <source> <destination> <optional promotion> (e.g. f5 e4 q)";
         }
-        redrawChessBoard(teamColor, board);
-        return "";
     }
 
-    private String resign(ChessGame.TeamColor teamColor, int gameID) throws DataAccessException {
+    private String resign(int gameID) throws DataAccessException {
         gameDataAccess.deleteSingleGame(gameID);
         return "You lost!";
     }
 
     private String highlightLegalMoves(String[] params, ChessGame.TeamColor teamColor, ChessBoard board) {
-        ChessPosition position = getPositionFromString(params[0], teamColor);
-        ChessPiece piece = board.getPiece(position);
-        Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
-        new DrawBoard().getValidMoveBoard(teamColor, board, validMoves);
-        if (validMoves.isEmpty()) {
-            return "No valid moves for " + piece.getTeamColor() + " " + piece.getPieceType();
+        if (params.length == 1) {
+            ChessPosition position = getPositionFromString(params[0], teamColor);
+            ChessPiece piece = board.getPiece(position);
+            Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
+            new DrawBoard().getValidMoveBoard(teamColor, board, validMoves);
+            if (validMoves.isEmpty()) {
+                return "No valid moves for " + piece.getTeamColor() + " " + piece.getPieceType();
+            }
+            return "";
+        } else {
+            return "highlight <position> (e.g. f5)";
         }
-        return "";
     }
 
     private String help() {
