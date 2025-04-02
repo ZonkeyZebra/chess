@@ -100,6 +100,11 @@ public class MySqlGameDAO implements GameDAO {
         DatabaseManager.executeUpdate(statement);
     }
 
+    public void deleteSingleGame(int gameID) throws DataAccessException {
+        String statement = "DELETE FROM game WHERE id=?";
+        DatabaseManager.executeUpdate(statement, gameID);
+    }
+
     private int newGameID() {
         return id++;
     }

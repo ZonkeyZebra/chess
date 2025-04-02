@@ -33,7 +33,7 @@ public class GameClient {
             case "redraw" -> redrawChessBoard(teamColor, board);
             case "leave" -> leave(teamColor, chessGame, gameID);
             case "move" -> makeMove(params, teamColor, board, chessGame);
-            case "resign" -> resign(teamColor, chessGame);
+            case "resign" -> resign(teamColor, gameID);
             case "highlight" -> highlightLegalMoves(params, teamColor, board);
             case "quit" -> "quit";
             default -> help();
@@ -74,7 +74,8 @@ public class GameClient {
         return "";
     }
 
-    private String resign(ChessGame.TeamColor teamColor, ChessGame game) {
+    private String resign(ChessGame.TeamColor teamColor, int gameID) throws DataAccessException {
+        gameDataAccess.deleteSingleGame(gameID);
         return "You lost!";
     }
 
