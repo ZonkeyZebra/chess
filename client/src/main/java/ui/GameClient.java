@@ -25,14 +25,14 @@ public class GameClient {
         this.serverUrl = serverUrl;
     }
 
-    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame chessGame, int gameID) throws DataAccessException {
+    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame chessGame, int gameID) throws Exception {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
             case "redraw" -> redrawChessBoard(teamColor, board);
             case "leave" -> leave(teamColor, chessGame, gameID);
-            case "move" -> makeMove(params);
+            case "move" -> makeMove(params, teamColor, board, chessGame);
             case "resign" -> resign(teamColor, chessGame);
             case "highlight" -> highlightLegalMoves(params, teamColor, board);
             case "quit" -> "quit";
@@ -61,8 +61,17 @@ public class GameClient {
         return "You left the game.";
     }
 
-    private String makeMove(String[] params) {
-        return "TODO: move";
+    private String makeMove(String[] params, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame game) throws Exception {
+        ChessPosition startPosition = getPositionFromString(params[0], teamColor);
+        ChessPosition endPosition = getPositionFromString(params[1], teamColor);
+        ChessPiece.PieceType promotion = getPieceType(params[2]);
+        if (teamColor == game.getTeamTurn()) {
+            game.makeMove(new ChessMove(startPosition, endPosition, promotion));
+        } else {
+            throw new Exception("Not your turn!");
+        }
+        redrawChessBoard(teamColor, board);
+        return "";
     }
 
     private String resign(ChessGame.TeamColor teamColor, ChessGame game) {
@@ -77,7 +86,7 @@ public class GameClient {
         if (validMoves.isEmpty()) {
             return "No valid moves for " + piece.getTeamColor() + " " + piece.getPieceType();
         }
-        return "Valid Moves for: " + piece + ": " + validMoves;
+        return "";
     }
 
     private String help() {
@@ -90,6 +99,19 @@ public class GameClient {
                 - help
                 - quit
                 """;
+    }
+
+    private ChessPiece.PieceType getPieceType(String input) {
+        if (Objects.equals(input, "q")) {
+            return ChessPiece.PieceType.QUEEN;
+        } else if (Objects.equals(input, "k")) {
+            return ChessPiece.PieceType.KNIGHT;
+        } else if (Objects.equals(input, "b")) {
+            return ChessPiece.PieceType.BISHOP;
+        } else if (Objects.equals(input, "r")) {
+            return ChessPiece.PieceType.ROOK;
+        }
+        return null;
     }
 
     private ChessPosition getPositionFromString(String input, ChessGame.TeamColor teamColor) {
