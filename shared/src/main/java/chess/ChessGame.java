@@ -106,10 +106,10 @@ public class ChessGame {
         }
         /// If the move is illegal (not valid or corresponding team color), it throws an InvalidMoveException.
         if (!isValid) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Not valid move.");
         }
         if (piece.getTeamColor() != getTeamTurn()) {
-            throw new InvalidMoveException();
+            throw new InvalidMoveException("Not your turn!");
         }
         /// Receives a given move and executes it, provided it is a legal move.
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
