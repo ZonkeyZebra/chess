@@ -36,7 +36,7 @@ public class DrawBoard {
 
         // Draw valid moves board
         ChessPiece piece = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
-        Collection<ChessMove> testMoves = piece.pieceMoves(board, new ChessPosition(2,2));
+        Collection<ChessMove> testMoves = piece.pieceMoves(board, new ChessPosition(7,7));
         drawHeaders(out, BLACK_HEADERS);
         drawBoard(out, ChessGame.TeamColor.BLACK, board, testMoves);
         drawHeaders(out, BLACK_HEADERS);
@@ -163,11 +163,7 @@ public class DrawBoard {
     }
 
     private static void getCols(PrintStream out, ChessGame.TeamColor teamColor, ChessBoard board, int row, boolean reverse, Collection<ChessMove> moves) {
-        if (teamColor == ChessGame.TeamColor.WHITE) {
-            printHeaderText(out, (8 - row) + " ");
-        } else {
-            printHeaderText(out, String.format((row + 1) + " "));
-        }
+        printHeaderText(out, String.format((row + 1) + " "));
         if (reverse) {
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
                 if (moves.isEmpty()) {
@@ -197,7 +193,7 @@ public class DrawBoard {
         boolean wasValid = false;
         for (ChessMove move : moves) {
             ChessPosition position = move.getEndPosition();
-            if (row == position.getRow() && col == position.getColumn()) {
+            if ((row + 1) == position.getRow() && col == position.getColumn()) {
                 setLightGreen(out);
                 printSquare(out, board, row, col, SET_BG_COLOR_LIGHT_GREEN);
                 wasValid = true;

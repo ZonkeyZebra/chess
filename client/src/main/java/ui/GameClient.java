@@ -160,6 +160,12 @@ public class GameClient {
         return new ChessPosition(row, col);
     }
 
+    private ChessPosition getPositionFromBlack(String input) {
+        int row = 0;
+        int col = 0;
+        return new ChessPosition(row, col);
+    }
+
     private void printValidMoves(Collection<ChessMove> validMoves) {
 
     }
