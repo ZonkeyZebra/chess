@@ -51,7 +51,7 @@ public class WebSocketHandler {
     }
 
     public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {
-        String message = String.format("%s made a move.", username);
+        String message = String.format("%s made a move to %s.", username, command.getMove());
         broadcast(session.toString(), gameID, message);
     }
 

@@ -12,7 +12,7 @@ public final class MakeMoveCommand extends UserGameCommand {
         this.move = move;
     }
 
-    public ChessMove move() {
+    public ChessMove getMove() {
         return move;
     }
 
