@@ -181,11 +181,7 @@ public class DrawBoard {
                 }
             }
         }
-        if (teamColor == ChessGame.TeamColor.WHITE) {
-            printHeaderText(out, " " + (8 - row));
-        } else {
-            printHeaderText(out, String.format(" " + (row + 1)));
-        }
+        printHeaderText(out, String.format(" " + (row + 1)));
         out.println();
     }
 
@@ -193,7 +189,7 @@ public class DrawBoard {
         boolean wasValid = false;
         for (ChessMove move : moves) {
             ChessPosition position = move.getEndPosition();
-            if ((row + 1) == position.getRow() && col == position.getColumn()) {
+            if ((row + 1) == position.getRow() && (col + 1) == position.getColumn()) {
                 setLightGreen(out);
                 printSquare(out, board, row, col, SET_BG_COLOR_LIGHT_GREEN);
                 wasValid = true;

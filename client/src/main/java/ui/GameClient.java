@@ -3,6 +3,10 @@ package ui;
 import chess.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import dataaccess.GameDAO;
+import dataaccess.MySqlGameDAO;
+import exception.DataAccessException;
+import model.GameData;
 import ui.websocket.WebSocketFacade;
 
 import java.util.Arrays;
@@ -14,21 +18,22 @@ public class GameClient {
     private final ServerFacade server;
     private final String serverUrl;
     private WebSocketFacade ws;
+    private final GameDAO gameDataAccess = new MySqlGameDAO();
 
     public GameClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
     }
 
-    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame chessGame) {
+    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame chessGame, int gameID) throws DataAccessException {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
             case "redraw" -> redrawChessBoard(teamColor, board);
-            case "leave" -> leave();
+            case "leave" -> leave(teamColor, chessGame, gameID);
             case "move" -> makeMove(params);
-            case "resign" -> resign();
+            case "resign" -> resign(teamColor, chessGame);
             case "highlight" -> highlightLegalMoves(params, teamColor, board);
             case "quit" -> "quit";
             default -> help();
@@ -40,7 +45,19 @@ public class GameClient {
         return "";
     }
 
-    private String leave() {
+    private String leave(ChessGame.TeamColor teamColor, ChessGame game, int gameID) throws DataAccessException {
+        GameData updateData;
+        String blackUsername;
+        String whiteUsername;
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            blackUsername = "";
+            whiteUsername = gameDataAccess.getGame(gameID).whiteUsername();
+        } else {
+            blackUsername = gameDataAccess.getGame(gameID).blackUsername();
+            whiteUsername = "";
+        }
+        updateData = new GameData(gameID, whiteUsername, blackUsername, gameDataAccess.getGame(gameID).gameName(), game);
+        gameDataAccess.updateGame(updateData);
         return "You left the game.";
     }
 
@@ -48,7 +65,7 @@ public class GameClient {
         return "TODO: move";
     }
 
-    private String resign() {
+    private String resign(ChessGame.TeamColor teamColor, ChessGame game) {
         return "You lost!";
     }
 
@@ -57,7 +74,10 @@ public class GameClient {
         ChessPiece piece = board.getPiece(position);
         Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
         new DrawBoard().getValidMoveBoard(teamColor, board, validMoves);
-        return "Valid Moves: " + validMoves;
+        if (validMoves.isEmpty()) {
+            return "No valid moves for " + piece.getTeamColor() + " " + piece.getPieceType();
+        }
+        return "Valid Moves for: " + piece + ": " + validMoves;
     }
 
     private String help() {
@@ -73,65 +93,13 @@ public class GameClient {
     }
 
     private ChessPosition getPositionFromString(String input, ChessGame.TeamColor teamColor) {
-        int row = 0;
-        int col = 0;
-        if (input.contains("a")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 1;
-            } else {
-                col = 8;
-            }
-        }
-        if (input.contains("b")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 2;
-            } else {
-                col = 7;
-            }
-        }
-        if (input.contains("c")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 3;
-            } else {
-                col = 6;
-            }
-        }
-        if (input.contains("d")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 4;
-            } else {
-                col = 5;
-            }
-        }
-        if (input.contains("e")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 5;
-            } else {
-                col = 4;
-            }
-        }
-        if (input.contains("f")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 6;
-            } else {
-                col = 3;
-            }
-        }
-        if (input.contains("g")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 7;
-            } else {
-                col = 2;
-            }
-        }
-        if (input.contains("h")) {
-            if (teamColor == ChessGame.TeamColor.WHITE) {
-                col = 8;
-            } else {
-                col = 1;
-            }
-        }
+        int row = getRow(input);
+        int col = getCol(input);
+        return new ChessPosition(row, col);
+    }
 
+    private static int getRow(String input) {
+        int row = 0;
         if (input.contains("1")) {
             row = 1;
         }
@@ -156,17 +124,36 @@ public class GameClient {
         if (input.contains("8")) {
             row = 8;
         }
-
-        return new ChessPosition(row, col);
+        return row;
     }
 
-    private ChessPosition getPositionFromBlack(String input) {
-        int row = 0;
+    private static int getCol(String input) {
         int col = 0;
-        return new ChessPosition(row, col);
+        if (input.contains("a")) {
+            col = 1;
+        }
+        if (input.contains("b")) {
+            col = 2;
+        }
+        if (input.contains("c")) {
+            col = 3;
+        }
+        if (input.contains("d")) {
+            col = 4;
+        }
+        if (input.contains("e")) {
+            col = 5;
+        }
+        if (input.contains("f")) {
+            col = 6;
+        }
+        if (input.contains("g")) {
+            col = 7;
+        }
+        if (input.contains("h")) {
+            col = 8;
+        }
+        return col;
     }
 
-    private void printValidMoves(Collection<ChessMove> validMoves) {
-
-    }
 }

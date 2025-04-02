@@ -24,6 +24,7 @@ public class PostLoginClient {
     private ChessGame chessGame;
     private WebSocketFacade ws;
     private final GameHandler handler;
+    private int gameNumID;
 
     public PostLoginClient(String serverUrl, GameHandler handler) {
         server = new ServerFacade(serverUrl);
@@ -98,7 +99,7 @@ public class PostLoginClient {
     public String joinGame(String[] params, String authToken) throws DataAccessException {
         if (params.length == 2 && (Objects.equals(params[1], "black") || Objects.equals(params[1], "white"))) {
             int num = Integer.parseInt(params[0]);
-            int id = 0;
+            int id;
             try {
                 id = idList.get(num);
             } catch (Exception e) {
@@ -113,6 +114,7 @@ public class PostLoginClient {
                 ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
                 setBoard(board);
                 setGame(gameDataAccess.getGame(id).game());
+                setGameNum(id);
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
                 throw new DataAccessException("Spot is already taken. Join another game or as another color.");
@@ -123,11 +125,18 @@ public class PostLoginClient {
 
     public String observeGame(String[] params, String authToken) throws Exception {
         if (params.length >= 1) {
-            int id = Integer.parseInt(params[0]);
+            int num = Integer.parseInt(params[0]);
+            int id;
+            try {
+                id = idList.get(num);
+            } catch (Exception e) {
+                throw new DataAccessException("This game does not exist.");
+            }
             ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
             setBoard(board);
             setGame(gameDataAccess.getGame(id).game());
-            return "Draw Board: observe " + id;
+            setGameNum(id);
+            return "Draw Board: observe " + num;
         }
         throw new DataAccessException("Expected observe <id>");
     }
@@ -158,5 +167,13 @@ public class PostLoginClient {
 
     public ChessGame getChessGame() {
         return chessGame;
+    }
+
+    private void setGameNum(int num) {
+        this.gameNumID = num;
+    }
+
+    public int getGameNum() {
+        return gameNumID;
     }
 }
