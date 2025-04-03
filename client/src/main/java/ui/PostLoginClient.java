@@ -8,6 +8,7 @@ import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.GameData;
 import model.JoinGameRequest;
+import server.websocket.WebSocketHandler;
 import ui.websocket.GameHandler;
 import ui.websocket.WebSocketFacade;
 
@@ -110,6 +111,8 @@ public class PostLoginClient {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             try {
+                //ws = new WebSocketFacade(serverUrl, handler);
+                //ws.connect(id, authToken);
                 server.joinGame(new JoinGameRequest(teamColor, id), authToken);
                 ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
                 setBoard(board);
@@ -118,6 +121,8 @@ public class PostLoginClient {
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
                 throw new DataAccessException("Spot is already taken. Join another game or as another color.");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
         }
         throw new DataAccessException("Expected join <id> <white|black>");

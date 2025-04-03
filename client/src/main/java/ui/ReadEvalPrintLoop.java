@@ -54,15 +54,15 @@ public class ReadEvalPrintLoop implements GameHandler {
                     setSignIn(false);
                 }
                 if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
-                    ChessBoard board = postLoginClient.getGameBoard();
                     teamColor = ChessGame.TeamColor.WHITE;
-                    new DrawBoard(teamColor, board);
+                    ChessGame game = postLoginClient.getChessGame();
+                    new DrawBoard(teamColor, game.getBoard());
                     setInGame(true);
                 }
                 if (result.contains("Draw Board: BLACK")) {
-                    ChessBoard board = postLoginClient.getGameBoard();
                     teamColor = ChessGame.TeamColor.BLACK;
-                    new DrawBoard(teamColor, board);
+                    ChessGame game = postLoginClient.getChessGame();
+                    new DrawBoard(teamColor, game.getBoard());
                     setInGame(true);
                 }
             } else {
@@ -135,18 +135,22 @@ public class ReadEvalPrintLoop implements GameHandler {
     }
 
     public void printMessage(String message) {
-        //TODO
+        System.out.println("\u001b[31m" + message);
+        printPrompt();
     }
 
     private void displayNotification(String message) {
-        //TODO
+        System.out.println("\u001b[31m" + message);
+        printPrompt();
     }
 
     private void displayError(String message) {
-        //TODO
+        System.out.println("\u001b[31m" + message);
+        printPrompt();
     }
 
     private void loadGame(ChessGame game) {
-        //TODO
+        new DrawBoard(teamColor, game.getBoard());
+        printPrompt();
     }
 }
