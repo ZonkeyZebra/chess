@@ -57,32 +57,24 @@ public class WebSocketHandler {
     public void connect(int gameID, Session session, String username) throws IOException {
         connections.addSession(gameID, session);
         String message = String.format("%s has joined the game.", username);
-        broadcast(session.toString(), gameID, message);
+        connections.broadcast(session.toString(), gameID, message);
     }
 
     public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {
         String message = String.format("%s made a move to %s.", username, command.getMove());
-        broadcast(session.toString(), gameID, message);
+        connections.broadcast(session.toString(), gameID, message);
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s left the game.", username);
-        broadcast(session.toString(), gameID, message);
+        connections.broadcast(session.toString(), gameID, message);
     }
 
     public void resignGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s forfeited the game.", username);
-        broadcast(session.toString(), gameID, message);
-    }
-
-    public void sendMessage(Session session) {
-
-    }
-
-    public void broadcast(String excludeSession, int gameID, String message) throws IOException {
-
+        connections.broadcast(session.toString(), gameID, message);
     }
 
     private void saveSession(int gameID, Session session) {

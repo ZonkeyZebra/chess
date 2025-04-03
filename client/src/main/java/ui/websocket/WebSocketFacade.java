@@ -17,8 +17,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class WebSocketFacade extends Endpoint {
-    private final Session session;
-    private GameHandler gameHandler;
+    Session session;
+    GameHandler gameHandler;
     private Gson gson;
 
     @Override
@@ -30,6 +30,7 @@ public class WebSocketFacade extends Endpoint {
         try {
             url = url.replace("http", "ws");
             URI socketURI = new URI(url + "/ws");
+            this.gameHandler = handler;
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
@@ -92,8 +93,10 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    private void sendMessage() {
+    private void sendMessage() throws IOException {
         // create command message
+        String msg = null;
         // send message to server
+        this.session.getBasicRemote().sendText(msg);
     }
 }

@@ -1,10 +1,8 @@
 package server.websocket;
 
 import org.eclipse.jetty.websocket.api.Session;
-import websocket.messages.ServerMessage;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,5 +34,13 @@ public class WebSocketSessions {
 
     public Set<Session> getSessionsForGame(int gameID) {
         return gameMap.get(gameID);
+    }
+
+    public void broadcast(String excludeSession, int gameID, String message) throws IOException {
+        for (Session session : sessions) {
+            if (session.isOpen()) {
+                session.getRemote().sendString(message);
+            }
+        }
     }
 }
