@@ -6,7 +6,9 @@ import model.AuthData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.common.WebSocketSession;
+//import org.eclipse.jetty.websocket.common.WebSocketSession;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
@@ -19,7 +21,7 @@ public class WebSocketHandler {
     private AuthDAO authDAO;
 
     @OnWebSocketMessage
-    public void onMessage(WebSocketSession session, String message) throws DataAccessException, IOException {
+    public void onMessage(Session session, String message) throws DataAccessException, IOException {
         try {
             UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
@@ -42,16 +44,6 @@ public class WebSocketHandler {
     @OnWebSocketError
     public void onError(Session session, Throwable throwable) {
         System.out.println("Error: " + throwable.getMessage());
-    }
-
-    @OnWebSocketConnect
-    public void onConnect(Session session) {
-        System.out.println("Connected to session: " + session);
-    }
-
-    @OnWebSocketClose
-    public void onClose(Session session) {
-        System.out.println("Closed session: " + session);
     }
 
     public void connect(int gameID, Session session, String username) throws IOException {
