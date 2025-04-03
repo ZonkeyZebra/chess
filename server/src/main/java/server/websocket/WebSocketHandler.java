@@ -44,6 +44,16 @@ public class WebSocketHandler {
         System.out.println("Error: " + throwable.getMessage());
     }
 
+    @OnWebSocketConnect
+    public void onConnect(Session session) {
+        System.out.println("Connected to session: " + session);
+    }
+
+    @OnWebSocketClose
+    public void onClose(Session session) {
+        System.out.println("Closed session: " + session);
+    }
+
     public void connect(int gameID, Session session, String username) throws IOException {
         connections.addSession(gameID, session);
         String message = String.format("%s has joined the game.", username);
