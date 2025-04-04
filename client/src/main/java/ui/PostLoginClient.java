@@ -111,8 +111,8 @@ public class PostLoginClient {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             try {
-                //ws = new WebSocketFacade(serverUrl, handler);
-                //ws.connect(id, authToken);
+                ws = new WebSocketFacade(serverUrl, handler);
+                ws.connect(id, authToken);
                 server.joinGame(new JoinGameRequest(teamColor, id), authToken);
                 ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
                 setBoard(board);

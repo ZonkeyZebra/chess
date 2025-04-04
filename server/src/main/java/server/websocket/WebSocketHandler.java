@@ -1,12 +1,12 @@
 package server.websocket;
 
 import dataaccess.AuthDAO;
+import dataaccess.MySqlAuthDAO;
 import exception.DataAccessException;
 import model.AuthData;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
-//import org.eclipse.jetty.websocket.common.WebSocketSession;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
@@ -18,10 +18,10 @@ import java.io.IOException;
 @WebSocket
 public class WebSocketHandler {
     private final WebSocketSessions connections = new WebSocketSessions();
-    private AuthDAO authDAO;
+    private AuthDAO authDAO = new MySqlAuthDAO();
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws DataAccessException, IOException {
+    public void onMessage(Session session, String message) throws Exception {
         try {
             UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
 
@@ -37,19 +37,20 @@ public class WebSocketHandler {
                 case RESIGN -> resignGame(command.getGameID(), session, username);
             }
         } catch (Exception e) {
-            throw new DataAccessException("Error: unauthorized");
+            throw new Exception(e.getMessage());
         }
     }
 
-    @OnWebSocketError
-    public void onError(Session session, Throwable throwable) {
-        System.out.println("Error: " + throwable.getMessage());
-    }
+//    @OnWebSocketError
+//    public void onError(Session session, Throwable throwable) {
+//        throwable.printStackTrace();
+//        System.out.println("Error: " + throwable.getMessage());
+//    }
 
     public void connect(int gameID, Session session, String username) throws IOException {
         connections.addSession(gameID, session);
         String message = String.format("%s has joined the game.", username);
-        connections.broadcast(session.toString(), gameID, message);
+        connections.broadcast(session.toString(), gameID, new Gson().toJson(message));
     }
 
     public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {
