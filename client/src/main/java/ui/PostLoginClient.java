@@ -131,8 +131,10 @@ public class PostLoginClient {
     public String observeGame(String[] params, String authToken) throws Exception {
         if (params.length >= 1) {
             int num = Integer.parseInt(params[0]);
-            int id;
+            int id = 0;
             try {
+                ws = new WebSocketFacade(serverUrl, handler);
+                ws.connect(id, authToken);
                 id = idList.get(num);
             } catch (Exception e) {
                 throw new DataAccessException("This game does not exist.");

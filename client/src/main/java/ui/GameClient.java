@@ -27,16 +27,24 @@ public class GameClient {
         this.handler = handler;
     }
 
-    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame chessGame, int gameID) throws Exception {
+    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessGame chessGame, int gameID, boolean observer) throws Exception {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        if (observer) {
+            return switch (command) {
+                case "redraw" -> redrawChessBoard(teamColor, chessGame);
+                case "leave" -> leave(teamColor, chessGame, gameID, authToken);
+                case "quit" -> "quit";
+                default -> observerHelp();
+            };
+        }
         return switch (command) {
             case "redraw" -> redrawChessBoard(teamColor, chessGame);
             case "leave" -> leave(teamColor, chessGame, gameID, authToken);
             case "move" -> makeMove(params, teamColor, chessGame, authToken);
             case "resign" -> resign(gameID, authToken);
-            case "highlight" -> highlightLegalMoves(params, teamColor, board);
+            case "highlight" -> highlightLegalMoves(params, teamColor, chessGame);
             case "quit" -> "quit";
             default -> help();
         };
@@ -92,8 +100,9 @@ public class GameClient {
         return "You lost!";
     }
 
-    private String highlightLegalMoves(String[] params, ChessGame.TeamColor teamColor, ChessBoard board) {
+    private String highlightLegalMoves(String[] params, ChessGame.TeamColor teamColor, ChessGame game) {
         if (params.length == 1) {
+            ChessBoard board = game.getBoard();
             ChessPosition position = getPositionFromString(params[0], teamColor);
             ChessPiece piece = board.getPiece(position);
             Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
@@ -114,6 +123,15 @@ public class GameClient {
                 - move <source> <destination> <optional promotion> (e.g. f5 e4 q)
                 - resign
                 - highlight <position> (e.g. f5)
+                - help
+                - quit
+                """;
+    }
+
+    private String observerHelp() {
+        return """
+                - redraw
+                - leave
                 - help
                 - quit
                 """;

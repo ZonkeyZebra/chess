@@ -1,7 +1,10 @@
 package server.websocket;
 
+import chess.ChessGame;
 import dataaccess.AuthDAO;
+import dataaccess.GameDAO;
 import dataaccess.MySqlAuthDAO;
+import dataaccess.MySqlGameDAO;
 import exception.DataAccessException;
 import model.AuthData;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -11,6 +14,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
@@ -20,6 +24,7 @@ import java.io.IOException;
 public class WebSocketHandler {
     private final WebSocketSessions connections = new WebSocketSessions();
     private AuthDAO authDAO = new MySqlAuthDAO();
+    private GameDAO gameDAO = new MySqlGameDAO();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
@@ -48,11 +53,13 @@ public class WebSocketHandler {
 //        System.out.println("Error: " + throwable.getMessage());
 //    }
 
-    public void connect(int gameID, Session session, String username) throws IOException {
+    public void connect(int gameID, Session session, String username) throws IOException, DataAccessException {
         connections.addSession(gameID, session);
         String message = String.format("%s has joined the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
         connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
+        connections.broadcastGame(loadGameMessage);
     }
 
     public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {
