@@ -24,7 +24,7 @@ public class ReadEvalPrintLoop implements GameHandler {
     public ReadEvalPrintLoop(String serverUrl) {
         preLoginClient = new PreLoginClient(serverUrl);
         postLoginClient = new PostLoginClient(serverUrl, this);
-        gameClient = new GameClient(serverUrl);
+        gameClient = new GameClient(serverUrl, this);
     }
 
     public void run() {

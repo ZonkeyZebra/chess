@@ -2,11 +2,13 @@ package server.websocket;
 
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,7 +44,17 @@ public class WebSocketSessions {
     public void broadcast(String excludeSession, int gameID, String message, NotificationMessage serverMessage) throws IOException {
         for (Session session : sessions) {
             if (session.isOpen()) {
-                session.getRemote().sendString(new Gson().toJson(serverMessage));
+                if (!Objects.equals(session.toString(), excludeSession)) {
+                    session.getRemote().sendString(new Gson().toJson(serverMessage));
+                }
+            }
+        }
+    }
+
+    public void broadcastGame(LoadGameMessage loadGameMessage) throws IOException {
+        for (Session session : sessions) {
+            if (session.isOpen()) {
+                session.getRemote().sendString(new Gson().toJson(loadGameMessage));
             }
         }
     }

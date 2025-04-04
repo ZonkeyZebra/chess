@@ -7,6 +7,7 @@ import dataaccess.GameDAO;
 import dataaccess.MySqlGameDAO;
 import exception.DataAccessException;
 import model.GameData;
+import ui.websocket.GameHandler;
 import ui.websocket.WebSocketFacade;
 
 import java.util.Arrays;
@@ -18,10 +19,12 @@ public class GameClient {
     private final String serverUrl;
     private WebSocketFacade ws;
     private final GameDAO gameDataAccess = new MySqlGameDAO();
+    private final GameHandler handler;
 
-    public GameClient(String serverUrl) {
+    public GameClient(String serverUrl, GameHandler handler) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+        this.handler = handler;
     }
 
     public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessBoard board, ChessGame chessGame, int gameID) throws Exception {
@@ -30,9 +33,9 @@ public class GameClient {
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
         return switch (command) {
             case "redraw" -> redrawChessBoard(teamColor, chessGame);
-            case "leave" -> leave(teamColor, chessGame, gameID);
-            case "move" -> makeMove(params, teamColor, chessGame);
-            case "resign" -> resign(gameID);
+            case "leave" -> leave(teamColor, chessGame, gameID, authToken);
+            case "move" -> makeMove(params, teamColor, chessGame, authToken);
+            case "resign" -> resign(gameID, authToken);
             case "highlight" -> highlightLegalMoves(params, teamColor, board);
             case "quit" -> "quit";
             default -> help();
@@ -44,7 +47,7 @@ public class GameClient {
         return "";
     }
 
-    private String leave(ChessGame.TeamColor teamColor, ChessGame game, int gameID) throws DataAccessException {
+    private String leave(ChessGame.TeamColor teamColor, ChessGame game, int gameID, String authToken) throws Exception {
         GameData updateData;
         String blackUsername;
         String whiteUsername;
@@ -55,12 +58,14 @@ public class GameClient {
             blackUsername = gameDataAccess.getGame(gameID).blackUsername();
             whiteUsername = "";
         }
+        ws = new WebSocketFacade(serverUrl, handler);
+        ws.leaveGame(gameID, authToken);
         updateData = new GameData(gameID, whiteUsername, blackUsername, gameDataAccess.getGame(gameID).gameName(), game);
         gameDataAccess.updateGame(updateData);
         return "You left the game.";
     }
 
-    private String makeMove(String[] params, ChessGame.TeamColor teamColor, ChessGame game) throws Exception {
+    private String makeMove(String[] params, ChessGame.TeamColor teamColor, ChessGame game, String authToken) throws Exception {
         if (params.length >= 2 && params.length < 4) {
             ChessPosition startPosition = getPositionFromString(params[0], teamColor);
             ChessPosition endPosition = getPositionFromString(params[1], teamColor);
@@ -80,8 +85,10 @@ public class GameClient {
         }
     }
 
-    private String resign(int gameID) throws DataAccessException {
+    private String resign(int gameID, String authToken) throws Exception {
         gameDataAccess.deleteSingleGame(gameID);
+        ws = new WebSocketFacade(serverUrl, handler);
+        ws.resignGame(gameID, authToken);
         return "You lost!";
     }
 
