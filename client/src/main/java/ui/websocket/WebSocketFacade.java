@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import exception.DataAccessException;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -19,7 +20,6 @@ import java.net.URISyntaxException;
 public class WebSocketFacade extends Endpoint {
     Session session;
     GameHandler gameHandler;
-    private Gson gson;
 
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
@@ -41,7 +41,7 @@ public class WebSocketFacade extends Endpoint {
                 @Override
                 public void onMessage(String message) {
                     try {
-                        ServerMessage serverMessage = gson.fromJson(message, ServerMessage.class);
+                        NotificationMessage serverMessage = new Gson().fromJson(message, NotificationMessage.class);
                         gameHandler.notify(serverMessage);
                     } catch(Exception ex) {
                         gameHandler.printMessage(ex.getMessage()); //?

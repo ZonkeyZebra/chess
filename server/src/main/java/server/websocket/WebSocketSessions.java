@@ -1,6 +1,9 @@
 package server.websocket;
 
+import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -36,10 +39,10 @@ public class WebSocketSessions {
         return gameMap.get(gameID);
     }
 
-    public void broadcast(String excludeSession, int gameID, String message) throws IOException {
+    public void broadcast(String excludeSession, int gameID, String message, NotificationMessage serverMessage) throws IOException {
         for (Session session : sessions) {
             if (session.isOpen()) {
-                session.getRemote().sendString(message);
+                session.getRemote().sendString(new Gson().toJson(serverMessage));
             }
         }
     }

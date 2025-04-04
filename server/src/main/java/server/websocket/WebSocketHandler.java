@@ -11,6 +11,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
@@ -50,24 +51,28 @@ public class WebSocketHandler {
     public void connect(int gameID, Session session, String username) throws IOException {
         connections.addSession(gameID, session);
         String message = String.format("%s has joined the game.", username);
-        connections.broadcast(session.toString(), gameID, new Gson().toJson(message));
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
     }
 
     public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {
         String message = String.format("%s made a move to %s.", username, command.getMove());
-        connections.broadcast(session.toString(), gameID, message);
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s left the game.", username);
-        connections.broadcast(session.toString(), gameID, message);
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
     }
 
     public void resignGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s forfeited the game.", username);
-        connections.broadcast(session.toString(), gameID, message);
+        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
     }
 
     private void saveSession(int gameID, Session session) {
