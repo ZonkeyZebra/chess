@@ -97,6 +97,7 @@ public class ReadEvalPrintLoop implements GameHandler {
             result = gameClient.eval(line, authToken, teamColor, postLoginClient.getChessGame(), postLoginClient.getGameNum(), isObserver);
             if (line.contains("leave") || line.contains("resign")) {
                 setInGame(false);
+                setObserver(false);
             }
             System.out.print("\u001B[34m" + result);
         } catch (Throwable e) {

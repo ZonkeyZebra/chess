@@ -7,6 +7,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -42,12 +43,20 @@ public class WebSocketSessions {
     }
 
     public void broadcast(String excludeSession, int gameID, String message, NotificationMessage serverMessage) throws IOException {
+        var removeList = new ArrayList<Session>();
         for (Session session : sessions) {
             if (session.isOpen()) {
                 if (!Objects.equals(session.toString(), excludeSession)) {
                     session.getRemote().sendString(new Gson().toJson(serverMessage));
                 }
+            } else {
+                removeList.add(session);
             }
+        }
+
+        // Clean up any connections that were left open.
+        for (var session : removeList) {
+            sessions.remove(session);
         }
     }
 
