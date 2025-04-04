@@ -34,7 +34,7 @@ public class GameClient {
         if (observer) {
             return switch (command) {
                 case "redraw" -> redrawChessBoard(teamColor, chessGame);
-                case "leave" -> leave(teamColor, chessGame, gameID, authToken);
+                case "leave" -> observerLeave(gameID, authToken);
                 case "quit" -> "quit";
                 default -> observerHelp();
             };
@@ -70,6 +70,12 @@ public class GameClient {
         ws.leaveGame(gameID, authToken);
         updateData = new GameData(gameID, whiteUsername, blackUsername, gameDataAccess.getGame(gameID).gameName(), game);
         gameDataAccess.updateGame(updateData);
+        return "You left the game.";
+    }
+
+    private String observerLeave(int gameID, String authToken) throws Exception {
+        ws = new WebSocketFacade(serverUrl, handler);
+        ws.leaveGame(gameID, authToken);
         return "You left the game.";
     }
 
