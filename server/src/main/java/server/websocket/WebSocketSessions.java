@@ -46,6 +46,7 @@ public class WebSocketSessions {
         var removeList = new ArrayList<Session>();
         for (Session session : sessions) {
             if (session.isOpen()) {
+                //if (gameID != sessionMap.get(excludeSession)) {
                 if (!Objects.equals(session.toString(), excludeSession)) {
                     session.getRemote().sendString(new Gson().toJson(serverMessage));
                 }

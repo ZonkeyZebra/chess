@@ -45,9 +45,6 @@ public class MySqlGameDAO implements GameDAO {
 
     public void createGame(String gameName) throws DataAccessException {
         int gameID = newGameID();
-        while (getGame(gameID) == null) {
-            gameID = newGameID();
-        }
         GameData game = new GameData(gameID, "", "", gameName, new ChessGame());
         String statement = "INSERT INTO game (id, whiteUsername, blackUsername, gameName, game, json) VALUES (?, ?, ?, ?, ?, ?)";
         var json = new Gson().toJson(game.game());
@@ -108,7 +105,7 @@ public class MySqlGameDAO implements GameDAO {
         DatabaseManager.executeUpdate(statement, gameID);
     }
 
-    private int newGameID() {
+    private int newGameID() throws DataAccessException {
         return id++;
     }
 
