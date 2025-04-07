@@ -42,7 +42,7 @@ public class WebSocketSessions {
         return gameMap.get(gameID);
     }
 
-    public void broadcast(Session excludeSession, int gameID, String message, NotificationMessage serverMessage) throws IOException {
+    public void broadcast(Session excludeSession, int gameID, NotificationMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Session>();
         for (Session session : sessions) {
             if (session.isOpen()) {
