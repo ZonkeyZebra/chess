@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
-import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,19 +14,22 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketSessions {
     private final ConcurrentHashMap<Integer, Set<Session>> gameMap;
-    private final ConcurrentHashMap<Session, Integer> sessionMap;
+    private final ConcurrentHashMap<Set<Session>, Integer> sessionMap;
+    private final ConcurrentHashMap<Session, String> userSession; //use this like connection
     private final Set<Session> sessions;
 
     public WebSocketSessions() {
         this.sessions = new HashSet<>();
         this.gameMap = new ConcurrentHashMap<>();
         this.sessionMap = new ConcurrentHashMap<>();
+        this.userSession = new ConcurrentHashMap<>();
     }
 
-    public void addSession(int gameID, Session session) {
+    public void addSession(int gameID, Session session, String username) {
         sessions.add(session);
         gameMap.put(gameID, sessions);
-        sessionMap.put(session, gameID);
+        sessionMap.put(sessions, gameID);
+        userSession.put(session, username);
     }
 
     public void removeSessionFromGame(int gameID, Session session) {
@@ -35,19 +37,18 @@ public class WebSocketSessions {
     }
 
     public void removeSession(Session session) {
-        sessionMap.remove(session);
+        sessionMap.remove(sessions);
     }
 
     public Set<Session> getSessionsForGame(int gameID) {
         return gameMap.get(gameID);
     }
 
-    public void broadcast(Session excludeSession, int gameID, NotificationMessage serverMessage) throws IOException {
+    public void broadcast(Session excludeSession, int gameID, NotificationMessage serverMessage, String username) throws IOException {
         var removeList = new ArrayList<Session>();
         for (Session session : sessions) {
             if (session.isOpen()) {
-                //if (gameID != sessionMap.get(excludeSession)) {
-                if (!Objects.equals(session.toString(), excludeSession.toString())) {
+                if (!Objects.equals(username, userSession.get(session))) {
                     session.getRemote().sendString(new Gson().toJson(serverMessage));
                 }
             } else {
