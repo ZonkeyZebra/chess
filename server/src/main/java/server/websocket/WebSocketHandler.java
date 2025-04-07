@@ -60,9 +60,9 @@ public class WebSocketHandler {
         connections.addSession(gameID, session);
         String message = String.format("%s has joined the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
-        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
-        connections.broadcastGame(loadGameMessage);
+        //LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
+        connections.broadcast(session, gameID, new Gson().toJson(message), notificationMessage);
+        //connections.broadcastGame(loadGameMessage);
     }
 
     public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {
@@ -70,21 +70,21 @@ public class WebSocketHandler {
         String move = String.format(convertColtoString(endMove.getColumn()) + convertRowtoString(endMove.getRow()));
         String message = String.format("%s made a move to %s.", username, move);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
+        connections.broadcast(session, gameID, new Gson().toJson(message), notificationMessage);
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s left the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
+        connections.broadcast(session, gameID, new Gson().toJson(message), notificationMessage);
     }
 
     public void resignGame(int gameID, Session session, String username) throws IOException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s forfeited the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(session.toString(), gameID, new Gson().toJson(message), notificationMessage);
+        connections.broadcast(session, gameID, new Gson().toJson(message), notificationMessage);
     }
 
     private void saveSession(int gameID, Session session) {

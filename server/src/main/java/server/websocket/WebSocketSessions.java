@@ -42,12 +42,12 @@ public class WebSocketSessions {
         return gameMap.get(gameID);
     }
 
-    public void broadcast(String excludeSession, int gameID, String message, NotificationMessage serverMessage) throws IOException {
+    public void broadcast(Session excludeSession, int gameID, String message, NotificationMessage serverMessage) throws IOException {
         var removeList = new ArrayList<Session>();
         for (Session session : sessions) {
             if (session.isOpen()) {
                 //if (gameID != sessionMap.get(excludeSession)) {
-                if (!Objects.equals(session.toString(), excludeSession)) {
+                if (!Objects.equals(session.toString(), excludeSession.toString())) {
                     session.getRemote().sendString(new Gson().toJson(serverMessage));
                 }
             } else {
