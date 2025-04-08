@@ -37,6 +37,8 @@ public class WebSocketSessions {
 
     public void removeSessionFromGame(int gameID, Session session) {
         gameMap.remove(gameID);
+        sessions.remove(session);
+        userSession.remove(session);
     }
 
     public void removeSession(Session session) {

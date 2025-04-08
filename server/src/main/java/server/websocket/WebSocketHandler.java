@@ -22,6 +22,7 @@ import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Objects;
 
 @WebSocket
@@ -47,9 +48,9 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command.getGameID(), session, username, authToken);
-                case MAKE_MOVE -> makeMove(command.getGameID(), session, username, moveCommand);
+                case MAKE_MOVE -> makeMove(command.getGameID(), session, username, moveCommand, authToken);
                 case LEAVE -> leaveGame(command.getGameID(), session, username);
-                case RESIGN -> resignGame(command.getGameID(), session, username);
+                case RESIGN -> resignGame(command.getGameID(), session, username, authToken);
             }
         } catch (Exception e) {
             throw new Exception(e.getMessage());
@@ -63,13 +64,17 @@ public class WebSocketHandler {
 
     public void connect(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
         if (authToken == null || authDAO.getAuth(authToken) == null) {
+            connections.addSession(gameID, session, "");
             String message = "Bad auth. Please register or sign in.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username);
+            connections.broadcastToUser(errorMessage, "");
+            connections.removeSessionFromGame(gameID, session);
         } else if (gameDAO.getGame(gameID).game() == null) {
+            connections.addSession(gameID, session, username);
             String message = "Not a valid game.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
             connections.broadcastToUser(errorMessage, username);
+            connections.removeSessionFromGame(gameID, session);
         } else {
             connections.addSession(gameID, session, username);
             String message = String.format("%s has joined the game.", username);
@@ -80,12 +85,60 @@ public class WebSocketHandler {
         }
     }
 
-    public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {
+    public void makeMove(int gameID, Session session, String username, MakeMoveCommand command, String authToken) throws IOException, DataAccessException {
         ChessPosition endMove = command.getMove().getEndPosition();
         String move = String.format(convertColtoString(endMove.getColumn()) + convertRowtoString(endMove.getRow()));
         String message = String.format("%s made a move to %s.", username, move);
+
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(notificationMessage, username);
+        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
+        String whiteUser = gameDAO.getGame(gameID).whiteUsername();
+        String blackUser = gameDAO.getGame(gameID).blackUsername();
+        ChessGame.TeamColor teamColor = gameDAO.getGame(gameID).game().getTeamTurn();
+        Collection<ChessMove> validMoves = gameDAO.getGame(gameID).game().validMoves(command.getMove().getStartPosition());
+
+        if (authToken == null || authDAO.getAuth(authToken) == null) {
+            message = "Bad auth. Please register or sign in.";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username);
+            if (Objects.equals(username, whiteUser) || Objects.equals(username, blackUser)) {
+                connections.broadcast(errorMessage, username);
+            }
+        } else {
+            if (validMoves.contains(command.getMove())) {
+                if (teamColor == ChessGame.TeamColor.WHITE) {
+                    broadcastMove(username, notificationMessage, loadGameMessage, whiteUser);
+                    if (Objects.equals(username, blackUser)) {
+                        message = "Not your turn!";
+                        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+                        connections.broadcastToUser(errorMessage, username);
+                    }
+                } else {
+                    broadcastMove(username, notificationMessage, loadGameMessage, blackUser);
+                    if (Objects.equals(username, whiteUser)) {
+                        message = "Not your turn!";
+                        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+                        connections.broadcastToUser(errorMessage, username);
+                    }
+                }
+            } else {
+                message = String.format("%s is not a valid move.", command.getMove());
+                ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+                connections.broadcastToUser(errorMessage, username);
+            }
+        }
+    }
+
+    private void broadcastMove(String username, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, String teamUser) throws IOException {
+        if (Objects.equals(username, teamUser)) {
+            connections.broadcastToUser(loadGameMessage, username);
+            connections.broadcast(notificationMessage, username);
+            connections.broadcast(loadGameMessage, username);
+        } else {
+            connections.broadcastToUser(notificationMessage, username);
+            connections.broadcastToUser(loadGameMessage, username);
+            connections.broadcast(loadGameMessage, username);
+        }
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException {
@@ -95,11 +148,12 @@ public class WebSocketHandler {
         connections.broadcast(notificationMessage, username);
     }
 
-    public void resignGame(int gameID, Session session, String username) throws IOException {
+    public void resignGame(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s forfeited the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(notificationMessage, username);
+        connections.broadcastToUser(notificationMessage, username);
     }
 
     private void saveSession(int gameID, Session session, String username) {
