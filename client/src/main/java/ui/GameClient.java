@@ -42,7 +42,7 @@ public class GameClient {
         return switch (command) {
             case "redraw" -> redrawChessBoard(teamColor, chessGame);
             case "leave" -> leave(teamColor, chessGame, gameID, authToken);
-            case "move" -> makeMove(params, teamColor, chessGame, authToken);
+            case "move" -> makeMove(params, teamColor, chessGame, authToken, gameID);
             case "resign" -> resign(gameID, authToken);
             case "highlight" -> highlightLegalMoves(params, teamColor, chessGame);
             case "quit" -> "quit";
@@ -79,7 +79,7 @@ public class GameClient {
         return "You left the game.";
     }
 
-    private String makeMove(String[] params, ChessGame.TeamColor teamColor, ChessGame game, String authToken) throws Exception {
+    private String makeMove(String[] params, ChessGame.TeamColor teamColor, ChessGame game, String authToken, int gameID) throws Exception {
         if (params.length >= 2 && params.length < 4) {
             ChessPosition startPosition = getPositionFromString(params[0], teamColor);
             ChessPosition endPosition = getPositionFromString(params[1], teamColor);
@@ -92,6 +92,8 @@ public class GameClient {
             } else {
                 throw new Exception("Not your turn!");
             }
+            ws = new WebSocketFacade(serverUrl, handler);
+            ws.makeMove(gameID, authToken, new ChessMove(startPosition, endPosition, promotion));
             redrawChessBoard(teamColor, game);
             return "";
         } else {

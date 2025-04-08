@@ -76,7 +76,6 @@ public class WebSocketFacade extends Endpoint {
 
     public void makeMove(int gameID, String authToken, ChessMove move) throws DataAccessException {
         try {
-            //UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID);
             MakeMoveCommand command = new MakeMoveCommand(UserGameCommand.CommandType.MAKE_MOVE, authToken, gameID, move);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception e) {
