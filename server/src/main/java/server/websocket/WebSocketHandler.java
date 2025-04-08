@@ -3,10 +3,7 @@ package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.MySqlAuthDAO;
-import dataaccess.MySqlGameDAO;
+import dataaccess.*;
 import exception.DataAccessException;
 import model.AuthData;
 import org.eclipse.jetty.websocket.api.annotations.*;
@@ -39,10 +36,9 @@ public class WebSocketHandler {
 
             AuthData authData = authDAO.getAuth(command.getAuthToken());
             String username = null;
-            String authToken = null;
+            String authToken = command.getAuthToken();
             if (authData != null) {
                 username = authData.username();
-                authToken = authData.authToken();
                 saveSession(command.getGameID(), session, username);
             }
 
@@ -100,25 +96,28 @@ public class WebSocketHandler {
         if (authToken == null || authDAO.getAuth(authToken) == null) {
             message = "Bad auth. Please register or sign in.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username);
-            if (Objects.equals(username, whiteUser) || Objects.equals(username, blackUser)) {
-                connections.broadcast(errorMessage, username);
+            if (teamColor == ChessGame.TeamColor.WHITE) {
+                connections.broadcastToUser(errorMessage, whiteUser);
+            } else {
+                connections.broadcastToUser(errorMessage, blackUser);
             }
         } else {
             if (validMoves.contains(command.getMove())) {
                 if (teamColor == ChessGame.TeamColor.WHITE) {
-                    broadcastMove(username, notificationMessage, loadGameMessage, whiteUser);
                     if (Objects.equals(username, blackUser)) {
                         message = "Not your turn!";
                         ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
                         connections.broadcastToUser(errorMessage, username);
+                    } else {
+                        broadcastMove(username, notificationMessage, loadGameMessage, whiteUser);
                     }
                 } else {
-                    broadcastMove(username, notificationMessage, loadGameMessage, blackUser);
                     if (Objects.equals(username, whiteUser)) {
                         message = "Not your turn!";
                         ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
                         connections.broadcastToUser(errorMessage, username);
+                    } else {
+                        broadcastMove(username, notificationMessage, loadGameMessage, blackUser);
                     }
                 }
             } else {
