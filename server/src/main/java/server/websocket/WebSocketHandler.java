@@ -104,27 +104,30 @@ public class WebSocketHandler {
         } else {
             if (validMoves.contains(command.getMove())) {
                 if (teamColor == ChessGame.TeamColor.WHITE) {
-                    if (Objects.equals(username, blackUser)) {
-                        message = "Not your turn!";
-                        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-                        connections.broadcastToUser(errorMessage, username);
-                    } else {
-                        broadcastMove(username, notificationMessage, loadGameMessage, whiteUser);
-                    }
+                    decideMessageToBroadcast(username, blackUser, whiteUser, notificationMessage, loadGameMessage);
                 } else {
-                    if (Objects.equals(username, whiteUser)) {
-                        message = "Not your turn!";
-                        ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-                        connections.broadcastToUser(errorMessage, username);
-                    } else {
-                        broadcastMove(username, notificationMessage, loadGameMessage, blackUser);
-                    }
+                    decideMessageToBroadcast(username, whiteUser, blackUser, notificationMessage, loadGameMessage);
                 }
             } else {
                 message = String.format("%s is not a valid move.", command.getMove());
                 ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
                 connections.broadcastToUser(errorMessage, username);
             }
+        }
+    }
+
+    private void decideMessageToBroadcast(String username, String oppositeUser, String thisUser, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage) throws IOException {
+        String message;
+        if (Objects.equals(username, oppositeUser)) {
+            message = "Not your turn!";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username);
+        } else if (!Objects.equals(username, thisUser) && !Objects.equals(username, oppositeUser)) {
+            message = "You are only observing!";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username);
+        } else {
+            broadcastMove(username, notificationMessage, loadGameMessage, thisUser);
         }
     }
 
@@ -148,11 +151,19 @@ public class WebSocketHandler {
     }
 
     public void resignGame(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
-        connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s forfeited the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(notificationMessage, username);
-        connections.broadcastToUser(notificationMessage, username);
+        String whiteUser = gameDAO.getGame(gameID).whiteUsername();
+        String blackUser = gameDAO.getGame(gameID).blackUsername();
+        if (!Objects.equals(username, whiteUser) && !Objects.equals(username, blackUser)) {
+            message = "You are only observing! If you want to exit the game please type 'leave'.";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username);
+        } else {
+            connections.broadcast(notificationMessage, username);
+            connections.broadcastToUser(notificationMessage, username);
+            connections.removeSessionFromGame(gameID, session);
+        }
     }
 
     private void saveSession(int gameID, Session session, String username) {
