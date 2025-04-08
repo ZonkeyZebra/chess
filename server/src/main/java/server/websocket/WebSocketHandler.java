@@ -16,11 +16,13 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -35,12 +37,16 @@ public class WebSocketHandler {
             MakeMoveCommand moveCommand = new Gson().fromJson(message, MakeMoveCommand.class);
 
             AuthData authData = authDAO.getAuth(command.getAuthToken());
-            String username = authData.username();
-
-            saveSession(command.getGameID(), session, username);
+            String username = null;
+            String authToken = null;
+            if (authData != null) {
+                username = authData.username();
+                authToken = authData.authToken();
+                saveSession(command.getGameID(), session, username);
+            }
 
             switch (command.getCommandType()) {
-                case CONNECT -> connect(command.getGameID(), session, username);
+                case CONNECT -> connect(command.getGameID(), session, username, authToken);
                 case MAKE_MOVE -> makeMove(command.getGameID(), session, username, moveCommand);
                 case LEAVE -> leaveGame(command.getGameID(), session, username);
                 case RESIGN -> resignGame(command.getGameID(), session, username);
@@ -50,18 +56,28 @@ public class WebSocketHandler {
         }
     }
 
-    @OnWebSocketError
-    public void onError(Session session, Throwable throwable) {
-        System.out.println("Error: " + throwable.getMessage());
-    }
+//    @OnWebSocketError
+//    public void onError(Session session, Throwable throwable) {
+//        System.out.println("Error: " + throwable.getMessage());
+//    }
 
-    public void connect(int gameID, Session session, String username) throws IOException, DataAccessException {
-        connections.addSession(gameID, session, username);
-        String message = String.format("%s has joined the game.", username);
-        NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
-        connections.broadcast(notificationMessage, username);
-        connections.broadcastToUser(loadGameMessage, username);
+    public void connect(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
+        if (authToken == null || authDAO.getAuth(authToken) == null) {
+            String message = "Bad auth. Please register or sign in.";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username);
+        } else if (gameDAO.getGame(gameID).game() == null) {
+            String message = "Not a valid game.";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username);
+        } else {
+            connections.addSession(gameID, session, username);
+            String message = String.format("%s has joined the game.", username);
+            NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
+            connections.broadcast(notificationMessage, username);
+            connections.broadcastToUser(loadGameMessage, username);
+        }
     }
 
     public void makeMove(int gameID, Session session, String username, MakeMoveCommand command) throws IOException {

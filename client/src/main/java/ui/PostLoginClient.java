@@ -8,7 +8,6 @@ import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.GameData;
 import model.JoinGameRequest;
-import server.websocket.WebSocketHandler;
 import ui.websocket.GameHandler;
 import ui.websocket.WebSocketFacade;
 
