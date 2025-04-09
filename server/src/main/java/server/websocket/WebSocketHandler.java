@@ -139,15 +139,15 @@ public class WebSocketHandler {
         GameData game = gameDAO.getGame(gameID);
         game.game().makeMove(move);
         gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game()));
-        loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game.game());
+        loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
         if (Objects.equals(username, teamUser)) {
             connections.broadcastToUser(loadGameMessage, username, gameID);
-            connections.broadcast(notificationMessage, username, gameID);
             connections.broadcast(loadGameMessage, username, gameID);
+            connections.broadcast(notificationMessage, username, gameID);
         } else {
-            connections.broadcastToUser(notificationMessage, username, gameID);
             connections.broadcastToUser(loadGameMessage, username, gameID);
             connections.broadcast(loadGameMessage, username, gameID);
+            connections.broadcastToUser(notificationMessage, username, gameID);
         }
     }
 
