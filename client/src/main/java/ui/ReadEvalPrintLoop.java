@@ -136,9 +136,6 @@ public class ReadEvalPrintLoop implements GameHandler {
         }
     }
 
-    public void updateGame(ChessGame game) {
-        //TODO
-    }
 
     public void printMessage(String message) {
         System.out.println("\u001b[31m" + message);

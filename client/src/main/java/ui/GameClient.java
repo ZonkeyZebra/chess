@@ -1,11 +1,8 @@
 package ui;
 
 import chess.*;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import dataaccess.GameDAO;
 import dataaccess.MySqlGameDAO;
-import exception.DataAccessException;
 import model.GameData;
 import ui.websocket.GameHandler;
 import ui.websocket.WebSocketFacade;
