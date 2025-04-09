@@ -45,7 +45,7 @@ public class WebSocketHandler {
 
             switch (command.getCommandType()) {
                 case CONNECT -> connect(command.getGameID(), session, username, authToken);
-                case MAKE_MOVE -> makeMove(command.getGameID(), session, username, moveCommand, authToken);
+                case MAKE_MOVE -> makeMove(command.getGameID(), username, moveCommand, authToken);
                 case LEAVE -> leaveGame(command.getGameID(), session, username);
                 case RESIGN -> resignGame(command.getGameID(), session, username, authToken);
             }
@@ -77,7 +77,7 @@ public class WebSocketHandler {
         }
     }
 
-    public void makeMove(int gameID, Session session, String username, MakeMoveCommand command, String authToken) throws IOException, DataAccessException, InvalidMoveException {
+    public void makeMove(int gameID, String username, MakeMoveCommand command, String authToken) throws IOException, DataAccessException, InvalidMoveException {
         ChessPosition endMove = command.getMove().getEndPosition();
         String move = String.format(convertColtoString(endMove.getColumn()) + convertRowtoString(endMove.getRow()));
         String message = String.format("%s made a move to %s.", username, move);
@@ -112,7 +112,9 @@ public class WebSocketHandler {
         }
     }
 
-    private void decideMessageToBroadcast(String username, String oppositeUser, String thisUser, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, int gameID, ChessMove move) throws IOException, DataAccessException, InvalidMoveException {
+    private void decideMessageToBroadcast(String username, String oppositeUser, String thisUser,
+                                          NotificationMessage notificationMessage, LoadGameMessage loadGameMessage,
+                                          int gameID, ChessMove move) throws IOException, DataAccessException, InvalidMoveException {
         String message;
         if (Objects.equals(username, oppositeUser)) {
             message = "Not your turn!";
@@ -131,7 +133,8 @@ public class WebSocketHandler {
         }
     }
 
-    private void broadcastMove(String username, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, String teamUser, ChessMove move, int gameID) throws IOException, DataAccessException, InvalidMoveException {
+    private void broadcastMove(String username, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage,
+                               String teamUser, ChessMove move, int gameID) throws IOException, DataAccessException, InvalidMoveException {
         if (Objects.equals(username, teamUser)) {
             connections.broadcastToUser(loadGameMessage, username, gameID);
             connections.broadcast(notificationMessage, username, gameID);

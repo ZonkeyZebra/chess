@@ -151,17 +151,17 @@ public class DrawBoard {
 
     private static void reverseBoard(PrintStream out, ChessGame.TeamColor teamColor, ChessBoard board, Collection<ChessMove> moves) {
         for (int row = BOARD_SIZE_IN_SQUARES - 1; row >= 0; row--) {
-            getCols(out, teamColor, board, row, true, moves);
+            getCols(out, board, row, true, moves);
         }
     }
 
     private static void drawNormalBoard(PrintStream out, ChessGame.TeamColor teamColor, ChessBoard board, Collection<ChessMove> moves) {
         for (int row = 0; row < BOARD_SIZE_IN_SQUARES; row++) {
-            getCols(out, teamColor, board, row, false, moves);
+            getCols(out, board, row, false, moves);
         }
     }
 
-    private static void getCols(PrintStream out, ChessGame.TeamColor teamColor, ChessBoard board, int row, boolean reverse, Collection<ChessMove> moves) {
+    private static void getCols(PrintStream out, ChessBoard board, int row, boolean reverse, Collection<ChessMove> moves) {
         printHeaderText(out, String.format((row + 1) + " "));
         if (reverse) {
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {

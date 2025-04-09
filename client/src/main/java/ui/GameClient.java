@@ -20,7 +20,8 @@ public class GameClient {
         this.handler = handler;
     }
 
-    public String eval(String input, String authToken, ChessGame.TeamColor teamColor, ChessGame chessGame, int gameID, boolean observer) throws Exception {
+    public String eval(String input, String authToken, ChessGame.TeamColor teamColor,
+                       ChessGame chessGame, int gameID, boolean observer) throws Exception {
         String[] tokens = input.split(" ");
         String command = tokens[0];
         String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
