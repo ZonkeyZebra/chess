@@ -151,11 +151,18 @@ public class WebSocketHandler {
         gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game()));
     }
 
-    public void leaveGame(int gameID, Session session, String username) throws IOException {
+    public void leaveGame(int gameID, Session session, String username) throws IOException, DataAccessException {
         connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s left the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(notificationMessage, username);
+        GameData game = gameDAO.getGame(gameID);
+        if (Objects.equals(username, game.whiteUsername())) {
+            gameDAO.updateGame(new GameData(gameID, "", game.blackUsername(), game.gameName(), game.game()));
+        }
+        if (Objects.equals(username, game.blackUsername())) {
+            gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), "", game.gameName(), game.game()));
+        }
     }
 
     public void resignGame(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
