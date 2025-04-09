@@ -6,7 +6,6 @@ import chess.ChessPosition;
 import dataaccess.*;
 import exception.DataAccessException;
 import model.AuthData;
-import org.eclipse.jetty.websocket.api.annotations.*;
 import com.google.gson.Gson;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
@@ -25,8 +24,8 @@ import java.util.Objects;
 @WebSocket
 public class WebSocketHandler {
     private final WebSocketSessions connections = new WebSocketSessions();
-    private AuthDAO authDAO = new MySqlAuthDAO();
-    private GameDAO gameDAO = new MySqlGameDAO();
+    private final AuthDAO authDAO = new MySqlAuthDAO();
+    private final GameDAO gameDAO = new MySqlGameDAO();
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws Exception {
@@ -90,26 +89,26 @@ public class WebSocketHandler {
         LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
         String whiteUser = gameDAO.getGame(gameID).whiteUsername();
         String blackUser = gameDAO.getGame(gameID).blackUsername();
-        ChessGame.TeamColor teamColor = gameDAO.getGame(gameID).game().getTeamTurn();
+        ChessGame.TeamColor currentTeam = gameDAO.getGame(gameID).game().getTeamTurn();
         Collection<ChessMove> validMoves = gameDAO.getGame(gameID).game().validMoves(command.getMove().getStartPosition());
 
         if (authToken == null || authDAO.getAuth(authToken) == null) {
             message = "Bad auth. Please register or sign in.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            if (teamColor == ChessGame.TeamColor.WHITE) {
+            if (currentTeam == ChessGame.TeamColor.WHITE) {
                 connections.broadcastToUser(errorMessage, whiteUser);
             } else {
                 connections.broadcastToUser(errorMessage, blackUser);
             }
         } else {
             if (validMoves.contains(command.getMove())) {
-                if (teamColor == ChessGame.TeamColor.WHITE) {
+                if (currentTeam == ChessGame.TeamColor.WHITE) {
                     decideMessageToBroadcast(username, blackUser, whiteUser, notificationMessage, loadGameMessage);
                 } else {
                     decideMessageToBroadcast(username, whiteUser, blackUser, notificationMessage, loadGameMessage);
                 }
             } else {
-                message = String.format("%s is not a valid move.", command.getMove());
+                message = String.format("%s is not a valid move.", move);
                 ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
                 connections.broadcastToUser(errorMessage, username);
             }
