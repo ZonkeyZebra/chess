@@ -48,6 +48,7 @@ public class WebSocketSessions {
         gameMap.remove(gameID);
         sessions.remove(session);
         userSession.remove(session);
+        gameSession.remove(session);
     }
 
     public void broadcast(ServerMessage serverMessage, String username, int gameID) throws IOException {
