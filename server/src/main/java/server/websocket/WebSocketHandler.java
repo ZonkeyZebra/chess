@@ -127,6 +127,10 @@ public class WebSocketHandler {
             message = "You are only observing!";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
             connections.broadcastToUser(errorMessage, username);
+        } else if (gameDAO.getGame(gameID).game().getGameComplete()){
+            message = "Game has been completed.";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username);
         } else {
             broadcastMove(username, notificationMessage, loadGameMessage, thisUser, move, gameID);
         }
@@ -164,9 +168,20 @@ public class WebSocketHandler {
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
             connections.broadcastToUser(errorMessage, username);
         } else {
-            connections.broadcast(notificationMessage, username);
-            connections.broadcastToUser(notificationMessage, username);
-            connections.removeSessionFromGame(gameID, session);
+            GameData gameData = gameDAO.getGame(gameID);
+            ChessGame game = gameData.game();
+            if (game.getGameComplete()) {
+                message = "Game has been completed.";
+                ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+                connections.broadcastToUser(errorMessage, username);
+            } else {
+                connections.broadcast(notificationMessage, username);
+                connections.broadcastToUser(notificationMessage, username);
+                connections.removeSessionFromGame(gameID, session);
+                // update game so it is complete and no more moves can be made
+                game.setGameStatus(true);
+                gameDAO.updateGame(new GameData(gameID, whiteUser, blackUser, gameData.gameName(), game));
+            }
         }
     }
 

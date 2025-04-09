@@ -15,12 +15,14 @@ public class ChessGame {
     private Collection<ChessMove> validMoves;
     private ChessPiece piece;
     private final ChessPiece.PieceType king = ChessPiece.PieceType.KING;
+    private boolean gameComplete;
 
     public ChessGame() {
         board = new ChessBoard();
         board.resetBoard();
         setBoard(board);
         setTeamTurn(TeamColor.WHITE);
+        setGameStatus(false);
     }
 
     /**
@@ -292,5 +294,13 @@ public class ChessGame {
             }
         }
         return false;
+    }
+
+    public void setGameStatus(boolean bool) {
+        this.gameComplete = bool;
+    }
+
+    public boolean getGameComplete() {
+        return gameComplete;
     }
 }
