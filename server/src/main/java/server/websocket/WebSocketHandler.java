@@ -152,15 +152,39 @@ public class WebSocketHandler {
         GameData game = gameDAO.getGame(gameID);
         game.game().makeMove(move);
         gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game()));
+        ChessGame.TeamColor currentTeam = game.game().getTeamTurn();
         loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
         if (Objects.equals(username, teamUser)) {
             connections.broadcastToUser(loadGameMessage, username, gameID);
             connections.broadcast(loadGameMessage, username, gameID);
             connections.broadcast(notificationMessage, username, gameID);
+            broadcastIfInCheck(username, gameID, game, currentTeam);
         } else {
             connections.broadcastToUser(loadGameMessage, username, gameID);
             connections.broadcast(loadGameMessage, username, gameID);
             connections.broadcastToUser(notificationMessage, username, gameID);
+            broadcastIfInCheck(username, gameID, game, currentTeam);
+        }
+    }
+
+    private void broadcastIfInCheck(String username, int gameID, GameData game, ChessGame.TeamColor currentTeam) throws IOException {
+        if (game.game().isInCheckmate(currentTeam)) {
+            String stateMessage = String.format("%s is in checkmate!", currentTeam);
+            NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage);
+            connections.broadcast(checkmateMessage, username, gameID);
+            connections.broadcastToUser(checkmateMessage, username, gameID);
+        }
+        if (game.game().isInCheck(currentTeam)) {
+            String stateMessage = String.format("%s is in check!", currentTeam);
+            NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage);
+            connections.broadcast(checkmateMessage, username, gameID);
+            connections.broadcastToUser(checkmateMessage, username, gameID);
+        }
+        if (game.game().isInStalemate(currentTeam)) {
+            String stateMessage = String.format("%s is in stalemate!", currentTeam);
+            NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage);
+            connections.broadcast(checkmateMessage, username, gameID);
+            connections.broadcastToUser(checkmateMessage, username, gameID);
         }
     }
 
