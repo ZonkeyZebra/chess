@@ -96,9 +96,12 @@ public class WebSocketHandler {
         String whiteUser = gameDAO.getGame(gameID).whiteUsername();
         String blackUser = gameDAO.getGame(gameID).blackUsername();
         ChessGame.TeamColor currentTeam = gameDAO.getGame(gameID).game().getTeamTurn();
-        Collection<ChessMove> validMoves = gameDAO.getGame(gameID).game().validMoves(command.getMove().getStartPosition());
         ChessPiece piece = gameDAO.getGame(gameID).game().getBoard().getPiece(command.getMove().getStartPosition());
-
+        if (piece == null) {
+            message = "Need to select a chess piece to move.";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username, gameID);
+        }
         if (authToken == null || authDAO.getAuth(authToken) == null) {
             message = "Bad auth. Please register or sign in.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
@@ -107,11 +110,8 @@ public class WebSocketHandler {
             } else {
                 connections.broadcastToUser(errorMessage, blackUser, gameID);
             }
-        } else if (piece == null) {
-            message = "Need to select a chess piece to move.";
-            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username, gameID);
         } else {
+            Collection<ChessMove> validMoves = gameDAO.getGame(gameID).game().validMoves(command.getMove().getStartPosition());
             if (validMoves.contains(command.getMove())) {
                 if (currentTeam == ChessGame.TeamColor.WHITE) {
                     decideMessageToBroadcast(username, blackUser, whiteUser, notificationMessage, loadGameMessage, gameID, command.getMove());

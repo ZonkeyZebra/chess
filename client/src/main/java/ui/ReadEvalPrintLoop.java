@@ -1,6 +1,7 @@
 package ui;
 
 import chess.ChessGame;
+import chess.InvalidMoveException;
 import ui.websocket.GameHandler;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
@@ -87,8 +88,25 @@ public class ReadEvalPrintLoop implements GameHandler {
     }
 
     private String getGameResult(String result, String line, String authToken, boolean isObserver) {
+        if (line.contains("resign")) {
+            result = "Are you sure you would like to resign? <type yes to leave or no to stay>";
+            System.out.print("\u001B[34m" + result);
+        } else {
+            if (line.contains("no")) {
+                result = "You got this!";
+                System.out.print("\u001B[34m" + result);
+            } else {
+                if (line.contains("yes")) {
+                    line = "resign";
+                }
+                result = getGameEval(result, line, authToken, isObserver);
+            }
+        }
+        return result;
+    }
+
+    private String getGameEval(String result, String line, String authToken, boolean isObserver) {
         try {
-            //result = gameClient.eval(line, authToken, teamColor, postLoginClient.getChessGame(), postLoginClient.getGameNum(), isObserver);
             result = gameClient.eval(line, authToken, teamColor, mostRecentGame, postLoginClient.getGameNum(), isObserver);
             if (line.contains("leave") || line.contains("resign")) {
                 setInGame(false);
