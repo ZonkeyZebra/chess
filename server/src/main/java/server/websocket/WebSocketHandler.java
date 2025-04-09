@@ -64,21 +64,21 @@ public class WebSocketHandler {
             connections.addSession(gameID, session, "");
             String message = "Bad auth. Please register or sign in.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, "");
+            connections.broadcastToUser(errorMessage, "", gameID);
             connections.removeSessionFromGame(gameID, session);
         } else if (gameDAO.getGame(gameID).game() == null) {
             connections.addSession(gameID, session, username);
             String message = "Not a valid game.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username);
+            connections.broadcastToUser(errorMessage, username, gameID);
             connections.removeSessionFromGame(gameID, session);
         } else {
             connections.addSession(gameID, session, username);
             String message = String.format("%s has joined the game.", username);
             NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
-            connections.broadcast(notificationMessage, username);
-            connections.broadcastToUser(loadGameMessage, username);
+            connections.broadcast(notificationMessage, username, gameID);
+            connections.broadcastToUser(loadGameMessage, username, gameID);
         }
     }
 
@@ -98,9 +98,9 @@ public class WebSocketHandler {
             message = "Bad auth. Please register or sign in.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
             if (currentTeam == ChessGame.TeamColor.WHITE) {
-                connections.broadcastToUser(errorMessage, whiteUser);
+                connections.broadcastToUser(errorMessage, whiteUser, gameID);
             } else {
-                connections.broadcastToUser(errorMessage, blackUser);
+                connections.broadcastToUser(errorMessage, blackUser, gameID);
             }
         } else {
             if (validMoves.contains(command.getMove())) {
@@ -112,7 +112,7 @@ public class WebSocketHandler {
             } else {
                 message = String.format("%s is not a valid move.", move);
                 ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-                connections.broadcastToUser(errorMessage, username);
+                connections.broadcastToUser(errorMessage, username, gameID);
             }
         }
     }
@@ -122,15 +122,15 @@ public class WebSocketHandler {
         if (Objects.equals(username, oppositeUser)) {
             message = "Not your turn!";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username);
+            connections.broadcastToUser(errorMessage, username, gameID);
         } else if (!Objects.equals(username, thisUser) && !Objects.equals(username, oppositeUser)) {
             message = "You are only observing!";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username);
+            connections.broadcastToUser(errorMessage, username, gameID);
         } else if (gameDAO.getGame(gameID).game().getGameComplete()){
             message = "Game has been completed.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username);
+            connections.broadcastToUser(errorMessage, username, gameID);
         } else {
             broadcastMove(username, notificationMessage, loadGameMessage, thisUser, move, gameID);
         }
@@ -138,13 +138,13 @@ public class WebSocketHandler {
 
     private void broadcastMove(String username, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, String teamUser, ChessMove move, int gameID) throws IOException, DataAccessException, InvalidMoveException {
         if (Objects.equals(username, teamUser)) {
-            connections.broadcastToUser(loadGameMessage, username);
-            connections.broadcast(notificationMessage, username);
-            connections.broadcast(loadGameMessage, username);
+            connections.broadcastToUser(loadGameMessage, username, gameID);
+            connections.broadcast(notificationMessage, username, gameID);
+            connections.broadcast(loadGameMessage, username, gameID);
         } else {
-            connections.broadcastToUser(notificationMessage, username);
-            connections.broadcastToUser(loadGameMessage, username);
-            connections.broadcast(loadGameMessage, username);
+            connections.broadcastToUser(notificationMessage, username, gameID);
+            connections.broadcastToUser(loadGameMessage, username, gameID);
+            connections.broadcast(loadGameMessage, username, gameID);
         }
         GameData game = gameDAO.getGame(gameID);
         game.game().makeMove(move);
@@ -152,10 +152,9 @@ public class WebSocketHandler {
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException, DataAccessException {
-        connections.removeSessionFromGame(gameID, session);
         String message = String.format("%s left the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(notificationMessage, username);
+        connections.broadcast(notificationMessage, username, gameID);
         GameData game = gameDAO.getGame(gameID);
         if (Objects.equals(username, game.whiteUsername())) {
             gameDAO.updateGame(new GameData(gameID, "", game.blackUsername(), game.gameName(), game.game()));
@@ -163,6 +162,7 @@ public class WebSocketHandler {
         if (Objects.equals(username, game.blackUsername())) {
             gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), "", game.gameName(), game.game()));
         }
+        connections.removeSessionFromGame(gameID, session);
     }
 
     public void resignGame(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
@@ -173,17 +173,17 @@ public class WebSocketHandler {
         if (!Objects.equals(username, whiteUser) && !Objects.equals(username, blackUser)) {
             message = "You are only observing! If you want to exit the game please type 'leave'.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-            connections.broadcastToUser(errorMessage, username);
+            connections.broadcastToUser(errorMessage, username, gameID);
         } else {
             GameData gameData = gameDAO.getGame(gameID);
             ChessGame game = gameData.game();
             if (game.getGameComplete()) {
                 message = "Game has been completed.";
                 ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
-                connections.broadcastToUser(errorMessage, username);
+                connections.broadcastToUser(errorMessage, username, gameID);
             } else {
-                connections.broadcast(notificationMessage, username);
-                connections.broadcastToUser(notificationMessage, username);
+                connections.broadcast(notificationMessage, username, gameID);
+                connections.broadcastToUser(notificationMessage, username, gameID);
                 connections.removeSessionFromGame(gameID, session);
                 // update game so it is complete and no more moves can be made
                 game.setGameStatus(true);

@@ -16,23 +16,35 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSocketSessions {
     private final ConcurrentHashMap<Integer, Set<Session>> gameMap;
-    private final ConcurrentHashMap<Set<Session>, Integer> sessionMap;
     private final ConcurrentHashMap<Session, String> userSession; //use this like connection
+    private final ConcurrentHashMap<Session, Integer> gameSession;
     private final Set<Session> sessions;
     private ArrayList<Session> removeList;
+    private Set<Session> addList = new HashSet<>();
 
     public WebSocketSessions() {
         this.sessions = new HashSet<>();
         this.gameMap = new ConcurrentHashMap<>();
-        this.sessionMap = new ConcurrentHashMap<>();
         this.userSession = new ConcurrentHashMap<>();
+        this.gameSession = new ConcurrentHashMap<>();
     }
 
     public void addSession(int gameID, Session session, String username) {
         sessions.add(session);
-        gameMap.put(gameID, sessions);
-        sessionMap.put(sessions, gameID);
         userSession.put(session, username);
+        gameSession.put(session, gameID);
+        addList.clear();
+        addList = getSessionsToAdd(gameID);
+        gameMap.put(gameID, addList);
+    }
+
+    private Set<Session> getSessionsToAdd(int gameID) {
+        for (Session session : sessions) {
+            if (gameSession.get(session) == gameID) {
+                addList.add(session);
+            }
+        }
+        return addList;
     }
 
     public void removeSessionFromGame(int gameID, Session session) {
@@ -41,17 +53,10 @@ public class WebSocketSessions {
         userSession.remove(session);
     }
 
-    public void removeSession(Session session) {
-        sessionMap.remove(sessions);
-    }
-
-    public Set<Session> getSessionsForGame(int gameID) {
-        return gameMap.get(gameID);
-    }
-
-    public void broadcast(ServerMessage serverMessage, String username) throws IOException {
+    public void broadcast(ServerMessage serverMessage, String username, int gameID) throws IOException {
         removeList = new ArrayList<Session>();
-        for (Session session : sessions) {
+        Set<Session> gameSessions = gameMap.get(gameID);
+        for (Session session : gameSessions) {
             if (session.isOpen()) {
                 if (!Objects.equals(username, userSession.get(session))) {
                     session.getRemote().sendString(new Gson().toJson(serverMessage));
@@ -70,9 +75,10 @@ public class WebSocketSessions {
         }
     }
 
-    public void broadcastToUser(ServerMessage message, String username) throws IOException {
+    public void broadcastToUser(ServerMessage message, String username, int gameID) throws IOException {
         removeList = new ArrayList<Session>();
-        for (Session session : sessions) {
+        Set<Session> gameSessions = gameMap.get(gameID);
+        for (Session session : gameSessions) {
             if (session.isOpen()) {
                 if (Objects.equals(username, userSession.get(session))) {
                     session.getRemote().sendString(new Gson().toJson(message));
