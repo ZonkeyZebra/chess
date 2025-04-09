@@ -44,4 +44,8 @@ public class MemoryGameDAO implements GameDAO {
         return id++;
     }
 
+    public void deleteSingleGame(int gameID) {
+        games.remove(gameID);
+    }
+
 }

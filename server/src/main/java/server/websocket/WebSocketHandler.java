@@ -1,9 +1,6 @@
 package server.websocket;
 
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
-import chess.InvalidMoveException;
+import chess.*;
 import dataaccess.*;
 import exception.DataAccessException;
 import model.AuthData;
@@ -100,6 +97,7 @@ public class WebSocketHandler {
         String blackUser = gameDAO.getGame(gameID).blackUsername();
         ChessGame.TeamColor currentTeam = gameDAO.getGame(gameID).game().getTeamTurn();
         Collection<ChessMove> validMoves = gameDAO.getGame(gameID).game().validMoves(command.getMove().getStartPosition());
+        ChessPiece piece = gameDAO.getGame(gameID).game().getBoard().getPiece(command.getMove().getStartPosition());
 
         if (authToken == null || authDAO.getAuth(authToken) == null) {
             message = "Bad auth. Please register or sign in.";
@@ -109,6 +107,10 @@ public class WebSocketHandler {
             } else {
                 connections.broadcastToUser(errorMessage, blackUser, gameID);
             }
+        } else if (piece == null) {
+            message = "Need to select a chess piece to move.";
+            ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
+            connections.broadcastToUser(errorMessage, username, gameID);
         } else {
             if (validMoves.contains(command.getMove())) {
                 if (currentTeam == ChessGame.TeamColor.WHITE) {
@@ -165,7 +167,6 @@ public class WebSocketHandler {
     public void leaveGame(int gameID, Session session, String username) throws IOException, DataAccessException {
         String message = String.format("%s left the game.", username);
         NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(notificationMessage, username, gameID);
         GameData game = gameDAO.getGame(gameID);
         if (Objects.equals(username, game.whiteUsername())) {
             gameDAO.updateGame(new GameData(gameID, "", game.blackUsername(), game.gameName(), game.game()));
@@ -173,6 +174,7 @@ public class WebSocketHandler {
         if (Objects.equals(username, game.blackUsername())) {
             gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), "", game.gameName(), game.game()));
         }
+        connections.broadcast(notificationMessage, username, gameID);
         connections.removeSessionFromGame(gameID, session);
     }
 
@@ -193,12 +195,12 @@ public class WebSocketHandler {
                 ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
                 connections.broadcastToUser(errorMessage, username, gameID);
             } else {
+                game.setGameStatus(true);
+                gameDAO.updateGame(new GameData(gameID, whiteUser, blackUser, gameData.gameName(), game));
+                gameDAO.deleteSingleGame(gameID);
                 connections.broadcast(notificationMessage, username, gameID);
                 connections.broadcastToUser(notificationMessage, username, gameID);
                 connections.removeSessionFromGame(gameID, session);
-                // update game so it is complete and no more moves can be made
-                game.setGameStatus(true);
-                gameDAO.updateGame(new GameData(gameID, whiteUser, blackUser, gameData.gameName(), game));
             }
         }
     }
