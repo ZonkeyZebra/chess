@@ -77,7 +77,8 @@ public class WebSocketHandler {
         }
     }
 
-    public void makeMove(int gameID, String username, MakeMoveCommand command, String authToken) throws IOException, DataAccessException, InvalidMoveException {
+    public void makeMove(int gameID, String username, MakeMoveCommand command,
+                         String authToken) throws IOException, DataAccessException, InvalidMoveException {
         ChessPosition endMove = command.getMove().getEndPosition();
         String move = String.format(convertColtoString(endMove.getColumn()) + convertRowtoString(endMove.getRow()));
         String message = String.format("%s made a move to %s.", username, move);
