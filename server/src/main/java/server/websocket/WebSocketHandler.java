@@ -55,13 +55,14 @@ public class WebSocketHandler {
     }
 
     public void connect(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
+        GameData game = gameDAO.getGame(gameID);
         if (authToken == null || authDAO.getAuth(authToken) == null) {
             connections.addSession(gameID, session, "");
             String message = "Bad auth. Please register or sign in.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
             connections.broadcastToUser(errorMessage, "", gameID);
             connections.removeSessionFromGame(gameID, session);
-        } else if (gameDAO.getGame(gameID).game() == null) {
+        } else if (game.game() == null) {
             connections.addSession(gameID, session, username);
             String message = "Not a valid game.";
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
@@ -69,12 +70,22 @@ public class WebSocketHandler {
             connections.removeSessionFromGame(gameID, session);
         } else {
             connections.addSession(gameID, session, username);
-            String message = String.format("%s has joined the game.", username);
-            NotificationMessage notificationMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+            NotificationMessage notificationMessage = getNotificationMessage(username, game);
             LoadGameMessage loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, gameDAO.getGame(gameID).game());
             connections.broadcast(notificationMessage, username, gameID);
             connections.broadcastToUser(loadGameMessage, username, gameID);
         }
+    }
+
+    private static NotificationMessage getNotificationMessage(String username, GameData game) {
+        String message = String.format("%s has joined the game as observer.", username);
+        if (Objects.equals(username, game.whiteUsername())) {
+            message = String.format("%s has joined the game as white.", username);
+        }
+        if (Objects.equals(username, game.blackUsername())) {
+            message = String.format("%s has joined the game as black.", username);
+        }
+        return new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
     }
 
     public void makeMove(int gameID, String username, MakeMoveCommand command,

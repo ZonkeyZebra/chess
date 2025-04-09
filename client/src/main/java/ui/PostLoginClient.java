@@ -105,10 +105,10 @@ public class PostLoginClient {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             try {
-                ws = new WebSocketFacade(serverUrl, handler);
-                ws.connect(id, authToken);
                 server.joinGame(new JoinGameRequest(teamColor, id), authToken);
                 setGameNum(id);
+                ws = new WebSocketFacade(serverUrl, handler);
+                ws.connect(id, authToken);
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
                 throw new DataAccessException("Spot is already taken. Join another game or as another color.");
