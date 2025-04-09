@@ -3,10 +3,12 @@ package server.websocket;
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
+import chess.InvalidMoveException;
 import dataaccess.*;
 import exception.DataAccessException;
 import model.AuthData;
 import com.google.gson.Gson;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -80,7 +82,7 @@ public class WebSocketHandler {
         }
     }
 
-    public void makeMove(int gameID, Session session, String username, MakeMoveCommand command, String authToken) throws IOException, DataAccessException {
+    public void makeMove(int gameID, Session session, String username, MakeMoveCommand command, String authToken) throws IOException, DataAccessException, InvalidMoveException {
         ChessPosition endMove = command.getMove().getEndPosition();
         String move = String.format(convertColtoString(endMove.getColumn()) + convertRowtoString(endMove.getRow()));
         String message = String.format("%s made a move to %s.", username, move);
@@ -103,9 +105,9 @@ public class WebSocketHandler {
         } else {
             if (validMoves.contains(command.getMove())) {
                 if (currentTeam == ChessGame.TeamColor.WHITE) {
-                    decideMessageToBroadcast(username, blackUser, whiteUser, notificationMessage, loadGameMessage);
+                    decideMessageToBroadcast(username, blackUser, whiteUser, notificationMessage, loadGameMessage, gameID, command.getMove());
                 } else {
-                    decideMessageToBroadcast(username, whiteUser, blackUser, notificationMessage, loadGameMessage);
+                    decideMessageToBroadcast(username, whiteUser, blackUser, notificationMessage, loadGameMessage, gameID, command.getMove());
                 }
             } else {
                 message = String.format("%s is not a valid move.", move);
@@ -115,7 +117,7 @@ public class WebSocketHandler {
         }
     }
 
-    private void decideMessageToBroadcast(String username, String oppositeUser, String thisUser, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage) throws IOException {
+    private void decideMessageToBroadcast(String username, String oppositeUser, String thisUser, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, int gameID, ChessMove move) throws IOException, DataAccessException, InvalidMoveException {
         String message;
         if (Objects.equals(username, oppositeUser)) {
             message = "Not your turn!";
@@ -126,11 +128,11 @@ public class WebSocketHandler {
             ErrorMessage errorMessage = new ErrorMessage(ServerMessage.ServerMessageType.ERROR, message);
             connections.broadcastToUser(errorMessage, username);
         } else {
-            broadcastMove(username, notificationMessage, loadGameMessage, thisUser);
+            broadcastMove(username, notificationMessage, loadGameMessage, thisUser, move, gameID);
         }
     }
 
-    private void broadcastMove(String username, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, String teamUser) throws IOException {
+    private void broadcastMove(String username, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage, String teamUser, ChessMove move, int gameID) throws IOException, DataAccessException, InvalidMoveException {
         if (Objects.equals(username, teamUser)) {
             connections.broadcastToUser(loadGameMessage, username);
             connections.broadcast(notificationMessage, username);
@@ -140,6 +142,9 @@ public class WebSocketHandler {
             connections.broadcastToUser(loadGameMessage, username);
             connections.broadcast(loadGameMessage, username);
         }
+        GameData game = gameDAO.getGame(gameID);
+        game.game().makeMove(move);
+        gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game()));
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException {
