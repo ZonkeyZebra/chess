@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessBoard;
 import chess.ChessGame;
 import ui.websocket.GameHandler;
 import websocket.messages.ErrorMessage;
@@ -58,7 +57,7 @@ public class ReadEvalPrintLoop implements GameHandler {
                 if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
                     teamColor = ChessGame.TeamColor.WHITE;
                     //ChessGame game = postLoginClient.getChessGame();
-                    //System.out.println("\n");
+                    System.out.println("\n");
                     //new DrawBoard(teamColor, game.getBoard());
                     setInGame(true);
                     if (result.contains("observe")) {
@@ -68,7 +67,7 @@ public class ReadEvalPrintLoop implements GameHandler {
                 if (result.contains("Draw Board: BLACK")) {
                     teamColor = ChessGame.TeamColor.BLACK;
                     //ChessGame game = postLoginClient.getChessGame();
-                    //System.out.println("\n");
+                    System.out.println("\n");
                     //new DrawBoard(teamColor, game.getBoard());
                     setInGame(true);
                 }
@@ -82,13 +81,7 @@ public class ReadEvalPrintLoop implements GameHandler {
                 System.out.print("\u001B[34m" + result);
             }
         } catch (Throwable e) {
-            var msg = e.toString();
-            var error = msg.split(":");
-            if (msg.contains("For input string")) {
-                System.out.print(error[2] + " is not a valid input. Type help for more info.");
-            } else {
-                System.out.print(error[1]);
-            }
+            throwError(e);
         }
         return result;
     }
@@ -103,15 +96,19 @@ public class ReadEvalPrintLoop implements GameHandler {
             }
             System.out.print("\u001B[34m" + result);
         } catch (Throwable e) {
-            var msg = e.toString();
-            var error = msg.split(":");
-            if (msg.contains("For input string")) {
-                System.out.print(error[2] + " is not a valid input. Type help for more info.");
-            } else {
-                System.out.print(error[1]);
-            }
+            throwError(e);
         }
         return result;
+    }
+
+    private static void throwError(Throwable e) {
+        var msg = e.toString();
+        var error = msg.split(":");
+        if (msg.contains("For input string")) {
+            System.out.print(error[2] + " is not a valid input. Type help for more info.");
+        } else {
+            System.out.print(error[1]);
+        }
     }
 
     private void printPrompt() {

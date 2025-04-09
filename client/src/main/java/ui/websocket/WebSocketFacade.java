@@ -103,10 +103,4 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    private void sendMessage() throws IOException {
-        // create command message
-        String msg = null;
-        // send message to server
-        this.session.getBasicRemote().sendText(msg);
-    }
 }

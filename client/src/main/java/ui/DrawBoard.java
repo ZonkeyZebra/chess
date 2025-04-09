@@ -6,7 +6,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static ui.EscapeSequences.*;
 
@@ -16,7 +15,7 @@ public class DrawBoard {
     private static final int BOARD_SIZE_IN_SQUARES = 8;
     private static final String[] WHITE_HEADERS = { "a", "b", "c", "d", "e", "f", "g", "h" };
     private static final String[] BLACK_HEADERS = { "h", "g", "f", "e", "d", "c", "b", "a" };
-    private static final Collection<ChessMove> emptyMoves = new ArrayList<>();
+    private static final Collection<ChessMove> EMPTY_MOVES = new ArrayList<>();
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -27,11 +26,11 @@ public class DrawBoard {
 
         // Draw normal white and black board
         drawHeaders(out, WHITE_HEADERS);
-        drawBoard(out, ChessGame.TeamColor.WHITE, board, emptyMoves);
+        drawBoard(out, ChessGame.TeamColor.WHITE, board, EMPTY_MOVES);
         drawHeaders(out, WHITE_HEADERS);
 
         drawHeaders(out, BLACK_HEADERS);
-        drawBoard(out, ChessGame.TeamColor.BLACK, board, emptyMoves);
+        drawBoard(out, ChessGame.TeamColor.BLACK, board, EMPTY_MOVES);
         drawHeaders(out, BLACK_HEADERS);
 
         // Draw valid moves board
@@ -53,11 +52,11 @@ public class DrawBoard {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         if (teamColor == ChessGame.TeamColor.BLACK) {
             drawHeaders(out, BLACK_HEADERS);
-            drawBoard(out, teamColor, board, emptyMoves);
+            drawBoard(out, teamColor, board, EMPTY_MOVES);
             drawHeaders(out, BLACK_HEADERS);
         } else {
             drawHeaders(out, WHITE_HEADERS);
-            drawBoard(out, teamColor, board, emptyMoves);
+            drawBoard(out, teamColor, board, EMPTY_MOVES);
             drawHeaders(out, WHITE_HEADERS);
         }
         out.print(SET_BG_COLOR_BLACK);

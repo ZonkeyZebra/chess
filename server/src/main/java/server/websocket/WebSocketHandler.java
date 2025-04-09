@@ -54,11 +54,6 @@ public class WebSocketHandler {
         }
     }
 
-//    @OnWebSocketError
-//    public void onError(Session session, Throwable throwable) {
-//        System.out.println("Error: " + throwable.getMessage());
-//    }
-
     public void connect(int gameID, Session session, String username, String authToken) throws IOException, DataAccessException {
         if (authToken == null || authDAO.getAuth(authToken) == null) {
             connections.addSession(gameID, session, "");
