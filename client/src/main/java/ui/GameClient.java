@@ -1,8 +1,8 @@
 package ui;
 
 import chess.*;
-import dataaccess.GameDAO;
-import dataaccess.MySqlGameDAO;
+//import dataaccess.GameDAO;
+//import dataaccess.MySqlGameDAO;
 import model.GameData;
 import ui.websocket.GameHandler;
 import ui.websocket.WebSocketFacade;
@@ -15,7 +15,7 @@ public class GameClient {
     private final ServerFacade server;
     private final String serverUrl;
     private WebSocketFacade ws;
-    private final GameDAO gameDataAccess = new MySqlGameDAO();
+    //private final GameDAO gameDataAccess = new MySqlGameDAO();
     private final GameHandler handler;
 
     public GameClient(String serverUrl, GameHandler handler) {
@@ -56,17 +56,17 @@ public class GameClient {
         GameData updateData;
         String blackUsername;
         String whiteUsername;
-        if (teamColor == ChessGame.TeamColor.BLACK) {
-            blackUsername = "";
-            whiteUsername = gameDataAccess.getGame(gameID).whiteUsername();
-        } else {
-            blackUsername = gameDataAccess.getGame(gameID).blackUsername();
-            whiteUsername = "";
-        }
+//        if (teamColor == ChessGame.TeamColor.BLACK) {
+//            blackUsername = "";
+//            whiteUsername = gameDataAccess.getGame(gameID).whiteUsername();
+//        } else {
+//            blackUsername = gameDataAccess.getGame(gameID).blackUsername();
+//            whiteUsername = "";
+//        }
         ws = new WebSocketFacade(serverUrl, handler);
         ws.leaveGame(gameID, authToken);
-        updateData = new GameData(gameID, whiteUsername, blackUsername, gameDataAccess.getGame(gameID).gameName(), game);
-        gameDataAccess.updateGame(updateData);
+//        updateData = new GameData(gameID, whiteUsername, blackUsername, gameDataAccess.getGame(gameID).gameName(), game);
+//        gameDataAccess.updateGame(updateData);
         return "You left the game.";
     }
 
@@ -99,7 +99,7 @@ public class GameClient {
     }
 
     private String resign(int gameID, String authToken) throws Exception {
-        gameDataAccess.deleteSingleGame(gameID);
+        //gameDataAccess.deleteSingleGame(gameID);
         ws = new WebSocketFacade(serverUrl, handler);
         ws.resignGame(gameID, authToken);
         return "You lost!";

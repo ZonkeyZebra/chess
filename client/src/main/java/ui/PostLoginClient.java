@@ -2,8 +2,8 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
-import dataaccess.GameDAO;
-import dataaccess.MySqlGameDAO;
+//import dataaccess.GameDAO;
+//import dataaccess.MySqlGameDAO;
 import exception.DataAccessException;
 import model.CreateGameRequest;
 import model.GameData;
@@ -19,7 +19,7 @@ public class PostLoginClient {
     private final ServerFacade server;
     private final String serverUrl;
     private final HashMap<Integer, Integer> idList = new HashMap<>();
-    private final GameDAO gameDataAccess = new MySqlGameDAO();
+    //private final GameDAO gameDataAccess = new MySqlGameDAO();
     private ChessBoard gameBoard;
     private ChessGame chessGame;
     private WebSocketFacade ws;
@@ -113,9 +113,9 @@ public class PostLoginClient {
                 ws = new WebSocketFacade(serverUrl, handler);
                 ws.connect(id, authToken);
                 server.joinGame(new JoinGameRequest(teamColor, id), authToken);
-                ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
-                setBoard(board);
-                setGame(gameDataAccess.getGame(id).game());
+                //ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
+                //setBoard(board);
+                //setGame(gameDataAccess.getGame(id).game());
                 setGameNum(id);
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
@@ -138,9 +138,9 @@ public class PostLoginClient {
             } catch (Exception e) {
                 throw new DataAccessException("This game does not exist.");
             }
-            ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
-            setBoard(board);
-            setGame(gameDataAccess.getGame(id).game());
+            //ChessBoard board = gameDataAccess.getGame(id).game().getBoard();
+            //setBoard(board);
+            //setGame(gameDataAccess.getGame(id).game());
             setGameNum(id);
             return "Draw Board: observe " + num;
         }

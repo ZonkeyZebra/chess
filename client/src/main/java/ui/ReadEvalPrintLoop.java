@@ -20,6 +20,7 @@ public class ReadEvalPrintLoop implements GameHandler {
     private boolean inGame = false;
     private boolean observer = false;
     private ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
+    ChessGame mostRecentGame;
 
 
     public ReadEvalPrintLoop(String serverUrl) {
@@ -56,9 +57,9 @@ public class ReadEvalPrintLoop implements GameHandler {
                 }
                 if (result.contains("Draw Board: observe") || result.contains("Draw Board: WHITE")) {
                     teamColor = ChessGame.TeamColor.WHITE;
-                    ChessGame game = postLoginClient.getChessGame();
-                    System.out.println("\n");
-                    new DrawBoard(teamColor, game.getBoard());
+                    //ChessGame game = postLoginClient.getChessGame();
+                    //System.out.println("\n");
+                    //new DrawBoard(teamColor, game.getBoard());
                     setInGame(true);
                     if (result.contains("observe")) {
                         setObserver(true);
@@ -66,9 +67,9 @@ public class ReadEvalPrintLoop implements GameHandler {
                 }
                 if (result.contains("Draw Board: BLACK")) {
                     teamColor = ChessGame.TeamColor.BLACK;
-                    ChessGame game = postLoginClient.getChessGame();
-                    System.out.println("\n");
-                    new DrawBoard(teamColor, game.getBoard());
+                    //ChessGame game = postLoginClient.getChessGame();
+                    //System.out.println("\n");
+                    //new DrawBoard(teamColor, game.getBoard());
                     setInGame(true);
                 }
             } else {
@@ -94,7 +95,8 @@ public class ReadEvalPrintLoop implements GameHandler {
 
     private String getGameResult(String result, String line, String authToken, boolean isObserver) {
         try {
-            result = gameClient.eval(line, authToken, teamColor, postLoginClient.getChessGame(), postLoginClient.getGameNum(), isObserver);
+            //result = gameClient.eval(line, authToken, teamColor, postLoginClient.getChessGame(), postLoginClient.getGameNum(), isObserver);
+            result = gameClient.eval(line, authToken, teamColor, mostRecentGame, postLoginClient.getGameNum(), isObserver);
             if (line.contains("leave") || line.contains("resign")) {
                 setInGame(false);
                 setObserver(false);
@@ -154,6 +156,7 @@ public class ReadEvalPrintLoop implements GameHandler {
 
     private void loadGame(ChessGame game) {
         System.out.println("\n");
+        mostRecentGame = game;
         new DrawBoard(teamColor, game.getBoard());
         printPrompt();
     }
