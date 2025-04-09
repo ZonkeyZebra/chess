@@ -76,7 +76,7 @@ public class GameClient {
             }
             ws = new WebSocketFacade(serverUrl, handler);
             ws.makeMove(gameID, authToken, new ChessMove(startPosition, endPosition, promotion));
-            redrawChessBoard(teamColor, game);
+            //redrawChessBoard(teamColor, game);
             return "";
         } else {
             return "move <source> <destination> <optional promotion> (e.g. f5 e4 q)";

@@ -69,6 +69,7 @@ public class WebSocketSessions {
         // Clean up any connections that were left open.
         for (var session : removeList) {
             sessions.remove(session);
+            gameSession.remove(session);
         }
     }
 

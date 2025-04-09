@@ -136,6 +136,10 @@ public class WebSocketHandler {
 
     private void broadcastMove(String username, NotificationMessage notificationMessage, LoadGameMessage loadGameMessage,
                                String teamUser, ChessMove move, int gameID) throws IOException, DataAccessException, InvalidMoveException {
+        GameData game = gameDAO.getGame(gameID);
+        game.game().makeMove(move);
+        gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game()));
+        loadGameMessage = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, game.game());
         if (Objects.equals(username, teamUser)) {
             connections.broadcastToUser(loadGameMessage, username, gameID);
             connections.broadcast(notificationMessage, username, gameID);
@@ -145,9 +149,6 @@ public class WebSocketHandler {
             connections.broadcastToUser(loadGameMessage, username, gameID);
             connections.broadcast(loadGameMessage, username, gameID);
         }
-        GameData game = gameDAO.getGame(gameID);
-        game.game().makeMove(move);
-        gameDAO.updateGame(new GameData(gameID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game()));
     }
 
     public void leaveGame(int gameID, Session session, String username) throws IOException, DataAccessException {
