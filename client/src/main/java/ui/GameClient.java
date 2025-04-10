@@ -14,10 +14,11 @@ public class GameClient {
     private WebSocketFacade ws;
     private final GameHandler handler;
 
-    public GameClient(String serverUrl, GameHandler handler) {
+    public GameClient(String serverUrl, GameHandler handler, WebSocketFacade ws) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.handler = handler;
+        this.ws = ws;
     }
 
     public String eval(String input, String authToken, ChessGame.TeamColor teamColor,
@@ -50,13 +51,11 @@ public class GameClient {
     }
 
     private String leave(ChessGame.TeamColor teamColor, ChessGame game, int gameID, String authToken) throws Exception {
-        ws = new WebSocketFacade(serverUrl, handler);
         ws.leaveGame(gameID, authToken);
         return "You left the game.";
     }
 
     private String observerLeave(int gameID, String authToken) throws Exception {
-        ws = new WebSocketFacade(serverUrl, handler);
         ws.leaveGame(gameID, authToken);
         return "You left the game.";
     }
@@ -78,7 +77,6 @@ public class GameClient {
             } else {
                 throw new Exception("Not your turn!");
             }
-            ws = new WebSocketFacade(serverUrl, handler);
             ws.makeMove(gameID, authToken, new ChessMove(startPosition, endPosition, promotion));
             return "";
         } else {
@@ -87,7 +85,6 @@ public class GameClient {
     }
 
     private String resign(int gameID, String authToken) throws Exception {
-        ws = new WebSocketFacade(serverUrl, handler);
         ws.resignGame(gameID, authToken);
         return "You lost!";
     }

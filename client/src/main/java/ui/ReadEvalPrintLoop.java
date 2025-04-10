@@ -3,6 +3,7 @@ package ui;
 import chess.ChessGame;
 import chess.InvalidMoveException;
 import ui.websocket.GameHandler;
+import ui.websocket.WebSocketFacade;
 import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
@@ -21,12 +22,18 @@ public class ReadEvalPrintLoop implements GameHandler {
     private boolean observer = false;
     private ChessGame.TeamColor teamColor = ChessGame.TeamColor.WHITE;
     ChessGame mostRecentGame;
+    private WebSocketFacade ws;
 
 
     public ReadEvalPrintLoop(String serverUrl) {
+        try {
+            ws = new WebSocketFacade(serverUrl, this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         preLoginClient = new PreLoginClient(serverUrl);
-        postLoginClient = new PostLoginClient(serverUrl, this);
-        gameClient = new GameClient(serverUrl, this);
+        postLoginClient = new PostLoginClient(serverUrl, this, ws);
+        gameClient = new GameClient(serverUrl, this, ws);
     }
 
     public void run() {

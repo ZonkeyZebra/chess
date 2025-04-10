@@ -21,10 +21,11 @@ public class PostLoginClient {
     private final GameHandler handler;
     private int gameNumID;
 
-    public PostLoginClient(String serverUrl, GameHandler handler) {
+    public PostLoginClient(String serverUrl, GameHandler handler, WebSocketFacade ws) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
         this.handler = handler;
+        this.ws = ws;
     }
 
     public String eval(String input, String authToken) throws Exception {
@@ -107,7 +108,6 @@ public class PostLoginClient {
             try {
                 server.joinGame(new JoinGameRequest(teamColor, id), authToken);
                 setGameNum(id);
-                ws = new WebSocketFacade(serverUrl, handler);
                 ws.connect(id, authToken);
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
@@ -125,7 +125,6 @@ public class PostLoginClient {
             int id;
             try {
                 id = idList.get(num);
-                ws = new WebSocketFacade(serverUrl, handler);
                 ws.connect(id, authToken);
             } catch (Exception e) {
                 throw new DataAccessException("This game does not exist.");
