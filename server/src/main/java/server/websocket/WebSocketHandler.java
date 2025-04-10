@@ -174,7 +174,7 @@ public class WebSocketHandler {
             connections.broadcast(checkmateMessage, username, gameID);
             connections.broadcastToUser(checkmateMessage, username, gameID);
         }
-        if (game.game().isInCheck(currentTeam)) {
+        if (game.game().isInCheck(currentTeam) && !game.game().isInCheckmate(currentTeam)) {
             String stateMessage = String.format("%s is in check!", currentTeam);
             NotificationMessage checkmateMessage = new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage);
             connections.broadcast(checkmateMessage, username, gameID);
