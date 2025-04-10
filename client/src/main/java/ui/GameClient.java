@@ -69,6 +69,10 @@ public class GameClient {
             if (params.length == 3) {
                 promotion = getPieceType(params[2]);
             }
+            ChessPiece piece = game.getBoard().getPiece(startPosition);
+            if (piece == null) {
+                throw new Exception("Not a piece!");
+            }
             if (teamColor == game.getTeamTurn()) {
                 game.makeMove(new ChessMove(startPosition, endPosition, promotion));
             } else {
@@ -76,7 +80,6 @@ public class GameClient {
             }
             ws = new WebSocketFacade(serverUrl, handler);
             ws.makeMove(gameID, authToken, new ChessMove(startPosition, endPosition, promotion));
-            //redrawChessBoard(teamColor, game);
             return "";
         } else {
             return "move <source> <destination> <optional promotion> (e.g. f5 e4 q)";

@@ -51,6 +51,7 @@ public class WebSocketSessions {
         gameSession.remove(session);
         addList.clear();
         removeList.clear();
+        session.close();
     }
 
     public void broadcast(ServerMessage serverMessage, String username, int gameID) throws IOException {
