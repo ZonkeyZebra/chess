@@ -106,9 +106,9 @@ public class PostLoginClient {
                 teamColor = ChessGame.TeamColor.BLACK;
             }
             try {
-                server.joinGame(new JoinGameRequest(teamColor, id), authToken);
-                setGameNum(id);
                 ws.connect(id, authToken);
+                setGameNum(id);
+                server.joinGame(new JoinGameRequest(teamColor, id), authToken);
                 return "Draw Board: " + teamColor + " " + num;
             } catch (DataAccessException e) {
                 throw new DataAccessException("Spot is already taken. Join another game or as another color.");

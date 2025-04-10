@@ -49,9 +49,6 @@ public class WebSocketSessions {
         sessions.remove(session);
         userSession.remove(session);
         gameSession.remove(session);
-        addList.clear();
-        removeList.clear();
-        session.close();
     }
 
     public void broadcast(ServerMessage serverMessage, String username, int gameID) throws IOException {
@@ -73,7 +70,6 @@ public class WebSocketSessions {
         // Clean up any connections that were left open.
         for (var session : removeList) {
             sessions.remove(session);
-            gameSession.remove(session);
         }
     }
 

@@ -94,7 +94,8 @@ public class GameClient {
             ChessBoard board = game.getBoard();
             ChessPosition position = getPositionFromString(params[0], teamColor);
             ChessPiece piece = board.getPiece(position);
-            Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
+            //Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
+            Collection<ChessMove> validMoves = game.validMoves(position);
             new DrawBoard().getValidMoveBoard(teamColor, board, validMoves);
             if (validMoves.isEmpty()) {
                 return "No valid moves for " + piece.getTeamColor() + " " + piece.getPieceType();
