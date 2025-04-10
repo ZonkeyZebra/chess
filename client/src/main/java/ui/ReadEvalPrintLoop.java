@@ -108,7 +108,7 @@ public class ReadEvalPrintLoop implements GameHandler {
     private String getGameEval(String result, String line, String authToken, boolean isObserver) {
         try {
             result = gameClient.eval(line, authToken, teamColor, mostRecentGame, postLoginClient.getGameNum(), isObserver);
-            if (line.contains("leave") || line.contains("resign")) {
+            if (line.contains("leave")) {
                 setInGame(false);
                 setObserver(false);
             }
